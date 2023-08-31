@@ -31,17 +31,26 @@ full justify:
 # include <iostream>
 # include <fstream>
 
+// function for flush left
+
+// function for flush right
+
+// function for full justify
+
+// optional text file creation function?
+
 int main(int argc, char* argv[]) {
-	if (argc<5) {
-		std::cerr << "ERROR: Not enough input arguments." << std::endl;
+	if (argc!=5) {
+		std::cerr << "ERROR: Not enough  or too many input arguments!" << std::endl;
 		return 0;
 	}
-	char inFileName = argv[1];
-	char outFileName = argv[2];
-	int textWidth = atoi(argv[3]);
+	const char* inFileName[] = argv[1]; // input file name
+	const char* outFileName[] = argv[2]; // output file name
+	int textWidth = atoi(argv[3]); // text width
+	const char* flushType = argv[4]; // flush_left, flush_right, or full_justify
 
-	// argv[1]: input file name
-	// argv[2]: output file name
-	// argv[3]: text width
-	// argv[4]: 
+	std::cout << inFileName << std::endl;
+	std::cout << outFileName << std::endl;
+	std::cout << textWidth << std::endl;
+	std::cout << flushType << std::endl;
 }
