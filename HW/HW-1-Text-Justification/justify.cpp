@@ -66,7 +66,13 @@ int main(int argc, char* argv[]) {
 
 	std::string line;
 	while (std::getline(file, line)) {
-		std::cout << line << std::endl;
+		std::string sentence = "Geeks For Geeks";
+	    std::string word;
+	 
+	    std::istringstream iss(line);
+	    while (std::getline(iss, word, ' ')) {
+	        std::cout << word << std::endl;
+	    }
 	}
 
 	// Close the file
