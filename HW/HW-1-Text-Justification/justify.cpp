@@ -30,6 +30,11 @@ full justify:
 
 # include <iostream>
 # include <fstream>
+# include <string>
+
+// void function for the dashed lines at the start and end
+
+//optional function to print out everything, takes spaced out text lines as input
 
 // function for flush left
 
@@ -41,16 +46,23 @@ full justify:
 
 int main(int argc, char* argv[]) {
 	if (argc!=5) {
-		std::cerr << "ERROR: Not enough  or too many input arguments!" << std::endl;
+		std::cerr << "ERROR: Not enough or too many input arguments!" << std::endl;
 		return 0;
 	}
-	const char* inFileName[] = argv[1]; // input file name
-	const char* outFileName[] = argv[2]; // output file name
+	std::string inFileName = argv[1]; // input file name
+	std::string outFileName = argv[2]; // output file name
 	int textWidth = atoi(argv[3]); // text width
-	const char* flushType = argv[4]; // flush_left, flush_right, or full_justify
+	std::string flushType = argv[4]; // flush_left, flush_right, or full_justify
 
-	std::cout << inFileName << std::endl;
-	std::cout << outFileName << std::endl;
-	std::cout << textWidth << std::endl;
-	std::cout << flushType << std::endl;
+	switch (flushType) {
+		case "flush_left":
+			std::cout << "testing" << std::endl;
+		case "flush_right":
+			std::cout << "testing" << std::endl;
+		case "full_justify":
+			std::cout << "testing" << std::endl;
+		default:
+			std::cerr << "ERROR: " << flushType << " is not a flush type" << std::endl;
+	}
+	return 0;
 }
