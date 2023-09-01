@@ -32,51 +32,64 @@ full justify:
 # include <fstream>
 # include <sstream>
 # include <string>
+# include <vector>
+# include <cstring>
 
 // void function for the dashed lines at the start and end
 
 //optional function to print out everything, takes spaced out text lines as input
 
 // function to read text and split up
-std::std::vector<std::string> v;
+bool GetText(std::string fileName, std::vector<std::string> &textArr) {
+	// open file in read mode
+	std::fstream file(fileName, std::ios::in);
 
-// function for flush left
-void left(char *text[]) {
-	std::cout << text << std::endl;
+	std::string line;
+
+	while (std::getline(file, line)) {
+	    std::string word;
+	 
+	    std::istringstream iss(line);
+	    while (std::getline(iss, word, ' ')) {
+	        textArr.push_back(word);
+	    }
+	}
+	// Close the file
+	file.close();
+	return true;
+}
+
+// function for flush left pass text by const reference
+bool left(std::string outName, const std::vector<std::string> &textArr) {
+
+	return true;
 }
 
 // function for flush right
+
 
 // function for full justify
 
 // optional text file creation function?
 
+// main function
 int main(int argc, char* argv[]) {
 	if (argc!=5) {
 		std::cerr << "ERROR: Not enough or too many input arguments!" << std::endl;
-		return 0;
+		exit(0);
 	}
 	std::string inFileName = argv[1]; // input file name
 	std::string outFileName = argv[2]; // output file name
 	int textWidth = atoi(argv[3]); // text width
 	std::string flushType = argv[4]; // flush_left, flush_right, or full_justify
 
-	// open file in read mode
-	std::fstream file(inFileName, std::ios::in);
+	std::vector<std::string> text;
 
-	std::string line;
-	while (std::getline(file, line)) {
-		std::string sentence = "Geeks For Geeks";
-	    std::string word;
-	 
-	    std::istringstream iss(line);
-	    while (std::getline(iss, word, ' ')) {
-	        std::cout << word << std::endl;
-	    }
+	bool success = GetText(inFileName, text);
+
+	for (unsigned int i=0; i < text.size(); i++) {
+		std::cout << text.at(i) << " " << strlen(text.at(i).c_str()) << std::endl;
 	}
-
-	// Close the file
-	file.close();
 
 	if (flushType=="flush_left") {
 		std::cout << "left" << std::endl;
