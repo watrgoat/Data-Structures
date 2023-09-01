@@ -30,13 +30,20 @@ full justify:
 
 # include <iostream>
 # include <fstream>
+# include <sstream>
 # include <string>
 
 // void function for the dashed lines at the start and end
 
 //optional function to print out everything, takes spaced out text lines as input
 
+// function to read text and split up
+std::std::vector<std::string> v;
+
 // function for flush left
+void left(char *text[]) {
+	std::cout << text << std::endl;
+}
 
 // function for flush right
 
@@ -54,15 +61,28 @@ int main(int argc, char* argv[]) {
 	int textWidth = atoi(argv[3]); // text width
 	std::string flushType = argv[4]; // flush_left, flush_right, or full_justify
 
-	switch (flushType) {
-		case "flush_left":
-			std::cout << "testing" << std::endl;
-		case "flush_right":
-			std::cout << "testing" << std::endl;
-		case "full_justify":
-			std::cout << "testing" << std::endl;
-		default:
-			std::cerr << "ERROR: " << flushType << " is not a flush type" << std::endl;
+	// open file in read mode
+	std::fstream file(inFileName, std::ios::in);
+
+	std::string line;
+	while (std::getline(file, line)) {
+		std::cout << line << std::endl;
 	}
-	return 0;
+
+	// Close the file
+	file.close();
+
+	if (flushType=="flush_left") {
+		std::cout << "left" << std::endl;
+	}
+	else if (flushType=="flush_right") {
+		std::cout << "right" << std::endl;
+	}
+	else if (flushType=="full_justify") {
+		std::cout << "full" << std::endl;
+	}
+	else {
+		std::cerr << "ERROR: " << flushType << " flush type is not an option." << std::endl;
+	}
+
 }
