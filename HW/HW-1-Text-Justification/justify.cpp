@@ -37,36 +37,61 @@ full justify:
 
 // void function for the dashed lines at the start and end
 
+
 //optional function to print out everything, takes spaced out text lines as input
 
-// function to read text and split up
-bool GetText(std::string fileName, std::vector<std::string> &textArr) {
-	// open file in read mode
-	std::fstream file(fileName, std::ios::in);
+// function to read text and split up words
+// possible change: bool func to output success
+void GetText(const std::string &fileName, std::vector<std::string> &textArr) {
+	std::ifstream file(fileName);
+
+	if (!file.good()) {
+	    std::cerr << "Can't open " << fileName << std::endl;
+	    exit(1);
+	}
 
 	std::string line;
 
-	while (std::getline(file, line)) {
+	while (file >> line) {
 	    std::string word;
-	 
+		
 	    std::istringstream iss(line);
 	    while (std::getline(iss, word, ' ')) {
 	        textArr.push_back(word);
 	    }
 	}
-	// Close the file
+
 	file.close();
-	return true;
 }
 
 // function for flush left pass text by const reference
-bool left(std::string outName, const std::vector<std::string> &textArr) {
+void FlushLeft(const std::string &outName, const int &maxWidth, const std::vector<std::string> &textArr) {
+	std::ofstream file(outName);
 
-	return true;
+	if (!file.good()) {
+	    std::cerr << "Can't open " << outName << std::endl;
+	    exit(1);
+	}
+
+	std::string line = textArr[0];
+	std::string front(maxWidth+4, '-');
+	std::cout << front << "\n";
+
+	for (unsigned int i=1; i < textArr.size(); i++) { 
+		// fyi size function call inside the loop is referencing the size val stored for all vectors and therfore has no practical difference and the tradeoff of saving the value to memory actually makes it worse
+		if (line.length()+textArr[i].length() > maxWidth) {
+			std::cout << "| " << line.substr(0, line.length()-1) << " |\n";
+			// adds line then erases line
+			line.clear();
+		}
+		line += " " + textArr[i];
+	}
+
+	std::cout << front << "\n";
+	file.close();
 }
 
 // function for flush right
-
 
 // function for full justify
 
@@ -75,9 +100,10 @@ bool left(std::string outName, const std::vector<std::string> &textArr) {
 // main function
 int main(int argc, char* argv[]) {
 	if (argc!=5) {
-		std::cerr << "ERROR: Not enough or too many input arguments!" << std::endl;
-		exit(0);
+		std::cerr << "ERROR: Only 4 arguments accepted!" << std::endl;
+		exit(1);
 	}
+
 	std::string inFileName = argv[1]; // input file name
 	std::string outFileName = argv[2]; // output file name
 	int textWidth = atoi(argv[3]); // text width
@@ -85,14 +111,11 @@ int main(int argc, char* argv[]) {
 
 	std::vector<std::string> text;
 
-	bool success = GetText(inFileName, text);
-
-	for (unsigned int i=0; i < text.size(); i++) {
-		std::cout << text.at(i) << " " << strlen(text.at(i).c_str()) << std::endl;
-	}
+	// gets text from input file
+	GetText(inFileName, text);
 
 	if (flushType=="flush_left") {
-		std::cout << "left" << std::endl;
+		FlushLeft(outFileName, textWidth, text);
 	}
 	else if (flushType=="flush_right") {
 		std::cout << "right" << std::endl;
@@ -102,6 +125,7 @@ int main(int argc, char* argv[]) {
 	}
 	else {
 		std::cerr << "ERROR: " << flushType << " flush type is not an option." << std::endl;
+		exit(1);
 	}
 
 }
