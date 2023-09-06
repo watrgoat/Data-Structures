@@ -32,7 +32,8 @@ bool GetText(ifstream &file, vector<string> &textArr) {
 // function for flush left pass text by const reference
 bool FlushLeft(ofstream &file, const vector<string> &lineVec, const unsigned int &width) {
 	string line;
-	for (unsigned int i; i < lineVec.size(); i++) {
+
+	for (unsigned int i=0; i < lineVec.size(); i++) {
 		// cout << lineVec[i] << ' ';
 		line += lineVec[i] + ' ';
 	}
@@ -41,7 +42,7 @@ bool FlushLeft(ofstream &file, const vector<string> &lineVec, const unsigned int
 
 	// adds the rest of spaces at the end
 	string extraSpaces(width-line.length(), ' ');
-	// cout << endl;
+	cout << "| " << line << extraSpaces << " |" << endl;
 
 	return true;
 }
@@ -89,8 +90,8 @@ bool LineSplitter(ofstream &oFile, const unsigned int &maxWidth, const vector<st
 			longLine = textArr[i];
 
 			while (longLine.length() > maxWidth) {
-				// cout << "| " << longLine.substr(0,maxWidth-1) << "- |" << endl;
-				longLine = longLine.substr(maxWidth);
+				cout << "| " << longLine.substr(0,maxWidth-2) << "- |" << endl;
+				longLine = longLine.substr(maxWidth-2);
 			}
 
 			if (longLine.length() > 0) {
@@ -105,22 +106,24 @@ bool LineSplitter(ofstream &oFile, const unsigned int &maxWidth, const vector<st
 				cout << "called flush here" << endl;
 				// CALL FLUSH HERE
 				// check if line is last for full just and call left just instead
-				// FlushLeft(oFile, line, maxWidth);
+				FlushLeft(oFile, line, maxWidth);
 				line.clear();
 				lineLength = textArr[i].length();
 				line.push_back(textArr[i]);
 			} else {
 				// line not too long
+				cout << lineLength;
 				cout << "word added to line" << endl;
 				line.push_back(textArr[i]);
 				lineLength += textArr[i].length();
+				cout << lineLength;
 			}
 		}
 	}
-	cout << line.size() << endl;
+
 	if (line.size() > 0) {
 		// call flush
-		// FlushLeft(oFile, line, maxWidth);
+		FlushLeft(oFile, line, maxWidth);
 		line.clear();
 		lineLength = 0;
 	}
