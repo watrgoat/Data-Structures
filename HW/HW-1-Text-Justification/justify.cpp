@@ -14,9 +14,7 @@ using namespace std;
 
 // function to read text and split up words
 // possible change: bool func to output success
-bool GetText(const string &fileName, vector<string> &textArr) {
-	ifstream file(fileName);
-
+bool GetText(ifstream &file, vector<string> &textArr) {
 	if (!file.good()) {
 	    cerr << "Can't open " << fileName << endl;
 	    exit(1);
@@ -26,8 +24,8 @@ bool GetText(const string &fileName, vector<string> &textArr) {
 
 	while (file >> line) {
 	    string word;
-		
 	    stringstream ss(line);
+
 	    while (ss >> word) {
 	        textArr.push_back(word);
 	    }
@@ -39,112 +37,29 @@ bool GetText(const string &fileName, vector<string> &textArr) {
 
 
 // function for flush left pass text by const reference
-bool FlushLeft(const string &outName, const unsigned int &maxWidth, const vector<string> &textArr) {
-	ofstream file(outName);
-
-	
-
-	if (!file.good()) {
-	    cerr << "Can't open " << outName << endl;
-	    exit(1);
-	}
-
-	string dashedLine(maxWidth+4, '-');
+bool FlushLeft(ofstream &oFile, const vector<string> &lineVec) {
 	string line;
-
-	file << dashedLine << endl;
-
-	for (unsigned int i; i<textArr.size(); i++) {
-		file.flush();
-		if (line.length()+textArr[i].length()<=maxWidth) {
-			// space goes before because there is a space always needed for 
-			line += textArr[i] + ' ';
-		} else {
-			if (line.back() == ' ') line.pop_back();
-			string extraSpace(maxWidth-line.length(), ' ');
-			file << "| " << line << extraSpace << " |" << endl;
-			line.clear();
-			line += textArr[i] + ' ';
-		}
-		/*else if (textArr[i] >= maxWidth) {
-			// MY BRAIN HURTED HERE
-			line += " " + textArr[i]
-			string tmpLine;
-			while line >= maxWidth;
-				tmpLine = line.substr(0, maxWidth)
-
-
-		}*/
-		// add word to line if it +1 isnt > maxWidth, " "
-		// if word fits add the word
-		// if word is > than maxWidth cut it off at 15 add a hyphen
-		// if word is == to maxWidth
-		
+	for (unsigned int i; i < lineVec.size(); i++) {
+		line += lineVec
 	}
-	if (line.length()>1) {
-		if (line.back() == ' ') line.pop_back();
-		string extraSpace(maxWidth-line.length(), ' ');
-		file << "| " << line << extraSpace << " |" << endl;
-	}
-	file << dashedLine << endl;
-	file.close();
+	// loop over words serperate by a space
+	// add the rest of spaces at the end
 	return true;
 }
 
 
 // function for flush right
-bool FlushRight(const string &outName, const unsigned int &maxWidth, const vector<string> &textArr) {
-	ofstream file(outName);
-
-	if (!file.good()) {
-	    cerr << "Can't open " << outName << endl;
-	    exit(1);
-	}
-
-	string dashedLine(maxWidth+4, '-');
-	string line;
-
-	file << dashedLine << endl;
-
-	for (unsigned int i; i<textArr.size(); i++) {
-		file.flush();
-		if (line.length()+textArr[i].length()<=maxWidth) {
-			// space goes before because there is a space always needed for 
-			line += textArr[i] + ' ';
-		} else {
-			if (line.back() == ' ') line.pop_back();
-			string extraSpace(maxWidth-line.length(), ' ');
-			file << "| " << extraSpace << line << " |" << endl;
-			line.clear();
-			line += textArr[i] + ' ';
-		}
-		/*else if (textArr[i] >= maxWidth) {
-			// MY BRAIN HURTED HERE
-			line += " " + textArr[i]
-			string tmpLine;
-			while line >= maxWidth;
-				tmpLine = line.substr(0, maxWidth)
-
-
-		}*/
-		// add word to line if it +1 isnt > maxWidth, " "
-		// if word fits add the word
-		// if word is > than maxWidth cut it off at 15 add a hyphen
-		// if word is == to maxWidth
-		
-	}
-	if (line.length()>1) {
-		if (line.back() == ' ') line.pop_back();
-		string extraSpace(maxWidth-line.length(), ' ');
-		file << "| " << extraSpace << line << " |" << endl;
-	}
-	file << dashedLine << endl;
-	file.close();
+bool FlushRight(ofstream &oFile, const vector<string> &lineVec) {
+	
 	return true;
 }
 
 
 // function for full justify
+bool FullJustify(ofstream &oFile, const vector<string> &lineVec) {
+
+	return true;
+}
 // divide the extra space and place it in between words, use floor div and modulo to contain remainder
 
 // optional text file creation function?
@@ -155,13 +70,15 @@ bool FlushRight(const string &outName, const unsigned int &maxWidth, const vecto
 // start and endline values are updated to max line length.
 // if single word is > than maxWidth catch it, set it to line, chop it like a tree, at max width-1 add a hyphen until lineLength < maxWidth
 // once lineLength is too full add lines to file, repeat until reaching end of 
-bool test(const string &outName, const unsigned int &maxWidth, const vector<string> &textArr) {
+bool LineSplitter(ofstream &outFile, const unsigned int &maxWidth, const vector<string> &textArr, const string &textType) {
 	int lineLength = 0;
 	vector<string> line;
 	string longLine;
 	
 	for (unsigned int i; i<textArr.size(); i++) {
 		if (textArr[i].length() > maxWidth) {
+			// word too long
+
 			if  (lineLength > 0) {
 				// CALL FLUSH HERE
 				line.clear();
@@ -170,7 +87,7 @@ bool test(const string &outName, const unsigned int &maxWidth, const vector<stri
 
 			longLine = textArr[i];
 
-			while (longLine.size() > maxWidth) {
+			while (longLine.length() > maxWidth) {
 				cout << "| " << longLine.substr(0,maxWidth-1) << "- |" << endl;
 				longLine = longLine.substr(maxWidth);
 			}
@@ -181,14 +98,14 @@ bool test(const string &outName, const unsigned int &maxWidth, const vector<stri
 				longLine.clear();
 			}
 		} else {
-			// line is not long
-			// add it to vector if n
-			if (textArr[i].length() + lineLength > maxWidth) {
+			// word not too long
+
+			if (textArr[i].length() + 1 + lineLength > maxWidth) {
 				// CALL FLUSH HERE
 				line.clear();
 				lineLength = 0;
 			} else {
-				// not too long
+				// line not too long
 				line.push_back(textArr[i])
 				lineLength += textArr[i].length()
 			}
@@ -204,10 +121,16 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	string inFileName = argv[1]; // input file name
-	string outFileName = argv[2]; // output file name
+	ifstream inFile(argv[1]); // input file name
+	ofstream outFile(argv[2]); // output file name
 	unsigned int textWidth = atoi(argv[3]); // text width
 	string flushType = argv[4]; // flush_left, flush_right, or full_justify
+
+	if (flushType!="flush_left" || flushType!="flush_right" || flushType!="full_justify") {
+		cerr << "ERROR: " << flushType << " is not an option." << endl;
+		exit(1);
+	}
+
 
 	vector<string> text;
 
@@ -216,19 +139,7 @@ int main(int argc, char* argv[]) {
 
 	bool success = false;
 
-	if (flushType=="flush_left") {
-		success = FlushLeft(outFileName, textWidth, text);
-	}
-	else if (flushType=="flush_right") {
-		success = FlushRight(outFileName, textWidth, text);
-	}
-	else if (flushType=="full_justify") {
-		cout << "full" << endl;
-	}
-	else {
-		cerr << "ERROR: " << flushType << " flush type is not an option." << endl;
-		exit(1);
-	}
+	
 
 	return 0;
 }
