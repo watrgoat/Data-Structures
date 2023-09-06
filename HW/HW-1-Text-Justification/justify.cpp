@@ -27,8 +27,8 @@ bool GetText(const string &fileName, vector<string> &textArr) {
 	while (file >> line) {
 	    string word;
 		
-	    istringstream iss(line);
-	    while (getline(iss, word, ' ')) {
+	    stringstream ss(line);
+	    while (ss >> word) {
 	        textArr.push_back(word);
 	    }
 	}
@@ -156,11 +156,43 @@ bool FlushRight(const string &outName, const unsigned int &maxWidth, const vecto
 // if single word is > than maxWidth catch it, set it to line, chop it like a tree, at max width-1 add a hyphen until lineLength < maxWidth
 // once lineLength is too full add lines to file, repeat until reaching end of 
 bool test(const string &outName, const unsigned int &maxWidth, const vector<string> &textArr) {
-	int startLine, endLine = 1;
 	int lineLength = 0;
+	vector<string> line;
+	string longLine;
 	
 	for (unsigned int i; i<textArr.size(); i++) {
-		
+		if (textArr[i].length() > maxWidth) {
+			if  (lineLength > 0) {
+				// CALL FLUSH HERE
+				line.clear();
+				lineLength = 0;
+			}
+
+			longLine = textArr[i];
+
+			while (longLine.size() > maxWidth) {
+				cout << "| " << longLine.substr(0,maxWidth-1) << "- |" << endl;
+				longLine = longLine.substr(maxWidth);
+			}
+
+			if (longLine.length() > 0) {
+				line.push_back(longLine)
+				lineLength = longLine.length();
+				longLine.clear();
+			}
+		} else {
+			// line is not long
+			// add it to vector if n
+			if (textArr[i].length() + lineLength > maxWidth) {
+				// CALL FLUSH HERE
+				line.clear();
+				lineLength = 0;
+			} else {
+				// not too long
+				line.push_back(textArr[i])
+				lineLength += textArr[i].length()
+			}
+		}
 	}
 	return true;
 }
