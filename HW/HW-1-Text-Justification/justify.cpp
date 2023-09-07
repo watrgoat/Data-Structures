@@ -1,3 +1,5 @@
+// File:	justify.cpp
+
 # include <iostream>
 # include <fstream>
 # include <sstream>
@@ -7,18 +9,16 @@
 
 using namespace std;
 
-// void function for the dashed lines at the start and end
-
-
-//optional function to print out everything, takes spaced out text lines as input
 
 // function to read text and split up words
-// possible change: bool func to output success
 bool GetText(ifstream &file, vector<string> &textArr) {
 	string line;
 
+	// in stream each line in file
 	while (file >> line) {
 	    string word;
+
+	    // splits line by spaces
 	    stringstream ss(line);
 	    while (ss >> word) {
 	        textArr.push_back(word);
@@ -31,16 +31,17 @@ bool GetText(ifstream &file, vector<string> &textArr) {
 
 
 // function for flush left pass text by const reference
-bool FlushLeft(ofstream &file, const vector<string> &lineVec, const unsigned int &width) {
+bool FlushLeft(ofstream &file, const vector<string> &lineVec, unsigned int width) {
 	string line;
 
+	// loops over words and connects them
 	for (unsigned int i=0; i < lineVec.size(); i++) {
 		line += lineVec[i] + ' ';
 	}
 	// remove extra space at the end
 	line.pop_back();
 
-	// adds the rest of spaces at the end
+	// adds the rest of spaces at the end based on how much space is left
 	string extraSpaces(width-line.length(), ' ');
 	file << "| " << line << extraSpaces << " |" << endl;
 
@@ -49,7 +50,7 @@ bool FlushLeft(ofstream &file, const vector<string> &lineVec, const unsigned int
 
 
 // function for flush right
-bool FlushRight(ofstream &file, const vector<string> &lineVec, const unsigned int &width) {
+bool FlushRight(ofstream &file, const vector<string> &lineVec, unsigned int width) {
 	string line;
 
 	for (unsigned int i=0; i < lineVec.size(); i++) {
@@ -67,10 +68,9 @@ bool FlushRight(ofstream &file, const vector<string> &lineVec, const unsigned in
 
 
 // function for full justify
-bool FullJustify(ofstream &file, const vector<string> &lineVec, const unsigned int &width, const unsigned int &lineLen) {
+bool FullJustify(ofstream &file, const vector<string> &lineVec, unsigned int width, int lineLen) {
 	string line;
 
-	cout << "HERE2" << endl;
 	if (lineVec.size() == 1) {
 		line += lineVec[0];
 		string space(width-line.length(), ' ');
@@ -91,13 +91,12 @@ bool FullJustify(ofstream &file, const vector<string> &lineVec, const unsigned i
 		
 	}
 	line += lineVec.back();
-	cout << "| " << line << " |" << endl;
 	file << "| " << line << " |" << endl;
 	return true;
 }
 // divide the extra space and place it in between words, use floor div and modulo to contain remainder
 
-void Flush(ofstream &outerFile, const vector<string> &lineV, const unsigned int &wideness, const string &type, const int &lineL, const bool &isLast) {
+void Flush(ofstream &outerFile, const vector<string> &lineV, unsigned int wideness, const string &type, int lineL, bool isLast) {
 	if (type=="flush_left") {
 		FlushLeft(outerFile, lineV, wideness);
 	} else if (type=="flush_right") {
@@ -105,7 +104,6 @@ void Flush(ofstream &outerFile, const vector<string> &lineV, const unsigned int 
 	} else if (type=="full_justify" && !(isLast)) {
 		FullJustify(outerFile, lineV, wideness, lineL);
 	} else if (type=="full_justify" && isLast) {
-		cout << "HERE" << endl;
 		FlushLeft(outerFile, lineV, wideness);
 	}
 	return;
@@ -117,7 +115,7 @@ void Flush(ofstream &outerFile, const vector<string> &lineV, const unsigned int 
 // start and endline values are updated to max line length.
 // if single word is > than maxWidth catch it, set it to line, chop it like a tree, at max width-1 add a hyphen until lineLength < maxWidth
 // once lineLength is too full add lines to file, repeat until reaching end of 
-bool LineSplitter(ofstream &oFile, const unsigned int &maxWidth, const vector<string> &textArr, const string &textType) {
+bool LineSplitter(ofstream &oFile, unsigned int maxWidth, const vector<string> &textArr, const string &textType) {
 	int lineLength = 0;
 	vector<string> line;
 	string longLine;
@@ -146,8 +144,8 @@ bool LineSplitter(ofstream &oFile, const unsigned int &maxWidth, const vector<st
 		} else {
 			// word not too long
 			if (textArr[i].length() + (line.size()-1) + lineLength >= maxWidth) {
-				cout << (i==(textArr.size()-1)) << endl;
-				Flush(oFile, line, maxWidth, textType, lineLength, i==textArr.size()-1);
+				
+				Flush(oFile, line, maxWidth, textType, lineLength, false);
 				line.clear();
 				lineLength = textArr[i].length();
 				line.push_back(textArr[i]);
