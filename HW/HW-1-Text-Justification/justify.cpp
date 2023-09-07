@@ -70,6 +70,7 @@ bool FlushRight(ofstream &file, const vector<string> &lineVec, const unsigned in
 bool FullJustify(ofstream &file, const vector<string> &lineVec, const unsigned int &width, const unsigned int &lineLen) {
 	string line;
 
+	cout << "HERE2" << endl;
 	if (lineVec.size() == 1) {
 		line += lineVec[0];
 		string space(width-line.length(), ' ');
@@ -90,6 +91,7 @@ bool FullJustify(ofstream &file, const vector<string> &lineVec, const unsigned i
 		
 	}
 	line += lineVec.back();
+	cout << "| " << line << " |" << endl;
 	file << "| " << line << " |" << endl;
 	return true;
 }
@@ -103,6 +105,7 @@ void Flush(ofstream &outerFile, const vector<string> &lineV, const unsigned int 
 	} else if (type=="full_justify" && !(isLast)) {
 		FullJustify(outerFile, lineV, wideness, lineL);
 	} else if (type=="full_justify" && isLast) {
+		cout << "HERE" << endl;
 		FlushLeft(outerFile, lineV, wideness);
 	}
 	return;
@@ -143,6 +146,7 @@ bool LineSplitter(ofstream &oFile, const unsigned int &maxWidth, const vector<st
 		} else {
 			// word not too long
 			if (textArr[i].length() + (line.size()-1) + lineLength >= maxWidth) {
+				cout << (i==(textArr.size()-1)) << endl;
 				Flush(oFile, line, maxWidth, textType, lineLength, i==textArr.size()-1);
 				line.clear();
 				lineLength = textArr[i].length();
