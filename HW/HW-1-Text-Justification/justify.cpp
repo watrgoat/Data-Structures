@@ -71,6 +71,7 @@ bool FlushRight(ofstream &file, const vector<string> &lineVec, unsigned int widt
 bool FullJustify(ofstream &file, const vector<string> &lineVec, unsigned int width, int lineLen) {
 	string line;
 
+	// if there is only one element, left justify
 	if (lineVec.size() == 1) {
 		line += lineVec[0];
 		string space(width-line.length(), ' ');
@@ -78,6 +79,8 @@ bool FullJustify(ofstream &file, const vector<string> &lineVec, unsigned int wid
 		return true;
 	}
 
+	// divids extra space and place it in between words
+	// uses floor div and modulo to account for remaining spaces
 	string space((width-lineLen)/(lineVec.size()-1), ' ');
 	int extraSpaces = (width-lineLen) % (lineVec.size()-1);
 	
@@ -94,8 +97,8 @@ bool FullJustify(ofstream &file, const vector<string> &lineVec, unsigned int wid
 	file << "| " << line << " |" << endl;
 	return true;
 }
-// divide the extra space and place it in between words, use floor div and modulo to contain remainder
 
+// calls the specific justify function: made to reduce code repitition
 void Flush(ofstream &outerFile, const vector<string> &lineV, unsigned int wideness, const string &type, int lineL, bool isLast) {
 	if (type=="flush_left") {
 		FlushLeft(outerFile, lineV, wideness);
@@ -104,25 +107,23 @@ void Flush(ofstream &outerFile, const vector<string> &lineV, unsigned int widene
 	} else if (type=="full_justify" && !(isLast)) {
 		FullJustify(outerFile, lineV, wideness, lineL);
 	} else if (type=="full_justify" && isLast) {
+		// calls left justify if it is the last of full justify
 		FlushLeft(outerFile, lineV, wideness);
 	}
 	return;
 }
 
-// hold 2 values, startLine, endLine they are both equal to 1 the 
-// if lineLength is empty and next item is greater than max width
-// vector is searched with a lineLength value being stored
-// start and endline values are updated to max line length.
-// if single word is > than maxWidth catch it, set it to line, chop it like a tree, at max width-1 add a hyphen until lineLength < maxWidth
-// once lineLength is too full add lines to file, repeat until reaching end of 
+// splits lines into a smaller vectors (max size of a line) and then gives  to the appropriate justification function
 bool LineSplitter(ofstream &oFile, unsigned int maxWidth, const vector<string> &textArr, const string &textType) {
 	int lineLength = 0;
 	vector<string> line;
 	string longLine;
 	
 	for (unsigned int i=0; i<textArr.size(); i++) {
+		// if line is long
 		if (textArr[i].length() > maxWidth) {
 
+			// flushes current text if any
 			if  (lineLength > 0) {
 				Flush(oFile, line, maxWidth, textType, lineLength, false);
 				line.clear();
@@ -131,24 +132,30 @@ bool LineSplitter(ofstream &oFile, unsigned int maxWidth, const vector<string> &
 
 			longLine = textArr[i];
 
+			// chops down long line until there the line is less than max
 			while (longLine.length() > maxWidth) {
 				oFile << "| " << longLine.substr(0,maxWidth-1) << "- |" << endl;
 				longLine = longLine.substr(maxWidth-1);
 			}
 
+			// checks for any more chars in the long line, pushes to vector
 			if (longLine.length() > 0) {
 				line.push_back(longLine);
 				lineLength = longLine.length();
 				longLine.clear();
 			}
+		// word is not too long
 		} else {
-			// word not too long
+			
+			// checks if the next word will overfill the current line
+			// if it does it flushes and adds the current word to line
 			if (textArr[i].length() + (line.size()-1) + lineLength >= maxWidth) {
-				
 				Flush(oFile, line, maxWidth, textType, lineLength, false);
 				line.clear();
 				lineLength = textArr[i].length();
 				line.push_back(textArr[i]);
+
+			// adds word to line if nothing else happened
 			} else {
 				line.push_back(textArr[i]);
 				lineLength += textArr[i].length();
@@ -156,6 +163,7 @@ bool LineSplitter(ofstream &oFile, unsigned int maxWidth, const vector<string> &
 		}
 	}
 
+	// checks if there is anything left in the line and flushes it
 	if (line.size() > 0) {
 		Flush(oFile, line, maxWidth, textType, lineLength, true);
 		line.clear();
@@ -172,26 +180,28 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
-	ifstream inFile(argv[1]); // input file name
-	ofstream outFile(argv[2]); // output file name
-	unsigned int textWidth = atoi(argv[3]); // text width
-	string flushType = argv[4]; // flush_left, flush_right, or full_justify
+	// input arguments
+	ifstream inFile(argv[1]);
+	ofstream outFile(argv[2]);
+	unsigned int textWidth = atoi(argv[3]);
+	string flushType = argv[4];
 
+	// checks if in and out files opened.
 	if (!inFile.good()) {
 	    std::cerr << "Can't open " << argv[1] << " to read.\n";
 	    exit(1);
-	}
-
-	if (!outFile.good()) {
+	} if (!outFile.good()) {
     	std::cerr << "Can't open " << argv[2] << " to read.\n";
     	exit(1);
     }
 
+    // checks if text width input is geater than 2
     if (textWidth<2) {
     	std::cerr << "Text width input too small\n";
     	exit(1);
     }
 
+    // checks flush type inputs are written correctly
 	if (flushType=="flush_left" || flushType=="flush_right" || flushType=="full_justify") {
 		// good
 	} else {
@@ -205,10 +215,13 @@ int main(int argc, char* argv[]) {
 	// gets text from input file
 	GetText(inFile, text);
 
+	// adds the dahsed line at the start
 	outFile << dashedLine << endl;
 
+	// calls line split function on text
 	LineSplitter(outFile, textWidth, text, flushType);
 
+	// dashed line at the end
 	outFile << dashedLine << endl;
 
 	outFile.close();
