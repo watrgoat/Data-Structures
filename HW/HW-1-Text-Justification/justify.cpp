@@ -85,6 +85,7 @@ bool FullJustify(ofstream &file, const vector<string> &lineVec, unsigned int wid
 	int extraSpaces = (width-lineLen) % (lineVec.size()-1);
 	
 	for (unsigned int i=0; i < lineVec.size()-1; i++) {
+		// extra spaces for the first ones if needed
 		if (extraSpaces > 0) {
 			line += lineVec[i] + space + ' ';
 			extraSpaces -= 1;
@@ -97,6 +98,7 @@ bool FullJustify(ofstream &file, const vector<string> &lineVec, unsigned int wid
 	file << "| " << line << " |" << endl;
 	return true;
 }
+
 
 // calls the specific justify function: made to reduce code repitition
 void Flush(ofstream &outerFile, const vector<string> &lineV, unsigned int wideness, const string &type, int lineL, bool isLast) {
@@ -112,6 +114,7 @@ void Flush(ofstream &outerFile, const vector<string> &lineV, unsigned int widene
 	}
 	return;
 }
+
 
 // splits lines into a smaller vectors (max size of a line) and then gives  to the appropriate justification function
 bool LineSplitter(ofstream &oFile, unsigned int maxWidth, const vector<string> &textArr, const string &textType) {
@@ -173,6 +176,7 @@ bool LineSplitter(ofstream &oFile, unsigned int maxWidth, const vector<string> &
 	return true;
 }
 
+
 // main function
 int main(int argc, char* argv[]) {
 	if (argc!=5) {
@@ -185,6 +189,8 @@ int main(int argc, char* argv[]) {
 	ofstream outFile(argv[2]);
 	unsigned int textWidth = atoi(argv[3]);
 	string flushType = argv[4];
+
+
 
 	// checks if in and out files opened.
 	if (!inFile.good()) {
@@ -200,6 +206,14 @@ int main(int argc, char* argv[]) {
     	std::cerr << "Text width input too small\n";
     	exit(1);
     }
+
+    bool isParrallel = false;
+
+	if (flushType=="p_flush_left" || flushType=="p_flush_right" || flushType=="p_full_justify") {
+		isParrallel = true;
+		flushType = flushType.substr(2);
+	}
+	cout << flushType << endl;
 
     // checks flush type inputs are written correctly
 	if (flushType=="flush_left" || flushType=="flush_right" || flushType=="full_justify") {
@@ -225,5 +239,29 @@ int main(int argc, char* argv[]) {
 	outFile << dashedLine << endl;
 
 	outFile.close();
+
+	if (isParrallel) {
+		text.clear();
+		ifstream iFile(argv[2]);
+		string line;
+
+		while (inFile >> line) {
+			text.push_back(line);
+			cout << line << endl;
+		}
+
+		iFile.close();
+		string spaces(text.size(), ' ');
+		ofstream fileOut(argv[2]);
+
+		for (unsigned int i=0; i<text.size(); i++) {
+			fileOut << spaces << text[i] <<  endl;
+			spaces.pop_back();
+		}
+		fileOut.close();
+		// open the outfile in read mode
+		// add space to top(len of file - 1 each time)
+	}
+
 	return 0;
 }
