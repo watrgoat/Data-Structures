@@ -207,14 +207,6 @@ int main(int argc, char* argv[]) {
     	exit(1);
     }
 
-    bool isParrallel = false;
-
-	if (flushType=="p_flush_left" || flushType=="p_flush_right" || flushType=="p_full_justify") {
-		isParrallel = true;
-		flushType = flushType.substr(2);
-	}
-	cout << flushType << endl;
-
     // checks flush type inputs are written correctly
 	if (flushType=="flush_left" || flushType=="flush_right" || flushType=="full_justify") {
 		// good
@@ -239,29 +231,6 @@ int main(int argc, char* argv[]) {
 	outFile << dashedLine << endl;
 
 	outFile.close();
-
-	if (isParrallel) {
-		text.clear();
-		ifstream iFile(argv[2]);
-		string line;
-
-		while (inFile >> line) {
-			text.push_back(line);
-			cout << line << endl;
-		}
-
-		iFile.close();
-		string spaces(text.size(), ' ');
-		ofstream fileOut(argv[2]);
-
-		for (unsigned int i=0; i<text.size(); i++) {
-			fileOut << spaces << text[i] <<  endl;
-			spaces.pop_back();
-		}
-		fileOut.close();
-		// open the outfile in read mode
-		// add space to top(len of file - 1 each time)
-	}
 
 	return 0;
 }
