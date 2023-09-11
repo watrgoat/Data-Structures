@@ -5,22 +5,34 @@ using std::string;
 
 class Course {
 public:
-	Course(string aCRN, string aDeptCode, string aCourseCode, string aCourseName, 
+	Course(string aDept, string aCourseCode, string aCourseName, 
 		string aDay, string aStartTime, string aEndTme, string aRoom);
 
-	// ACCESSORS
-	string getCRN() const;
-	string getDeptCode() const;
-	string getCourseCode() const;
-	string getCourseName() const;
-	string getDay() const;
-	string getStartTime() const;
-	string getEndTime() const;
+	// no accessors or modifiers needed
 	string getRoom() const;
+	int getCourseNameLength() const;
+	int getDayLength() const;
+	
 
-	// no modifiers needed
 
 	// member func for comparing??
-	void print() const;
+	void printRoom() const; // room?, deptCode, courseCode, courseName, day, startTime, endTime
+	
+	void printDept() const; // courseCode, CourseName, day, startTime, endTime
+
+private:
+	string dept;
+	string courseCode;
+	string courseName;
+	string day;
+	string startTime;
+	string endTime;
+	string room;
 
 };
+
+// room compare order: tables by alphabetic room name??, day, start time hour, course code, department
+// bool compareRoom()
+
+// department compare
+// bool compareDept()
