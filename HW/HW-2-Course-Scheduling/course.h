@@ -9,10 +9,13 @@ public:
 		string aDay, string aStartTime, string aEndTme, string aRoom);
 
 	// no accessors or modifiers needed
+	string getDept() const;
+	string getCourseCode() const;
+	string getCourseName() const;
+	string getDay() const;
+	string getStartTime() const;
+	string getEndTime() const;
 	string getRoom() const;
-	int getCourseNameLength() const;
-	int getDayLength() const;
-	
 
 
 	// member func for comparing??
@@ -24,7 +27,7 @@ private:
 	string dept;
 	string courseCode;
 	string courseName;
-	string day;
+	int day;
 	string startTime;
 	string endTime;
 	string room;
@@ -32,7 +35,7 @@ private:
 };
 
 // room compare order: tables by alphabetic room name??, day, start time hour, course code, department
-// bool compareRoom()
+bool compareRoom(const Course &course1, const Course &course2);
 
 // department compare
-// bool compareDept()
+bool compareDept(const Course &course1, const Course &course2);
