@@ -27,7 +27,7 @@ private:
 	string dept;
 	string courseCode;
 	string courseName;
-	int day;
+	string day;
 	string startTime;
 	string endTime;
 	string room;
