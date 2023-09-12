@@ -11,16 +11,23 @@
 using namespace std;
 
 string convertDay(string dayDigit) {
-	return dayMap[dayDigit];
+	if (dayDigit=="M") {}
+	return ;
 }
 
 int main(int argc, char* argv[]) {
 
-	ifstream
+	ifstream inputFile(argv[1]);
+	ofstream outputFile(argv[2]);
 
+	vector<Course> courses;
+
+
+
+	// checks argument inputs and calls assosiated functions
 	if (argc==4) {
 		if (argv[3]=="room") {
-			// find rooms
+			// finds all rooms
 		} else if (argv[3]=="custom") {
 			// find the times when rooms are empty.
 		}
@@ -34,7 +41,7 @@ int main(int argc, char* argv[]) {
 		cerr << "ERROR: Incorrect arguments inputted.\n";
 	}
 
-	vector<Course> courses;
+	
 
 	// do stuff
 }

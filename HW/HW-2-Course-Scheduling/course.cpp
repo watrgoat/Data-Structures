@@ -5,8 +5,9 @@
 #include <string>
 #include "course.h"
 
-using namespace std::string, std::map, std::cout;
+using namespace std;
 
+// apparantly maps arent allowed???? everyone should already be familiar with dicts...
 // const map<string, int> dayMap = {{"Monday", 0}, {"Tuesday", 1}, {"Wednesday", 2}, {"Thursday", 3}, {"Friday", 4}};
 
 Course::Course(string aDept, string aCourseCode, string aCourseName, 
@@ -43,8 +44,10 @@ string Course::getRoom() const {
 
 bool compareRoom(const Course &course1, const Course &course2) {
 	// order of ops: tables by alphabetic room name??, day, start time hour, course code, department
-	course1::getRoom()
+	return true;
 }
 
 // department compare
-bool compareDept(const Course &course1, const Course &course2);
+bool compareDept(const Course &course1, const Course &course2) {
+	return true;
+}

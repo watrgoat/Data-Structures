@@ -1,4 +1,7 @@
 // header
+#ifndef COURSE_H
+#define COURSE_H
+
 #include <string>
 
 using std::string;
@@ -39,3 +42,5 @@ bool compareRoom(const Course &course1, const Course &course2);
 
 // department compare
 bool compareDept(const Course &course1, const Course &course2);
+
+#endif
