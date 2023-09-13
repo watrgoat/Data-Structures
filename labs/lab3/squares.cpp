@@ -1,7 +1,7 @@
 #include <iostream>
 #include <math.h>
 
-bool computeSquares(const unsigned int (&inArray)[], unsigned int (&outArray)[], unsigned int n) {
+bool computeSquares(const unsigned int *inArray, unsigned int *outArray, unsigned int n) {
 	unsigned int *inp;
 	unsigned int *outp;
 	inp=inArray;
@@ -20,7 +20,8 @@ int main() {
 	unsigned int arr2[len];
 	for (int i=0;i<len;i++) {
 		std::cout << i << std::endl;
-			}
+		arr1[i] = i;
+	}
 	computeSquares(arr1, arr2, len);
 	for (int i=0;i<len;i++) {
 		std::cout << arr2[i] << std::endl;
