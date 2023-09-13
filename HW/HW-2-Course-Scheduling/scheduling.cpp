@@ -11,26 +11,28 @@
 using namespace std;
 
 string convertDay(string dayDigit) {
-	if (dayDigit=="M") {
+	switch (dayDigit) {
+	case "M":
 		return "Monday";
-	} else if (dayDigit=="T") {
+	case "T":
 		return "Tuesday";
-	} else if (dayDigit=="W") {
+	case "W":
 		return "Wednesday";
-	} else if (dayDigit=="R") {
+	case "R":
 		return "Thursday";
-	} else if (dayDigit=="F") {
+	case "F":
 		return "Friday";
-	} else {
+	default:
 		cerr << "ERROR: Incorrect day digit:" << dayDigit << endl;
 		exit(1);
 	}
 }
 
-void dayExpander(const vector<string> &shortDayCourses, const vector<Course> &readDayCourses) {
+void dayExpander(const vector<string> &shortDayCourses, vector<Course> &readDayCourses) {
 	
-	
-	Course(indvCourse[0], indvCourse[1], indvCourse[2], indvCourse[3], indvCourse[4], indvCourse[5], indvCourse[6], indvCourse[7]);
+	readDayCourses.push_back(Course(
+	shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
+	shortDayCourses[4], shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
 }
 
 bool readCourses(ifstream &file, vector<Course> &readCourses) {
