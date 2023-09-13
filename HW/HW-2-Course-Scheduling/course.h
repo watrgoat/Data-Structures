@@ -8,10 +8,10 @@ using std::string;
 
 class Course {
 public:
-	Course(string aDept, string aCourseCode, string aCourseName, 
+	Course(string aCrn, string aDept, string aCourseCode, string aCourseName, 
 		string aDay, string aStartTime, string aEndTme, string aRoom);
 
-	// no accessors or modifiers needed
+	// ACCESSORS
 	string getDept() const;
 	string getCourseCode() const;
 	string getCourseName() const;
@@ -20,13 +20,13 @@ public:
 	string getEndTime() const;
 	string getRoom() const;
 
-
 	// member func for comparing??
 	void printRoom() const; // room?, deptCode, courseCode, courseName, day, startTime, endTime
 	
 	void printDept() const; // courseCode, CourseName, day, startTime, endTime
 
 private:
+	string crn;
 	string dept;
 	string courseCode;
 	string courseName;
@@ -34,7 +34,6 @@ private:
 	string startTime;
 	string endTime;
 	string room;
-
 };
 
 // room compare order: tables by alphabetic room name??, day, start time hour, course code, department

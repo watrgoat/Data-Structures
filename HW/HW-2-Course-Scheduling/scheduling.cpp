@@ -23,20 +23,34 @@ string convertDay(string dayDigit) {
 		return "Friday";
 	} else {
 		cerr << "ERROR: Incorrect day digit:" << dayDigit << endl;
+		exit(1);
 	}
 }
 
-bool readCourses(ifstream file, vector<Course> &readCourses) {
+void dayExpander(const vector<string> &shortDayCourses, const vector<Course> &readDayCourses) {
+	
+	
+	Course(indvCourse[0], indvCourse[1], indvCourse[2], indvCourse[3], indvCourse[4], indvCourse[5], indvCourse[6], indvCourse[7]);
+}
+
+bool readCourses(ifstream &file, vector<Course> &readCourses) {
 	string word;
-	vector<vector<string> > courseInfo;
+
 	// catch days
+	vector<string> indvCourse;
 	int i = 1;
 	while (file>>word) {
-		Course course;
+		
 		if (i%9==0) {
+			// expand multi day courses
+			// double up
+			day
+
+			
+			indvCourse.clear();
 			i = 1;
 		}
-		courseInfo
+		indvCourse.push_back(word);
 		i++
 	}
 }

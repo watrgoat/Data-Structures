@@ -10,8 +10,9 @@ using namespace std;
 // apparantly maps arent allowed???? everyone should already be familiar with dicts...
 // const map<string, int> dayMap = {{"Monday", 0}, {"Tuesday", 1}, {"Wednesday", 2}, {"Thursday", 3}, {"Friday", 4}};
 
-Course::Course(string aDept, string aCourseCode, string aCourseName, 
+Course::Course(string aCrn, string aDept, string aCourseCode, string aCourseName, 
 		string aDay, string aStartTime, string aEndTime, string aRoom) {
+	crn = aCrn;
 	dept = aDept;
 	courseCode = aCourseCode;
 	courseName = aCourseName;
