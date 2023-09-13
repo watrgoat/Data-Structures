@@ -11,8 +11,34 @@
 using namespace std;
 
 string convertDay(string dayDigit) {
-	if (dayDigit=="M") {}
-	return ;
+	if (dayDigit=="M") {
+		return "Monday";
+	} else if (dayDigit=="T") {
+		return "Tuesday";
+	} else if (dayDigit=="W") {
+		return "Wednesday";
+	} else if (dayDigit=="R") {
+		return "Thursday";
+	} else if (dayDigit=="F") {
+		return "Friday";
+	} else {
+		cerr << "ERROR: Incorrect day digit:" << dayDigit << endl;
+	}
+}
+
+bool readCourses(ifstream file, vector<Course> &readCourses) {
+	string word;
+	vector<vector<string> > courseInfo;
+	// catch days
+	int i = 1;
+	while (file>>word) {
+		Course course;
+		if (i%9==0) {
+			i = 1;
+		}
+		courseInfo
+		i++
+	}
 }
 
 int main(int argc, char* argv[]) {
