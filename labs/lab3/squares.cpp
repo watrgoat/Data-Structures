@@ -26,4 +26,15 @@ int main() {
 	for (int i=0;i<len;i++) {
 		std::cout << *(p+i) << std::endl;
 	}
+
+	unsigned int arr3[len] = {11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+	unsigned int arr4[len];
+
+	computeSquares(arr3, arr4, len);
+
+	unsigned int *pt;
+	pt = arr4;
+	for (int i=0;i<len;i++) {
+		std::cout << *(pt+i) << std::endl;
+	}
 }
