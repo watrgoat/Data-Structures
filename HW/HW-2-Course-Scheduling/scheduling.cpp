@@ -10,80 +10,100 @@
 
 using namespace std;
 
-string convertDay(string dayDigit) {
-	switch (dayDigit) {
-	case "M":
+string convertDay(char dayDigit) {
+	if (dayDigit=='M') {
 		return "Monday";
-	case "T":
+	} else if (dayDigit=='T') {
 		return "Tuesday";
-	case "W":
+	} else if (dayDigit=='W') {
 		return "Wednesday";
-	case "R":
+	} else if (dayDigit=='R') {
 		return "Thursday";
-	case "F":
+	} else if (dayDigit=='F') {
 		return "Friday";
-	default:
+	} else{
 		cerr << "ERROR: Incorrect day digit:" << dayDigit << endl;
 		exit(1);
 	}
 }
 
-void dayExpander(const vector<string> &shortDayCourses, vector<Course> &readDayCourses) {
-	
-	readDayCourses.push_back(Course(
-	shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
-	shortDayCourses[4], shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
+bool dayExpander(const vector<string> &shortDayCourses, vector<Course> &readDayCourses) {
+	string days = shortDayCourses[4];
+	if (days.length()>1) {
+		cout << "added 2" << endl;
+		readDayCourses.push_back(Course(
+		shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
+		convertDay(shortDayCourses[4][1]), shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
+
+		readDayCourses.push_back(Course(
+		shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
+		convertDay(shortDayCourses[4][0]), shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
+	} else {
+		cout << "added 1" << endl;	
+		readDayCourses.push_back(Course(
+		shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
+		convertDay(shortDayCourses[4][0]), shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
+	}
+
+	return true;
 }
 
-bool readCourses(ifstream &file, vector<Course> &readCourses) {
+bool readCourses(ifstream &file, vector<Course> &rCourses) {
 	string word;
 
 	// catch days
 	vector<string> indvCourse;
-	int i = 1;
+	int i = 0;
 	while (file>>word) {
-		
-		if (i%9==0) {
+		cout << i << ": " << word << endl;
+		// reset on new course line
+		if (i%8==0&&i!=0) {
 			// expand multi day courses
-			// double up
-			day
-
-			
+			dayExpander(indvCourse, rCourses);
 			indvCourse.clear();
-			i = 1;
+			i = 0;
 		}
 		indvCourse.push_back(word);
-		i++
+		i++;
 	}
+	return true;
 }
 
 int main(int argc, char* argv[]) {
+	if (argc!=4&&argc!=5) {
+		cerr << "ERROR: Invalid input count." << endl;
+		exit(1);
+	}
+
 
 	ifstream inputFile(argv[1]);
 	ofstream outputFile(argv[2]);
+	string arg1 = argv[3];
 
 	vector<Course> courses;
 
+	readCourses(inputFile, courses);
 
+	cout << courses.size() <<  endl;
 
 	// checks argument inputs and calls assosiated functions
 	if (argc==4) {
-		if (argv[3]=="room") {
+		if (arg1=="room") {
 			// finds all rooms
-		} else if (argv[3]=="custom") {
+		} else if (arg1=="custom") {
 			// find the times when rooms are empty.
 		}
 	} else if (argc==5) {
-		if (argv[3]=="room") {
+		// maybe needed??
+		string arg2 = argv[4];
+		if (arg1=="room") {
 			// write func that only saves courses that are in that room from argv[4]
-		} else if (argv[3]=="dept") {
+		} else if (arg1=="dept") {
 
 		}
 	} else {
 		cerr << "ERROR: Incorrect arguments inputted.\n";
 	}
 
-	
-
-	// do stuff
+	return 0;
 }

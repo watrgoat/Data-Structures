@@ -20,11 +20,6 @@ public:
 	string getEndTime() const;
 	string getRoom() const;
 
-	// member func for comparing??
-	void printRoom() const; // room?, deptCode, courseCode, courseName, day, startTime, endTime
-	
-	void printDept() const; // courseCode, CourseName, day, startTime, endTime
-
 private:
 	string crn;
 	string dept;
