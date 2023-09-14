@@ -19,6 +19,7 @@ Course::Course(string aCrn, string aDept, string aCourseCode, string aCourseName
 	day = aDay;
 	startTime = aStartTime;
 	endTime = aEndTime;
+	room = aRoom;
 }
 
 string Course::getDept() const {
