@@ -1,3 +1,5 @@
 1. compiled point.cpp since it was the lowest level looking file. worked without error.
 2. compiled line.cpp fixed the error by adding ifdefine stuff into both point.h and line.h
 3. compiled roads.cpp and added algo include statement to fix error
+
+4. where is seg fault coming from

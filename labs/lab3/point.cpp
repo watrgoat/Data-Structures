@@ -1,3 +1,5 @@
+
+
 #include <cmath>
 #include <iomanip>
 #include "point.h"
