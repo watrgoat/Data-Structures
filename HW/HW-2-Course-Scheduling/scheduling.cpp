@@ -49,11 +49,12 @@ bool dayExpander(const vector<string> &shortDayCourses, vector<Course> &readDayC
 
 bool readCourses(ifstream &file, vector<Course> &rCourses) {
 	string word;
-
-	// catch days
 	vector<string> indvCourse;
+
+
 	int i = 0;
 	while (file>>word) {
+		// cout << "test" << endl;
 		// reset on new course line
 		if (i%8==0&&i!=0) {
 			// expand multi day courses
@@ -71,58 +72,85 @@ bool readCourses(ifstream &file, vector<Course> &rCourses) {
 
 void printRoom(const vector<Course> &c) {
 	string currRoom;
-
+	int classNameSize = 11;
+	int daySize = 6;
+	int entryCount = 0;
+	unsigned int j;
+	
+	// loop over ahead of printing and save where the last one was bc of un
 	for (unsigned int i=0;i<c.size();i++) {
 		if (currRoom!=c[i].getRoom()) {
+			if (!currRoom.empty()) {
+				cout << entryCount << " entries\n\n";
+			}
 			currRoom = c[i].getRoom();
 			cout << "Room " << currRoom << endl;
-			cout << "Dept  CourseNum  Class Title" << classNameSpace << "  Day" << daySpace << "  Start Time  End Time" << endl;
-
-			
+			j = i;
+			while (j < c.size() && currRoom==c[j].getRoom()) {
+				// find max length
+				if (c[j].getCourseName().length() > classNameSize) {
+					classNameSize = c[j].getCourseName().length();
+				}
+				if (c[j].getDay().length() > daySize) {
+					daySize = c[j].getDay().length();
+				}
+				j++;
+			}
+			entryCount = j-i;
+			string classSpace(classNameSize-11, ' ');
+			string daySpace(daySize-3, ' ');
+			cout << "Dept  CourseNum  Class Title" << classSpace << "  Day" << daySpace << "  Start Time  End Time\n";
+			string classDashes(classNameSize, '-');
+			string dayDashes(daySize, '-');
+			cout << "----  ---------  " << classDashes << "  " << dayDashes << "  ----------  --------\n";
 		}
-
+		string classSpace(classNameSize-c[i].getCourseName().length(), ' ');
+		string daySpace(daySize-c[i].getDay().length(), ' ');
+		cout << c[i].getDept() << "  " << c[i].getCourseCode()<< "    " <<  c[i].getCourseName() << classSpace << "  " << c[i].getDay() << daySpace << "  " << c[i].getStartTime() << "     " << c[i].getEndTime() << " " <<  endl;
 	}
-	cout << c.getDept() <<' '<< c.getCourseCode()<<' '<<  c.getCourseName() <<' '<< c.getDay() <<' ' << c.getStartTime() <<' '<< c.getEndTime() <<  endl;
-}
-
-bool findRooms(vector<Course> &allCourses) {
-	// sort courses
-	sort(allCourses.begin(), allCourses.end(), compareRoom);
+	cout << entryCount << " entries\n\n";
 }
 
 int main(int argc, char* argv[]) {
 
+	// checks argument count
 	if (argc!=4&&argc!=5) {
 		cerr << "ERROR: Invalid input count." << endl;
 		exit(1);
 	}
 
-
 	ifstream inputFile(argv[1]);
 	ofstream outputFile(argv[2]);
 	string arg1 = argv[3];
+
+	// checks if input and output files are able to be opened
+	if (!inputFile.good()) {
+	    std::cerr << "Can't open " << argv[1] << " to read.\n";
+	    exit(1);
+	} if (!outputFile.good()) {
+    	std::cerr << "Can't open " << argv[2] << " to write.\n";
+    	exit(1);
+    }
+
+    // checks if input file is empty
+    if (inputFile.peek() == ifstream::traits_type::eof()) {
+    	cout << "No data available.\n\n";
+    	return 0;
+    }
 
 	vector<Course> courses;
 
 	readCourses(inputFile, courses);
 
-	// check if courses is empty
 
-	if (!(courses.size()>0)) {
-		cout << "No data available.\n\n";
-	}
-
-	for (unsigned int i=0;i<courses.size();i++) {
-		// cout << courses[i].getDept() << courses[i].getCourseCode() << courses[i].getCourseName() <<  endl;
-	}
-
-	cout << "Finished reading " << courses.size() << " courses" << endl;
+	// cout << "Finished reading " << courses.size() << " courses" << endl;
 
 	// checks argument inputs and calls assosiated functions
 	if (argc==4) {
 		if (arg1=="room") {
-			// finds all rooms
-			findRooms(courses);
+			// sort by rooms
+			sort(courses.begin(), courses.end(), compareRoom);
+			printRoom(courses);
 		} else if (arg1=="custom") {
 			// find the times when rooms are empty.
 		}
@@ -130,16 +158,13 @@ int main(int argc, char* argv[]) {
 		// maybe needed??
 		string arg2 = argv[4];
 		if (arg1=="room") {
-			// write func that only saves courses that are in that room from argv[4]
+			// write func that only saves courses that are in that room from courses
+
 		} else if (arg1=="dept") {
 
 		}
 	} else {
-		cerr << "ERROR: Incorrect arguments inputted.\n";
-	}
-
-	for (unsigned int i=0;i<courses.size();i++) {
-		printRoom(courses[i]);
+		cerr << "ERROR: Incorrect input args.\n";
 	}
 
 	return 0;
