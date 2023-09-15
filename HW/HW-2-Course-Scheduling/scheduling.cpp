@@ -69,9 +69,17 @@ bool readCourses(ifstream &file, vector<Course> &rCourses) {
 	return true;
 }
 
-bool findRooms()
+void printRoom(const Course &c) {
+	cout << c.getDept() <<' '<< c.getCourseCode()<<' '<<  c.getCourseName() <<' '<< c.getDay() <<' ' << c.getStartTime() <<' '<< c.getEndTime() <<  endl;
+}
+
+bool findRooms(vector<Course> &allCourses) {
+	// sort courses
+	sort(allCourses.begin(), allCourses.end(), compareRoom);
+}
 
 int main(int argc, char* argv[]) {
+
 	if (argc!=4&&argc!=5) {
 		cerr << "ERROR: Invalid input count." << endl;
 		exit(1);
@@ -86,16 +94,17 @@ int main(int argc, char* argv[]) {
 
 	readCourses(inputFile, courses);
 
-	cout << "Finished reading " << courses.size() << " courses" << endl;
-
-	for (int i=0;i<courses.size();i++) {
-		cout << courses[i].getDept() << endl;
+	for (unsigned int i=0;i<courses.size();i++) {
+		// cout << courses[i].getDept() << courses[i].getCourseCode() << courses[i].getCourseName() <<  endl;
 	}
+
+	cout << "Finished reading " << courses.size() << " courses" << endl;
 
 	// checks argument inputs and calls assosiated functions
 	if (argc==4) {
 		if (arg1=="room") {
 			// finds all rooms
+			findRooms(courses);
 		} else if (arg1=="custom") {
 			// find the times when rooms are empty.
 		}
@@ -109,6 +118,10 @@ int main(int argc, char* argv[]) {
 		}
 	} else {
 		cerr << "ERROR: Incorrect arguments inputted.\n";
+	}
+
+	for (unsigned int i=0;i<courses.size();i++) {
+		printRoom(courses[i]);
 	}
 
 	return 0;
