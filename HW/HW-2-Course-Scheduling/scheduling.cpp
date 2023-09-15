@@ -30,7 +30,7 @@ string convertDay(char dayDigit) {
 bool dayExpander(const vector<string> &shortDayCourses, vector<Course> &readDayCourses) {
 	string days = shortDayCourses[4];
 	if (days.length()>1) {
-		cout << "added 2" << endl;
+
 		readDayCourses.push_back(Course(
 		shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
 		convertDay(shortDayCourses[4][1]), shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
@@ -39,7 +39,6 @@ bool dayExpander(const vector<string> &shortDayCourses, vector<Course> &readDayC
 		shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
 		convertDay(shortDayCourses[4][0]), shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
 	} else {
-		cout << "added 1" << endl;	
 		readDayCourses.push_back(Course(
 		shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
 		convertDay(shortDayCourses[4][0]), shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
@@ -55,7 +54,6 @@ bool readCourses(ifstream &file, vector<Course> &rCourses) {
 	vector<string> indvCourse;
 	int i = 0;
 	while (file>>word) {
-		cout << i << ": " << word << endl;
 		// reset on new course line
 		if (i%8==0&&i!=0) {
 			// expand multi day courses
@@ -66,8 +64,12 @@ bool readCourses(ifstream &file, vector<Course> &rCourses) {
 		indvCourse.push_back(word);
 		i++;
 	}
+	dayExpander(indvCourse, rCourses);
+	indvCourse.clear();
 	return true;
 }
+
+bool findRooms()
 
 int main(int argc, char* argv[]) {
 	if (argc!=4&&argc!=5) {
@@ -84,7 +86,11 @@ int main(int argc, char* argv[]) {
 
 	readCourses(inputFile, courses);
 
-	cout << courses.size() <<  endl;
+	cout << "Finished reading " << courses.size() << " courses" << endl;
+
+	for (int i=0;i<courses.size();i++) {
+		cout << courses[i].getDept() << endl;
+	}
 
 	// checks argument inputs and calls assosiated functions
 	if (argc==4) {

@@ -11,7 +11,7 @@ using namespace std;
 // const map<string, int> dayMap = {{"Monday", 0}, {"Tuesday", 1}, {"Wednesday", 2}, {"Thursday", 3}, {"Friday", 4}};
 
 Course::Course(string aCrn, string aDept, string aCourseCode, string aCourseName, 
-		string aDay, string aStartTime, string aEndTime, string aRoom) {
+			string aDay, string aStartTime, string aEndTime, string aRoom) {
 	crn = aCrn;
 	dept = aDept;
 	courseCode = aCourseCode;
@@ -46,6 +46,10 @@ string Course::getRoom() const {
 
 bool compareRoom(const Course &course1, const Course &course2) {
 	// order of ops: tables by alphabetic room name??, day, start time hour, course code, department
+	if (course1.getRoom()!=course2.getRoom()) {
+		// compare rooms
+		// return early
+	} if (course1.)
 	return true;
 }
 
