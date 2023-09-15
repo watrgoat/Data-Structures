@@ -72,8 +72,8 @@ bool readCourses(ifstream &file, vector<Course> &rCourses) {
 
 void printRoom(const vector<Course> &c) {
 	string currRoom;
-	int classNameSize = 11;
-	int daySize = 6;
+	unsigned int classNameSize = 11;
+	unsigned int daySize = 6;
 	int entryCount = 0;
 	unsigned int j;
 	
@@ -109,6 +109,14 @@ void printRoom(const vector<Course> &c) {
 		cout << c[i].getDept() << "  " << c[i].getCourseCode()<< "    " <<  c[i].getCourseName() << classSpace << "  " << c[i].getDay() << daySpace << "  " << c[i].getStartTime() << "     " << c[i].getEndTime() << " " <<  endl;
 	}
 	cout << entryCount << " entries\n\n";
+}
+
+void oneRoom(vector<Course> &roomCourses, string inRoom) {
+	for (unsigned int i=0; i<roomCourses.size(); i++) {
+		if (roomCourses[i].getRoom() != inRoom) {
+			roomCourses.erase(roomCourses.begin() + i);
+		}
+	}
 }
 
 int main(int argc, char* argv[]) {
@@ -158,8 +166,12 @@ int main(int argc, char* argv[]) {
 		// maybe needed??
 		string arg2 = argv[4];
 		if (arg1=="room") {
+			cout << "HERE" << endl;
 			// write func that only saves courses that are in that room from courses
-
+			oneRoom(courses, arg2);
+			for (unsigned int i=0;i<courses.size();i++)
+				cout << c[i].getDept() << "  " << c[i].getCourseCode()<< "    " <<  c[i].getCourseName() << classSpace << "  " << c[i].getDay() << "  " << c[i].getStartTime() << "     " << c[i].getEndTime() << " " <<  endl;
+			// printRoom(courses);
 		} else if (arg1=="dept") {
 
 		}
