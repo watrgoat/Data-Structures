@@ -59,7 +59,10 @@ int day2int(const string &dayOfWeek) {
 }
 
 bool word2bool(const string &s1, const string &s2) {
-	if (s1.compare(s2)<=0) {
+	int i = s1.compare(s2);
+	cout << i << endl;
+	if (i<0) {
+		cout << s1 << " is before " << s2 << endl;
 		return true;
 	} else {
 		return false;
@@ -68,42 +71,49 @@ bool word2bool(const string &s1, const string &s2) {
 
 // 11:12PM
 bool time2bool(const string &time1, const string &time2) {
-
+	// cout << time1 << " vs " << time2 << endl;
+	// cout << stoi(time1.substr(0, 2)) << " vs " << stoi(time2.substr(0, 2)) << endl;
+	// what about 12pm
 	if (time1[5] == 'A' && time2[5] == 'P') {
 		return true;
 	} else if (time1[5] == 'P' && time2[5] == 'A') {
 		return false;
-	} else if (stoi(time1.substr(0, 2)) > stoi(time2.substr(0, 2))) {
+	} else if (stoi(time1.substr(0, 2)) < stoi(time2.substr(0, 2))) {
 		return true;
-	} else if (stoi(time2.substr(0, 2)) > stoi(time1.substr(0, 2))) {
+	} else if (stoi(time2.substr(0, 2)) < stoi(time1.substr(0, 2))) {
 		return false;
-	} else if (stoi(time1.substr(3, 2)) > stoi(time2.substr(3, 2))) {
+	} else if (stoi(time1.substr(3, 2)) < stoi(time2.substr(3, 2))) {
 		return true;
-	} else if (stoi(time2.substr(3, 2)) > stoi(time1.substr(3, 2))) {
+	} else if (stoi(time2.substr(3, 2)) < stoi(time1.substr(3, 2))) {
 		return false;
 	} else {
-		return true;
+		return false;
 	}
 }
 
 
 // main roomm comp
 bool compareRoom(const Course &course1, const Course &course2) {
+	cout << course1.getCourseName() << ' '<< course1.getDay() << ' ' << course2.getCourseName() << course2.getDay() << endl;
 	// order of ops: tables by alphabetic room name??, day, start time hour, course code, department
 
 	if (course1.getRoom()!=course2.getRoom()) {
+		cout << "rooms not equal" << endl;
 		// compare rooms
 		// if string 1 <= string 2 then string1 comes before
 		return word2bool(course1.getRoom(), course2.getRoom());
 		
 	} else if (course1.getDay()!=course2.getDay()) {
-		return day2int(course1.getDay()) >= day2int(course1.getDay());
+		cout << "days not equal: " << day2int(course1.getDay()) <<' '<< day2int(course2.getDay()) << endl;
+		return day2int(course1.getDay()) < day2int(course2.getDay());
 
 	} else if (course1.getStartTime()!=course2.getStartTime()) {
+		cout << "times not equal: " << time2bool(course1.getStartTime(), course2.getStartTime()) <<  endl;
 		// am pm, hour, then min
 		return time2bool(course1.getStartTime(), course2.getStartTime());
 
 	} else if (course1.getCourseCode()!=course2.getCourseCode()) {
+		cout << "course code not equal" << endl;
 		return word2bool(course1.getCourseCode(), course2.getCourseCode());
 
 	} else if (course1.getDept()!= course2.getDept()) {

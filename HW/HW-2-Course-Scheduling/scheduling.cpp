@@ -70,6 +70,12 @@ bool readCourses(ifstream &file, vector<Course> &rCourses) {
 }
 
 void printRoom(const Course &c) {
+	string currRoom;
+
+	for (unsigned int i=0;i<c.size();i++) {
+		if currRoom
+
+	}
 	cout << c.getDept() <<' '<< c.getCourseCode()<<' '<<  c.getCourseName() <<' '<< c.getDay() <<' ' << c.getStartTime() <<' '<< c.getEndTime() <<  endl;
 }
 
@@ -93,6 +99,12 @@ int main(int argc, char* argv[]) {
 	vector<Course> courses;
 
 	readCourses(inputFile, courses);
+
+	// check if courses is empty
+
+	if (!(courses.size()>0)) {
+		cout << 
+	}
 
 	for (unsigned int i=0;i<courses.size();i++) {
 		// cout << courses[i].getDept() << courses[i].getCourseCode() << courses[i].getCourseName() <<  endl;
