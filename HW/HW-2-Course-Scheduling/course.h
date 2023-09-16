@@ -1,4 +1,5 @@
-// header
+// course header
+
 #ifndef COURSE_H
 #define COURSE_H
 
@@ -36,5 +37,8 @@ bool compareRoom(const Course &course1, const Course &course2);
 
 // department compare
 bool compareDept(const Course &course1, const Course &course2);
+
+// comparison for custom function
+bool compareOnlyRoom(const Course &course1, const Course &course2);
 
 #endif

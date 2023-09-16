@@ -20,9 +20,7 @@ ESTIMATE OF # OF HOURS SPENT ON THIS ASSIGNMENT:  10
 
 
 
-DESCRIPTION OF YOUR CREATIVE STATISTIC: Shows all the free times available
-for the rooms based on the times that the room is unavailable. From 8am-8pm.
-MAY HAVE PROBLEMS WITH BAD INPUTS NOT MY FAULT.
+DESCRIPTION OF YOUR CREATIVE STATISTIC: Shows the most common time that classes start at.
 
 
 
