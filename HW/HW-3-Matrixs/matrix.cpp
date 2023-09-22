@@ -29,6 +29,7 @@ Matrix::Matrix(unsigned int m, unsigned int n, double fill) {
 	}
 }
 
-bool Matrix::get(unsigned int x, unsigned int y) {
+bool Matrix::get(unsigned int x, unsigned int y, double val) {
+	if (x<)
 	return arr[x][y];
 }
