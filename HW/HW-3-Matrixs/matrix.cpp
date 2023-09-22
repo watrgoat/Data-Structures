@@ -27,5 +27,8 @@ Matrix::Matrix(unsigned int m, unsigned int n, double fill) {
 			arr[i][j] = fill;
 		}
 	}
+}
 
+bool Matrix::get(unsigned int x, unsigned int y) {
+	return arr[x][y];
 }
