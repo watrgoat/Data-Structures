@@ -5,7 +5,7 @@ using namespace std;
 int main() {
 	int *p = new int;
 	*p = 10;
-	int *q = &p;
+	int *q = p;
 	cout << p << " " << q << endl;
 	p = new int;
 	*p = 1;
