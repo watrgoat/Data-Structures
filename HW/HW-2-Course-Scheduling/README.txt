@@ -20,7 +20,7 @@ ESTIMATE OF # OF HOURS SPENT ON THIS ASSIGNMENT:  10
 
 
 
-DESCRIPTION OF YOUR CREATIVE STATISTIC: Shows the most common time that classes start at.
+DESCRIPTION OF YOUR CREATIVE STATISTIC: Shows the most common time that classes start at. To do this I sort all the values by their start time and search through my vector of courses to find the most common start time.
 
 
 

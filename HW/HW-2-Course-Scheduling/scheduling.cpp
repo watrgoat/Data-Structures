@@ -31,19 +31,10 @@ string convertDay(char dayDigit) {
 bool dayExpander(const vector<string> &shortDayCourses, vector<Course> &readDayCourses) {
 	// expands days into multiple course objects, for ex: MR -> two days so 2 objects
 	string days = shortDayCourses[4];
-	if (days.length()>1) {
-
+	for (unsigned int i=0;i<days.length();i++) {
 		readDayCourses.push_back(Course(
 		shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
-		convertDay(shortDayCourses[4][1]), shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
-
-		readDayCourses.push_back(Course(
-		shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
-		convertDay(shortDayCourses[4][0]), shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
-	} else {
-		readDayCourses.push_back(Course(
-		shortDayCourses[0], shortDayCourses[1], shortDayCourses[2], shortDayCourses[3],
-		convertDay(shortDayCourses[4][0]), shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
+		convertDay(shortDayCourses[4][i]), shortDayCourses[5], shortDayCourses[6], shortDayCourses[7]));
 	}
 
 	return true;
