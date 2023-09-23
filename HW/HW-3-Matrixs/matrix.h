@@ -4,15 +4,19 @@
 
 class Matrix {
 public:
+	// constructor
 	Matrix(unsigned int rows, unsigned int cols, double fill);
+
+	// destructor
+	~Matrix();
 
 	// GETTERS
 	// how to get row and col?
-	double point(unsigned int x, unsigned int y) const; 
+	bool get(unsigned int x, unsigned int y, double &value) const; 
 	unsigned int num_rows() const; // return _rows
 	unsigned int num_cols() const; // return _cols
 
-	void clear(); // reset num of rows and cols to 0
+	void clear(); // reset num of rows and cols to 0 and deallocate all memory
 
 	Matrix operator==(const Matrix &other) const;
 	Matrix operator!=(const Matrix &other) const;
