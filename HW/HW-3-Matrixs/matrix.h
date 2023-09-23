@@ -17,6 +17,7 @@ public:
 	unsigned int num_cols() const; // return _cols
 
 	void clear(); // reset num of rows and cols to 0 and deallocate all memory
+	void print();
 
 	Matrix operator==(const Matrix &other) const;
 	Matrix operator!=(const Matrix &other) const;
@@ -26,6 +27,6 @@ private:
 	unsigned int _rows;
 	unsigned int _cols;
 	double **arr;
-}
+};
 
 #endif

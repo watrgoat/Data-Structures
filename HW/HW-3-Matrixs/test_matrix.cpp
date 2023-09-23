@@ -22,19 +22,23 @@ int main() {
 		}
 	}
 
-	cout << "[";
+	Matrix m1(rows, cols, 1);
+	double p;
 
-	for (int i=0;i<rows;i++) {
-		for (int j=0;j<cols;j++) {
-			cout << ' ' << arr[i][j];
+	cout << '[';
+
+	for (int i=0; i<rows; i++) {
+		for (int j=0; j<cols; j++) {
+			m1.get(i, j, p);
+			cout << ' ' << p;
 		}
-		if (i==rows-1) {
-			continue;
+		if (i!=rows-1) {
+			cout << endl << ' ';
 		}
-		cout << endl;
-		cout << ' ';
 	}
+
 	cout << " ]" << endl;
+
 
 	// Matrix *myMatrix = new Matrix(arr);
 
