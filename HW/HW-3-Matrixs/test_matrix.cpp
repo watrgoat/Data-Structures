@@ -1,6 +1,7 @@
 // my test file
-#include "matrix.h"
+#include "Matrix.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -11,36 +12,21 @@ double intDiv(int a, int b) {
 }
 
 int main() {
-	int rows = 10;
+	int rows = 100;
 	int cols = 5;
 
-	double arr[rows][cols];
+	Matrix m2(rows, cols, 1);
 
-	for (int i=0;i<rows;i++) {
-		for (int j=1;j<cols+1;j++) {
-			arr[i][j] = intDiv(i, j);
-		}
-	}
+	m2.set(0, 0, 0);
 
-	Matrix m1(rows, cols, 1);
-	double p;
+	Matrix m1(m2);
 
-	cout << '[';
+	m1.set(0, 1, 2);
 
-	for (int i=0; i<rows; i++) {
-		for (int j=0; j<cols; j++) {
-			m1.get(i, j, p);
-			cout << ' ' << p;
-		}
-		if (i!=rows-1) {
-			cout << endl << ' ';
-		}
-	}
-
-	cout << " ]" << endl;
+	cout << m2.num_cols() << endl;
 
 
-	// Matrix *myMatrix = new Matrix(arr);
+	cout << m2 << m1 << endl;
 
 	return 0;
 }
