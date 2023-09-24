@@ -14,21 +14,21 @@ int main() {
 	int rows = 10;
 	int cols = 5;
 
-	double arr[rows][cols];
-
-	for (int i=0;i<rows;i++) {
-		for (int j=1;j<cols+1;j++) {
-			arr[i][j] = intDiv(i, j);
-		}
-	}
-
 	Matrix m1(rows, cols, 1);
+	Matrix m2;
+
+	cout << m2.num_rows() << endl;
+
+
 	double p;
 
+	m2.get(0, 0, p);
+
+	cout << p << endl;
 	cout << '[';
 
-	for (int i=0; i<rows; i++) {
-		for (int j=0; j<cols; j++) {
+	for (int i=0; i<m1.num_rows(); i++) {
+		for (int j=0; j<m1.num_cols(); j++) {
 			m1.get(i, j, p);
 			cout << ' ' << p;
 		}

@@ -25,7 +25,6 @@ public:
 	void set(unsigned int x, unsigned int y, double &value) const;
 
 	void clear(); // reset num of rows and cols to 0 and deallocate all memory
-	void print();
 
 	Matrix operator==(const Matrix &other) const;
 	Matrix operator!=(const Matrix &other) const;
