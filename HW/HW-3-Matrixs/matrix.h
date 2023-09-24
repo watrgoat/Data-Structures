@@ -2,6 +2,10 @@
 #ifndef MATRIX_H 
 #define MATRIX_H
 
+#include <iostream>
+
+using namespace std;
+
 class Matrix {
 public:
 	// default constructor
@@ -22,7 +26,7 @@ public:
 	unsigned int num_cols() const;
 
 	// SETTERS
-	void set(unsigned int x, unsigned int y, double &value) const;
+	bool set(unsigned int x, unsigned int y, double value);
 
 	void clear(); // reset num of rows and cols to 0 and deallocate all memory
 
@@ -30,11 +34,13 @@ public:
 	Matrix operator!=(const Matrix &other) const;
 	Matrix operator+(const Matrix &other) const;
 	Matrix operator-(const Matrix &other) const;
-	Matrix operator<<(const Matrix &other) const;
+
 private:
 	unsigned int _rows;
 	unsigned int _cols;
 	double **arr;
 };
+
+ostream& operator<<(ostream &out, const Matrix &mat);
 
 #endif
