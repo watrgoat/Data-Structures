@@ -96,18 +96,64 @@ bool Matrix::set(unsigned int x, unsigned int y, double value) {
 
 
 // operator overload funcs
-/*Matrix Matrix::operator==(const Matrix &other) const {
+bool Matrix::operator==(const Matrix &other) const {
+	// check sizes
+	if !(_rows==other.num_rows() && _cols==other.num_cols()) {
+		return false;
+	}
+	double p;
+	// check all squares
+	for (unsigned int i=0; i<_rows; i++) {
+		for (unsigned int j=0; j<_cols; j++) {
+			p = other.get(i, j, p);
+			if (arr[i][j] != p) {
+				return false;
+			}
+		}
+	}
 
+	return true;
 }
-Matrix Matrix::operator!=(const Matrix &other) const {
+bool Matrix::operator!=(const Matrix &other) const {
+	// check size
+	if (_rows==other.num_rows() && _cols==other.num_cols()) {
+		return false;
+	}
 
+	double p;
+	// check all squares
+	for (unsigned int i=0; i<_rows; i++) {
+		for (unsigned int j=0; j<_cols; j++) {
+			p = other.get(i, j, p);
+			if (arr[i][j] != p) {
+				return true;
+			}
+		}
+	}
+	
+	return false;
 }
 Matrix Matrix::operator+(const Matrix &other) const {
+	// check size
+	if (_rows==other.num_rows() && _cols==other.num_cols()) {
+		return false;
+	}
 
+	// create a copy of 1 matrix and add second values
+	Matrix mat(other);
+	double p;
+
+	for (unsigned int i=0; i<_rows; i++) {
+		for (unsigned int j=0; j<_cols; j++) {
+			other.get(i, j, p)
+			mat.set(i, j, p+arr[i][j])
+		}
+	}
 }
 Matrix Matrix::operator-(const Matrix &other) const {
 
-}*/
+}
+
 ostream& operator<<(ostream &out, const Matrix &mat) {
 	double p;
 	out << mat.num_rows() << " x " << mat.num_cols() << " matrix:" << endl;

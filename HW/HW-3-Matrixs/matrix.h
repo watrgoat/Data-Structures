@@ -30,8 +30,8 @@ public:
 
 	void clear(); // reset num of rows and cols to 0 and deallocate all memory
 
-	Matrix operator==(const Matrix &other) const;
-	Matrix operator!=(const Matrix &other) const;
+	bool operator==(const Matrix &other) const;
+	bool operator!=(const Matrix &other) const;
 	Matrix operator+(const Matrix &other) const;
 	Matrix operator-(const Matrix &other) const;
 
