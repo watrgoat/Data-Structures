@@ -98,7 +98,7 @@ bool Matrix::set(unsigned int x, unsigned int y, double value) {
 // operator overload funcs
 bool Matrix::operator==(const Matrix &other) const {
 	// check sizes
-	if (!(_rows==other.num_rows() && _cols==other.num_cols())) {
+	if (_rows!=other.num_rows() || _cols!=other.num_cols()) {
 		return false;
 	}
 	double p;
@@ -114,10 +114,11 @@ bool Matrix::operator==(const Matrix &other) const {
 
 	return true;
 }
+
 bool Matrix::operator!=(const Matrix &other) const {
 	// check size
-	if (_rows==other.num_rows() && _cols==other.num_cols()) {
-		return false;
+	if (_rows!=other.num_rows() || _cols!=other.num_cols()) {
+		return true;
 	}
 
 	double p;
@@ -133,10 +134,12 @@ bool Matrix::operator!=(const Matrix &other) const {
 	
 	return false;
 }
-/*Matrix Matrix::operator+(const Matrix &other) const {
+
+Matrix Matrix::operator+(const Matrix &other) const {
 	// check size
-	if (_rows==other.num_rows() && _cols==other.num_cols()) {
-		return false;
+	if (_rows!=other.num_rows() || _cols!=other.num_cols()) {
+		cerr << "ERROR: Invalid matrix input. Can't add inequal size matrices" << endl;
+		exit(1);
 	}
 
 	// create a copy of 1 matrix and add second values
@@ -145,14 +148,34 @@ bool Matrix::operator!=(const Matrix &other) const {
 
 	for (unsigned int i=0; i<_rows; i++) {
 		for (unsigned int j=0; j<_cols; j++) {
-			other.get(i, j, p)
-			mat.set(i, j, p+arr[i][j])
+			other.get(i, j, p);
+			mat.set(i, j, (arr[i][j]-p));
 		}
 	}
-}
-Matrix Matrix::operator-(const Matrix &other) const {
 
-}*/
+	return mat;
+}
+
+Matrix Matrix::operator-(const Matrix &other) const {
+		// check size
+	if (_rows!=other.num_rows() || _cols!=other.num_cols()) {
+		cerr << "ERROR: Invalid matrix input. Can't subtract inequal size matrices" << endl;
+		exit(1);
+	}
+
+	// create a copy of 1 matrix and add second values
+	Matrix mat(other);
+	double p;
+
+	for (unsigned int i=0; i<_rows; i++) {
+		for (unsigned int j=0; j<_cols; j++) {
+			other.get(i, j, p);
+			mat.set(i, j, (arr[i][j]-p));
+		}
+	}
+
+	return mat;
+}
 
 ostream& operator<<(ostream &out, const Matrix &mat) {
 	double p;
@@ -169,7 +192,36 @@ ostream& operator<<(ostream &out, const Matrix &mat) {
 		}
 	}
 
-	out << " ]" << endl;
+	out << " ]" << endl << endl;
 
 	return out;
+}
+
+void Matrix::multiply_by_coefficient(double a) {
+	// loops over each value
+	for (unsigned int i=0; i<_rows; i++) {
+		for (unsigned int j=0; j<_cols; j++) {
+			// multiply by coef
+			arr[i][j] *= a;
+		}
+	}
+}
+
+bool Matrix::swap_row(unsigned int a, unsigned int b) {
+	// check size
+	if (a>=_rows && b>=_rows) {
+		return false;
+	}
+
+	double *row1 = arr[a];
+	arr[a] = arr[b];
+	arr[b] = row1;
+	return true;
+}
+
+double* Matrix::get_row(unsigned int a) const {
+	if (a>=_rows) {
+		return nullptr;
+	}
+	return arr[a];
 }
