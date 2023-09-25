@@ -98,14 +98,14 @@ bool Matrix::set(unsigned int x, unsigned int y, double value) {
 // operator overload funcs
 bool Matrix::operator==(const Matrix &other) const {
 	// check sizes
-	if !(_rows==other.num_rows() && _cols==other.num_cols()) {
+	if (!(_rows==other.num_rows() && _cols==other.num_cols())) {
 		return false;
 	}
 	double p;
 	// check all squares
 	for (unsigned int i=0; i<_rows; i++) {
 		for (unsigned int j=0; j<_cols; j++) {
-			p = other.get(i, j, p);
+			other.get(i, j, p);
 			if (arr[i][j] != p) {
 				return false;
 			}
@@ -124,7 +124,7 @@ bool Matrix::operator!=(const Matrix &other) const {
 	// check all squares
 	for (unsigned int i=0; i<_rows; i++) {
 		for (unsigned int j=0; j<_cols; j++) {
-			p = other.get(i, j, p);
+			other.get(i, j, p);
 			if (arr[i][j] != p) {
 				return true;
 			}
@@ -133,7 +133,7 @@ bool Matrix::operator!=(const Matrix &other) const {
 	
 	return false;
 }
-Matrix Matrix::operator+(const Matrix &other) const {
+/*Matrix Matrix::operator+(const Matrix &other) const {
 	// check size
 	if (_rows==other.num_rows() && _cols==other.num_cols()) {
 		return false;
@@ -152,7 +152,7 @@ Matrix Matrix::operator+(const Matrix &other) const {
 }
 Matrix Matrix::operator-(const Matrix &other) const {
 
-}
+}*/
 
 ostream& operator<<(ostream &out, const Matrix &mat) {
 	double p;
