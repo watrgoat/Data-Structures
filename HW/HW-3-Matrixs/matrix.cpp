@@ -198,7 +198,6 @@ ostream& operator<<(ostream &out, const Matrix &mat) {
 }
 
 void Matrix::multiply_by_coefficient(double a) {
-	// loops over each value
 	for (unsigned int i=0; i<_rows; i++) {
 		for (unsigned int j=0; j<_cols; j++) {
 			// multiply by coef
@@ -223,5 +222,24 @@ double* Matrix::get_row(unsigned int a) const {
 	if (a>=_rows) {
 		return nullptr;
 	}
+	// returns pointer to the start of the array of that row
 	return arr[a];
+}
+
+double* Matrix::get_col(unsigned int a) const {
+	// return pointer with variable row????
+	if (a>=_cols) {
+		return nullptr;
+	}
+
+	// stores column array in heap
+	// MUST DELETE AFTER CALLED
+	double *column = new double[_rows];
+
+	// adds column elements to array
+	for (unsigned int i=0; i<_rows; i++) {
+		column[i] = arr[i][a];
+	}
+
+	return column;
 }

@@ -40,9 +40,11 @@ int main() {
 
 	cout << m3;
 
-	double* row1 = m3.get_row(1);
+	double* col = m3.get_col(1);
 
-	cout << row1[0] << ' ' << row1[1] << endl;
+	cout << col[0] << ' ' << col[1] << endl;
+
+	delete[] col;
 
 	return 0;
 }
