@@ -32,8 +32,12 @@ public:
 
 	bool operator==(const Matrix &other) const;
 	bool operator!=(const Matrix &other) const;
+
 	Matrix operator+(const Matrix &other) const;
+	bool add(const Matrix &other);
+
 	Matrix operator-(const Matrix &other) const;
+	bool subtract(const Matrix &other);
 
 	void multiply_by_coefficient(double a);
 	bool swap_row(unsigned int a, unsigned int b); // if both rows in bounds swap and return true
