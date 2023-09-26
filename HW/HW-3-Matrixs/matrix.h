@@ -4,6 +4,7 @@
 
 #include <iostream>
 
+
 using namespace std;
 
 class Matrix {
@@ -16,6 +17,9 @@ public:
 
 	// copy constructor
 	Matrix(const Matrix &other);
+
+	friend void swap(Matrix &m1, Matrix &m2);
+	Matrix& operator=(Matrix other);
 
 	// destructor
 	~Matrix();

@@ -1,8 +1,11 @@
 // matrix.cpp
 #include "Matrix.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
+
+// NEED TO CHECK IF GET RETURNS TRUE
 
 // default constructor
 Matrix::Matrix() {
@@ -52,9 +55,25 @@ Matrix::Matrix(const Matrix &other) {
 	// fills in the values from copied arr
 	for (unsigned int i=0; i<_rows; i++) {
 		for (unsigned int j=0; j<_cols; j++) {
+			// no need to check if get returns true since it has copied size
 			other.get(i, j, arr[i][j]);
 		}
 	}
+}
+
+// swap function to for assignment explained: https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
+void swap(Matrix &m1, Matrix &m2) {
+	swap(m1._rows, m2._rows);
+	swap(m1._cols, m2._cols);
+	swap(m1.arr , m2.arr);
+}
+
+// assignment operator
+Matrix& Matrix::operator=(Matrix other) {
+	// swaps objs
+	swap(*this, other);
+
+	return *this;
 }
 
 // destructor
@@ -149,11 +168,30 @@ Matrix Matrix::operator+(const Matrix &other) const {
 	for (unsigned int i=0; i<_rows; i++) {
 		for (unsigned int j=0; j<_cols; j++) {
 			other.get(i, j, p);
-			mat.set(i, j, (arr[i][j]-p));
+			mat.set(i, j, (arr[i][j]+p));
 		}
 	}
 
 	return mat;
+}
+
+bool Matrix::add(const Matrix &other) {
+	// check size
+	if (_rows!=other.num_rows() || _cols!=other.num_cols()) {
+		// inequal sized matrix
+		return false;
+	}
+
+	double p;
+
+	for (unsigned int i=0; i<_rows; i++) {
+		for (unsigned int j=0; j<_cols; j++) {
+			other.get(i, j, p);
+			arr[i][j] = (arr[i][j]+p);
+		}
+	}
+
+	return true;
 }
 
 Matrix Matrix::operator-(const Matrix &other) const {
@@ -175,6 +213,25 @@ Matrix Matrix::operator-(const Matrix &other) const {
 	}
 
 	return mat;
+}
+
+bool Matrix::subtract(const Matrix &other) {
+	// check size
+	if (_rows!=other.num_rows() || _cols!=other.num_cols()) {
+		// inequal sized matrix
+		return false;
+	}
+
+	double p;
+
+	for (unsigned int i=0; i<_rows; i++) {
+		for (unsigned int j=0; j<_cols; j++) {
+			other.get(i, j, p);
+			arr[i][j] = (arr[i][j]-p);
+		}
+	}
+
+	return true;
 }
 
 ostream& operator<<(ostream &out, const Matrix &mat) {
@@ -222,8 +279,17 @@ double* Matrix::get_row(unsigned int a) const {
 	if (a>=_rows) {
 		return nullptr;
 	}
-	// returns pointer to the start of the array of that row
-	return arr[a];
+
+	// stores column array in heap
+	// MUST DELETE AFTER CALLED
+	double *row = new double[_cols];
+	
+	// adds rows elements to array
+	for (unsigned int i=0; i<_cols; i++) {
+		row[i] = arr[a][i];
+	}
+
+	return row;
 }
 
 double* Matrix::get_col(unsigned int a) const {
