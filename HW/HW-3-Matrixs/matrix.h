@@ -45,10 +45,11 @@ public:
 
 	void multiply_by_coefficient(double a);
 	bool swap_row(unsigned int a, unsigned int b); // if both rows in bounds swap and return true
+	void transpose();
 
 	double* get_row(unsigned int a) const; // if outside matrix return nullptr
 	double* get_col(unsigned int a) const;
-	Matrix* quarter(); // returns matrix pointer to 4 differnt matrices in UL, UR, LL, LR
+	Matrix* quarter() const; // returns matrix pointer to 4 differnt matrices in UL, UR, LL, LR
 
 private:
 	unsigned int _rows;

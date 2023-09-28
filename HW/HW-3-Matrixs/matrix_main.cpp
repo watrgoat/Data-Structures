@@ -114,7 +114,7 @@ void SimpleTest(){  //well behaved getrow/read after
 
 	delete [] r1; //Remember we need to clean up dynamic allocations.
 
-/*	Matrix m9(3,6,0);
+	Matrix m9(3,6,0);
 	m9.set(0,0,1);
 	m9.set(0,1,2);
 	m9.set(0,2,1);
@@ -202,12 +202,86 @@ void SimpleTest(){  //well behaved getrow/read after
 	assert(ma1[3].get(1,1,comparison_value));
 	assert(double_compare(comparison_value,12));
 
-	delete [] ma1;*/
+	delete [] ma1;
 }
 
 //Write your own test cases here
 void StudentTest(){
+	Matrix m100(3,4,0);
+	m100.set(0,0,1);
+	m100.set(0,1,2);
+	m100.set(0,2,3);
+	m100.set(0,3,4);
 
+	m100.set(1,0,5);
+	m100.set(1,1,6);
+	m100.set(1,2,7);
+	m100.set(1,3,8);
+
+	m100.set(2,0,9);
+	m100.set(2,1,10);
+	m100.set(2,2,11);
+	m100.set(2,3,12);
+
+	std::cout << "\nM100 to be transposed: " << std::endl;
+	std::cout << m100 << std::endl;
+
+	m100.transpose();
+
+	std::cout << "M100 after being transposed: " << std::endl;
+	std::cout << m100 << std::endl;
+
+	double comparison_value;
+	assert(m100.get(0,0,comparison_value));
+	assert(double_compare(comparison_value,1));
+	assert(m100.get(0,1,comparison_value));
+	assert(double_compare(comparison_value,5));
+	assert(m100.get(3,2,comparison_value));
+	assert(double_compare(comparison_value,12));
+
+	m100.clear();
+
+	std::cout << "M100 after being cleared: " << std::endl;
+	std::cout << m100 << std::endl;
+
+	m100 = Matrix(10, 5, 1);
+
+	std::cout << "M100 before being multiplied: " << std::endl;
+	std::cout << m100 << std::endl;
+
+	m100.multiply_by_coefficient(100);
+
+	std::cout << "M100 after being multiplied: " << std::endl;
+	std::cout << m100 << std::endl;
+
+	assert(m100.get(3,4,comparison_value));
+	assert(double_compare(comparison_value,100));
+
+	double v=1;
+	for (unsigned int i=0; i<m100.num_rows(); i++) {
+		for (unsigned int j=0; j<m100.num_cols(); j++) {
+			m100.set(i, j, v);
+			v++;
+		}
+	}
+
+	Matrix m21 = m100;
+
+	std::cout << "M21: " << std::endl;
+	std::cout << m21 << std::endl;
+
+	double* m21_col = m21.get_col(0);
+	
+	std::cout << "M21 0th column: " << std::endl;
+
+	for (unsigned int i=0; i<m21.num_rows(); i++) {
+		std::cout << m21_col[i] << std::endl;
+	}
+
+	// MUST DELETE COLUMN AFTER
+	delete[] m21_col;
+
+	std::cout << std::endl;
 }
 
 ////////////////Utility functions//////////////////////

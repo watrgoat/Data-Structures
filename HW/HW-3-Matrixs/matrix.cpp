@@ -113,6 +113,17 @@ bool Matrix::set(unsigned int x, unsigned int y, double value) {
 	return true;
 }
 
+void Matrix::clear() {
+	for (unsigned int i=0; i<_rows; i++) {
+		delete[] arr[i];
+	}
+	delete[] arr;
+
+	_rows = 0;
+	_cols = 0;
+
+	arr = new double*[0];
+}
 
 // operator overload funcs
 bool Matrix::operator==(const Matrix &other) const {
@@ -236,6 +247,8 @@ bool Matrix::subtract(const Matrix &other) {
 
 ostream& operator<<(ostream &out, const Matrix &mat) {
 	double p;
+
+	out << endl;
 	out << mat.num_rows() << " x " << mat.num_cols() << " matrix:" << endl;
 	out << '[';
 
@@ -249,7 +262,7 @@ ostream& operator<<(ostream &out, const Matrix &mat) {
 		}
 	}
 
-	out << " ]" << endl << endl;
+	out << " ]" << endl;
 
 	return out;
 }
@@ -273,6 +286,24 @@ bool Matrix::swap_row(unsigned int a, unsigned int b) {
 	arr[a] = arr[b];
 	arr[b] = row1;
 	return true;
+}
+
+void Matrix::transpose() {
+	// early return for small matrices
+	if (_rows<=1 && _cols<=1) {
+		return;
+	}
+
+	// create temp matrix with swapped row and column values
+	Matrix temp(_cols, _rows, 0);
+
+	for (unsigned int i=0; i<_rows; i++) {
+		for (unsigned int j=0; j<_cols; j++) {
+			temp.set(j, i, arr[i][j]);
+		}
+	}
+
+	swap(*this, temp);
 }
 
 double* Matrix::get_row(unsigned int a) const {
@@ -308,4 +339,41 @@ double* Matrix::get_col(unsigned int a) const {
 	}
 
 	return column;
+}
+
+Matrix* Matrix::quarter() const {
+	// check if empty
+
+	// how to find height and width
+	unsigned int cut_row = (_rows+1)/2;
+	unsigned int cut_col = (_cols+1)/2;
+
+	Matrix* quarters = new Matrix[4]{
+        Matrix(cut_row, cut_col, 0),
+        Matrix(cut_row, cut_col, 0),
+        Matrix(cut_row, cut_col, 0),
+        Matrix(cut_row, cut_col, 0)
+    };
+
+
+    // early return for empty matrix
+    if (_rows==0 || _cols==0) {
+		return quarters;
+	}
+
+	
+	for (unsigned int i=0; i<cut_row; i++) {
+		for (unsigned int j=0; j<cut_col; j++) {
+			// upper left
+			quarters[0].set(i, j, arr[i][j]);
+			// upper right
+			quarters[1].set(i, j, arr[i][j + _cols/2]);
+			// lower left
+			quarters[2].set(i, j, arr[i + _rows/2][j]);
+			// lower right
+			quarters[3].set(i, j, arr[i + _rows/2][j + _cols/2]);
+		}
+	}
+
+    return quarters;
 }
