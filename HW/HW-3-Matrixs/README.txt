@@ -39,9 +39,11 @@ O(1) because its accessing a stored int
 get_column:
 O(1) because its accessing a stored int
 
-operator<<
+operator<<:
+O(m*n) because it must loop over every element in the matrix
 
-quarter
+quarter:
+
 
 operator==
 
