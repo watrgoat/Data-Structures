@@ -281,6 +281,65 @@ void StudentTest(){
 	// MUST DELETE COLUMN AFTER
 	delete[] m21_col;
 
+	std::cout << "M21 after being quartered: " << std::endl << std::endl;
+
+	Matrix* ma2 = NULL;
+	ma2 = m21.quarter();
+	assert(ma2 != NULL);
+
+	std::cout << "UL: " << std::endl << ma2[0] << std::endl;
+	std::cout << "UR: " << std::endl << ma2[1] << std::endl;
+	std::cout << "LL: " << std::endl << ma2[2] << std::endl;
+	std::cout << "LR: " << std::endl << ma2[3] << std::endl;
+
+	for(unsigned int i=0; i<4; i++){
+		assert((ma2[i].num_rows() == 5) && (ma2[i].num_cols() == 3));
+	}
+
+	//Upper Left
+	assert(ma2[0].get(0,0,comparison_value));
+	assert(double_compare(comparison_value,1));
+	assert(ma2[0].get(2,2,comparison_value));
+	assert(double_compare(comparison_value,13));
+
+	//Upper Right
+	assert(ma2[1].get(0,0,comparison_value));
+	assert(double_compare(comparison_value,3));
+	assert(ma2[1].get(2,2,comparison_value));
+	assert(double_compare(comparison_value,15));
+
+	//Lower Left
+	assert(ma2[2].get(0,0,comparison_value));
+	assert(double_compare(comparison_value,26));
+	assert(ma2[2].get(2,2,comparison_value));
+	assert(double_compare(comparison_value,38));
+
+	//Lower Right
+	assert(ma2[3].get(0,0,comparison_value));
+	assert(double_compare(comparison_value,28));
+	assert(ma2[3].get(2,2,comparison_value));
+	assert(double_compare(comparison_value,40));
+
+	// empty matrix quarter
+	m21.clear();
+
+	std::cout << "Empty	matrix to be quartered: " << std::endl << m21 << std::endl;
+
+	Matrix* ma3 = m21.quarter();
+
+	std::cout << "UL: " << std::endl << ma3[0] << std::endl;
+	std::cout << "UR: " << std::endl << ma3[1] << std::endl;
+	std::cout << "LL: " << std::endl << ma3[2] << std::endl;
+	std::cout << "LR: " << std::endl << ma3[3] << std::endl;
+
+	for(unsigned int i=0; i<4; i++){
+		assert((ma3[i].num_rows() == 0) && (ma3[i].num_cols() == 0));
+	}
+
+	delete[] ma2;
+	delete[] ma3;
+
+
 	std::cout << std::endl;
 }
 
