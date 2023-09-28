@@ -1,0 +1,48 @@
+Class Name: Matrix
+
+Description:
+  A class for handling two-dimensional matrices.
+
+Constructors and Destructor:
+  - Default constructor: Creates an empty matrix.
+  - Constructor with dimensions and fill value: Creates a matrix with specified dimensions and fills it with a given value.
+  - Copy constructor: Creates a new matrix as a copy of an existing one.
+  - Destructor: Deallocates memory and cleans up the matrix.
+
+Assignment and Swapping:
+  - Assignment operator: Copies the contents of another matrix.
+  - Friend function 'swap': Swaps the contents of two matrices.
+
+Getters:
+  - 'get': Retrieve a value from the matrix at a specified position and store it in a referenced double.
+  - 'num_rows': Get the number of rows in the matrix.
+  - 'num_cols': Get the number of columns in the matrix.
+
+Setters:
+  - 'set': Set a value in the matrix at a specified position.
+
+Utility Functions:
+  - 'clear': Reset the matrix to an empty state and deallocate memory.
+  - 'operator==': Check if two matrices are equal.
+  - 'operator!=': Check if two matrices are not equal.
+
+Matrix Arithmetic:
+  - 'operator+': Add two matrices of equal size.
+  - 'add': Add another matrix to the current one both equal size.
+  - 'operator-': Subtract two matrices of equal size.
+  - 'subtract': Subtract another matrix from the current one both equal size.
+
+Scalar Operations:
+  - 'multiply_by_coefficient': Multiply all elements by a specified coefficient.
+
+Row and Column Operations:
+  - 'swap_row': Swap two rows within the matrix if both are in bounds.
+  - 'transpose': Transpose the matrix.
+
+Matrix Slicing:
+  - 'get_row': Get a pointer to a double array representing a specified row.
+  - 'get_col': Get a pointer to a double array representing a specified column.
+  - 'quarter': Return pointers to four different matrices (Upper Left, Upper Right, Lower Left, Lower Right).
+
+Stream Output:
+  - Overloaded stream operator '<<': Display the matrix in a readable format.

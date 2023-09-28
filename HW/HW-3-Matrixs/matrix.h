@@ -4,59 +4,57 @@
 
 #include <iostream>
 
-
 using namespace std;
 
 class Matrix {
 public:
-	// default constructor
-	Matrix();
+    // Constructors and Destructor
+    Matrix();
+    Matrix(unsigned int rows, unsigned int cols, double fill);
+    Matrix(const Matrix &other);
+    ~Matrix();
 
-	// constructor
-	Matrix(unsigned int rows, unsigned int cols, double fill);
+    // Assignment Operator and Swapping
+    Matrix& operator=(Matrix other);
+    friend void swap(Matrix &m1, Matrix &m2);
 
-	// copy constructor
-	Matrix(const Matrix &other);
+    // Getters
+    bool get(unsigned int x, unsigned int y, double &value) const;
+    unsigned int num_rows() const;
+    unsigned int num_cols() const;
 
-	friend void swap(Matrix &m1, Matrix &m2);
-	Matrix& operator=(Matrix other);
+    // Setters
+    bool set(unsigned int x, unsigned int y, double value);
 
-	// destructor
-	~Matrix();
+    // Utility Functions
+    void clear();
+    bool operator==(const Matrix &other) const;
+    bool operator!=(const Matrix &other) const;
 
-	// GETTERS
-	bool get(unsigned int x, unsigned int y, double &value) const; 
-	unsigned int num_rows() const;
-	unsigned int num_cols() const;
+    // Matrix Arithmetic
+    Matrix operator+(const Matrix &other) const;
+    bool add(const Matrix &other);
+    Matrix operator-(const Matrix &other) const;
+    bool subtract(const Matrix &other);
 
-	// SETTERS
-	bool set(unsigned int x, unsigned int y, double value);
+    // Scalar Operations
+    void multiply_by_coefficient(double a);
 
-	void clear(); // reset num of rows and cols to 0 and deallocate all memory
+    // Row and Column Operations
+    bool swap_row(unsigned int a, unsigned int b);
+    void transpose();
 
-	bool operator==(const Matrix &other) const;
-	bool operator!=(const Matrix &other) const;
-
-	Matrix operator+(const Matrix &other) const;
-	bool add(const Matrix &other);
-
-	Matrix operator-(const Matrix &other) const;
-	bool subtract(const Matrix &other);
-
-	void multiply_by_coefficient(double a);
-	bool swap_row(unsigned int a, unsigned int b); // if both rows in bounds swap and return true
-	void transpose();
-
-	double* get_row(unsigned int a) const; // if outside matrix return nullptr
-	double* get_col(unsigned int a) const;
-	Matrix* quarter() const; // returns matrix pointer to 4 differnt matrices in UL, UR, LL, LR
+    // Matrix Slicing
+    double* get_row(unsigned int a) const;
+    double* get_col(unsigned int a) const;
+    Matrix* quarter() const;
 
 private:
-	unsigned int _rows;
-	unsigned int _cols;
-	double **arr;
+    unsigned int _rows;
+    unsigned int _cols;
+    double **arr;
 };
 
+// Stream Operator Overload
 ostream& operator<<(ostream &out, const Matrix &mat);
-
 #endif

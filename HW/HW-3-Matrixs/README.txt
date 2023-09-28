@@ -43,16 +43,19 @@ operator<<:
 O(m*n) because it must loop over every element in the matrix
 
 quarter:
+O(m*n) because it has to loop over more than half of the elements in the matrix
 
+operator==:
+O(m*n) because it loops over every element
 
-operator==
+operator!=:
+O(m*n) because it loops over every element
 
-operator!=
+swap_rows:
+O(n) because it has to copy every element in the array
 
-swap_rows
-
-rref (provided in matrix_main.cpp)
-
+rref (provided in matrix_main.cpp):
+O()
 
 
 TESTING & DEBUGGING STRATEGY: 
@@ -60,6 +63,9 @@ Discuss your strategy for testing & debugging your program.
 What tools did you use (gdb/lldb/Visual Studio debugger,
 Valgrind/Dr. Memory, std::cout & print, etc.)?  How did you test the
 "corner cases" of your Matrix class design & implementation?
+
+I didn't run into many confusing memory problems when implemeneting my version of the Matrix class, I did however only run my code through valgrind until all memory leaks were plugged.
+I always use cout on lines to figure out where a program is going wrong, but I am trying to get into the habit of using gdb more often.
 
 MISC. COMMENTS TO GRADER:  
 (optional, please be concise!)
