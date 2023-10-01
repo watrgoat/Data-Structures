@@ -55,7 +55,7 @@ swap_rows:
 O(n) because it has to copy every element in the array
 
 rref (provided in matrix_main.cpp):
-O()
+O((m^2)*n)
 
 
 TESTING & DEBUGGING STRATEGY: 
