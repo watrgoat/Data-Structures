@@ -1,5 +1,6 @@
 #ifndef DRIVER_H
 #define DRIVER_H
+
 #include <string>
 
 class Driver {
@@ -19,11 +20,25 @@ private:
     std::string riderPhoneNumber;
 
 public:
-    Driver() = default;
-    
-    // You can also provide an appropriate constructor if needed
+    Driver();
 
-    // Getters
+    // Constructor
+    Driver(const std::string& firstName,
+           const std::string& lastName,
+           const std::string& gender,
+           int age,
+           const std::string& phoneNumber,
+           double rating,
+           double currentLatitude,
+           double currentLongitude,
+           const std::string& vehicleType,
+           const std::string& currentState,
+           const std::string& riderFirstName,
+           const std::string& riderLastName,
+           const std::string& riderPhoneNumber);
+    
+
+    // Getter methods
     std::string getFirstName() const;
     std::string getLastName() const;
     std::string getGender() const;
@@ -37,6 +52,21 @@ public:
     std::string getRiderFirstName() const;
     std::string getRiderLastName() const;
     std::string getRiderPhoneNumber() const;
+
+    // Setter methods
+    void setFirstName(const std::string& firstName);
+    void setLastName(const std::string& lastName);
+    void setGender(const std::string& gender);
+    void setAge(int age);
+    void setPhoneNumber(const std::string& phoneNumber);
+    void setRating(double rating);
+    void setCurrentLatitude(double latitude);
+    void setCurrentLongitude(double longitude);
+    void setVehicleType(const std::string& vehicleType);
+    void setCurrentState(const std::string& currentState);
+    void setRiderFirstName(const std::string& riderFirstName);
+    void setRiderLastName(const std::string& riderLastName);
+    void setRiderPhoneNumber(const std::string& riderPhoneNumber);
 };
 
 #endif

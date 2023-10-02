@@ -24,14 +24,16 @@ private:
     std::string driverPhoneNumber;
 
 public:
+    Rider();
+    
     // Constructor
     Rider(const std::string& firstName,
           const std::string& lastName,
           const std::string& gender,
           int age,
           const std::string& phoneNumber,
-          double rating,
           const std::string& pickupLocationName,
+          double rating,
           double pickupLatitude,
           double pickupLongitude,
           const std::string& dropoffLocationName,
@@ -39,12 +41,47 @@ public:
           double dropoffLongitude,
           const std::string& vehiclePreference,
           const std::string& currentState,
-          const std::string& driverFirstName = "null",
-          const std::string& driverLastName = "null",
-          const std::string& driverPhoneNumber = "null");
+          const std::string& driverFirstName,
+          const std::string& driverLastName,
+          const std::string& driverPhoneNumber);
 
-    // Getter methods (to be implemented)
-    // ... (Other member functions as needed)
+    // Getter methods
+    std::string getFirstName() const;
+    std::string getLastName() const;
+    std::string getGender() const;
+    int getAge() const;
+    std::string getPhoneNumber() const;
+    double getRating() const;
+    std::string getPickupLocationName() const;
+    double getPickupLatitude() const;
+    double getPickupLongitude() const;
+    std::string getDropoffLocationName() const;
+    double getDropoffLatitude() const;
+    double getDropoffLongitude() const;
+    std::string getVehiclePreference() const;
+    std::string getCurrentState() const;
+    std::string getDriverFirstName() const;
+    std::string getDriverLastName() const;
+    std::string getDriverPhoneNumber() const;
+
+    // Setter methods
+    void setFirstName(const std::string& firstName);
+    void setLastName(const std::string& lastName);
+    void setGender(const std::string& gender);
+    void setAge(int age);
+    void setPhoneNumber(const std::string& phoneNumber);
+    void setRating(double rating);
+    void setPickupLocationName(const std::string& locationName);
+    void setPickupLatitude(double latitude);
+    void setPickupLongitude(double longitude);
+    void setDropoffLocationName(const std::string& locationName);
+    void setDropoffLatitude(double latitude);
+    void setDropoffLongitude(double longitude);
+    void setVehiclePreference(const std::string& preference);
+    void setCurrentState(const std::string& state);
+    void setDriverFirstName(const std::string& driverFirstName);
+    void setDriverLastName(const std::string& driverLastName);
+    void setDriverPhoneNumber(const std::string& driverPhoneNumber);
 };
 
-#endif // RIDER_H
+#endif
