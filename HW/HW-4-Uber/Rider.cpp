@@ -1,0 +1,38 @@
+#include "Rider.h"
+
+Rider::Rider(const std::string& firstName,
+             const std::string& lastName,
+             const std::string& gender,
+             int age,
+             const std::string& phoneNumber,
+             double rating,
+             const std::string& pickupLocationName,
+             double pickupLatitude,
+             double pickupLongitude,
+             const std::string& dropoffLocationName,
+             double dropoffLatitude,
+             double dropoffLongitude,
+             const std::string& vehiclePreference,
+             const std::string& currentState,
+             const std::string& driverFirstName,
+             const std::string& driverLastName,
+             const std::string& driverPhoneNumber)
+    : firstName(firstName),
+      lastName(lastName),
+      gender(gender),
+      age(age),
+      phoneNumber(phoneNumber),
+      rating(rating),
+      pickupLocationName(pickupLocationName),
+      pickupLatitude(pickupLatitude),
+      pickupLongitude(pickupLongitude),
+      dropoffLocationName(dropoffLocationName),
+      dropoffLatitude(dropoffLatitude),
+      dropoffLongitude(dropoffLongitude),
+      vehiclePreference(vehiclePreference),
+      currentState(currentState),
+      driverFirstName(driverFirstName),
+      driverLastName(driverLastName),
+      driverPhoneNumber(driverPhoneNumber) {}
+
+// Implementation of Getter methods can be added here
