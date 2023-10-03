@@ -32,6 +32,21 @@ Driver::Driver(const std::string& firstName,
               riderLastName(riderLastName),
               riderPhoneNumber(riderPhoneNumber) {}
 
+Driver::Driver(const Driver& other) {
+  firstName = other.getFirstName();
+  lastName = other.getLastName();
+  gender = other.getGender();
+  age = other.getAge();
+  phoneNumber = other.getPhoneNumber();
+  rating = other.getRating();
+  currentLatitude = other.getCurrentLatitude();
+  currentLongitude = other.getCurrentLongitude();
+  vehicleType = other.getVehicleType();
+  currentState = other.getCurrentState();
+  riderFirstName = other.getRiderFirstName();
+  riderLastName = other.getRiderLastName();
+  riderPhoneNumber = other.getRiderPhoneNumber(); }
+
 std::string Driver::getFirstName() const { return firstName; }
 std::string Driver::getLastName() const { return lastName; }
 std::string Driver::getGender() const { return gender; }
