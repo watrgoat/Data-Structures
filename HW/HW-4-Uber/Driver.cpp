@@ -1,7 +1,7 @@
 #include "Driver.h"
 
 Driver::Driver()
-: firstName(""), lastName(""), gender(""), age(0), phoneNumber(""), rating(0.0), 
+: firstName(""), lastName(""), gender(""), age(0), phoneNumber(""), rating(""), 
   currentLatitude(0.0), currentLongitude(0.0), vehicleType(""), currentState(""), 
   riderFirstName("null"), riderLastName("null"), riderPhoneNumber("null") {}
 
@@ -10,7 +10,7 @@ Driver::Driver(const std::string& firstName,
                const std::string& gender,
                int age,
                const std::string& phoneNumber,
-               double rating,
+               const std::string& rating,
                double currentLatitude,
                double currentLongitude,
                const std::string& vehicleType,
@@ -37,7 +37,7 @@ std::string Driver::getLastName() const { return lastName; }
 std::string Driver::getGender() const { return gender; }
 int Driver::getAge() const { return age; }
 std::string Driver::getPhoneNumber() const { return phoneNumber; }
-double Driver::getRating() const { return rating; }
+std::string Driver::getRating() const { return rating; }
 double Driver::getCurrentLatitude() const { return currentLatitude; }
 double Driver::getCurrentLongitude() const { return currentLongitude; }
 std::string Driver::getVehicleType() const { return vehicleType; }
@@ -51,7 +51,7 @@ void Driver::setLastName(const std::string& lastName) { this->lastName = lastNam
 void Driver::setGender(const std::string& gender) { this->gender = gender; }
 void Driver::setAge(int age) { this->age = age; }
 void Driver::setPhoneNumber(const std::string& phoneNumber) { this->phoneNumber = phoneNumber; }
-void Driver::setRating(double rating) { this->rating = rating; }
+void Driver::setRating(const std::string&  rating) { this->rating = rating; }
 void Driver::setCurrentLatitude(double latitude) { this->currentLatitude = latitude; }
 void Driver::setCurrentLongitude(double longitude) { this->currentLongitude = longitude; }
 void Driver::setVehicleType(const std::string& vehicleType) { this->vehicleType = vehicleType; }

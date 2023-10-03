@@ -10,7 +10,7 @@ private:
     std::string gender;
     int age;
     std::string phoneNumber;
-    double rating;
+    std::string rating;
     std::string pickupLocationName;
     double pickupLatitude;
     double pickupLongitude;
@@ -33,7 +33,7 @@ public:
           int age,
           const std::string& phoneNumber,
           const std::string& pickupLocationName,
-          double rating,
+          const std::string& rating,
           double pickupLatitude,
           double pickupLongitude,
           const std::string& dropoffLocationName,
@@ -51,7 +51,7 @@ public:
     std::string getGender() const;
     int getAge() const;
     std::string getPhoneNumber() const;
-    double getRating() const;
+    std::string getRating() const;
     std::string getPickupLocationName() const;
     double getPickupLatitude() const;
     double getPickupLongitude() const;
@@ -70,7 +70,7 @@ public:
     void setGender(const std::string& gender);
     void setAge(int age);
     void setPhoneNumber(const std::string& phoneNumber);
-    void setRating(double rating);
+    void setRating(const std::string& rating);
     void setPickupLocationName(const std::string& locationName);
     void setPickupLatitude(double latitude);
     void setPickupLongitude(double longitude);

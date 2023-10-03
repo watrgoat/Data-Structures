@@ -10,7 +10,7 @@ private:
     std::string gender;
     int age;
     std::string phoneNumber;
-    double rating;
+    std::string rating;
     double currentLatitude;
     double currentLongitude;
     std::string vehicleType;
@@ -28,7 +28,7 @@ public:
            const std::string& gender,
            int age,
            const std::string& phoneNumber,
-           double rating,
+           const std::string& rating,
            double currentLatitude,
            double currentLongitude,
            const std::string& vehicleType,
@@ -44,7 +44,7 @@ public:
     std::string getGender() const;
     int getAge() const;
     std::string getPhoneNumber() const;
-    double getRating() const;
+    std::string getRating() const;
     double getCurrentLatitude() const;
     double getCurrentLongitude() const;
     std::string getVehicleType() const;
@@ -59,7 +59,7 @@ public:
     void setGender(const std::string& gender);
     void setAge(int age);
     void setPhoneNumber(const std::string& phoneNumber);
-    void setRating(double rating);
+    void setRating(const std::string& rating);
     void setCurrentLatitude(double latitude);
     void setCurrentLongitude(double longitude);
     void setVehicleType(const std::string& vehicleType);

@@ -1,7 +1,7 @@
 #include "Rider.h"
 
 Rider::Rider()
-: firstName(""), lastName(""), gender(""), age(0), phoneNumber(""), rating(0.0), 
+: firstName(""), lastName(""), gender(""), age(0), phoneNumber(""), rating(""), 
   pickupLocationName(""), pickupLatitude(0.0), pickupLongitude(0.0),
   dropoffLocationName(""), dropoffLatitude(0.0), dropoffLongitude(0.0), 
   vehiclePreference(""), currentState(""), driverFirstName("null"), 
@@ -12,7 +12,7 @@ Rider::Rider(const std::string& firstName,
              const std::string& gender,
              int age,
              const std::string& phoneNumber,
-             double rating,
+             const std::string& rating,
              const std::string& pickupLocationName,
              double pickupLatitude,
              double pickupLongitude,
@@ -47,7 +47,7 @@ std::string Rider::getLastName() const { return lastName; }
 std::string Rider::getGender() const { return gender; }
 int Rider::getAge() const { return age; }
 std::string Rider::getPhoneNumber() const { return phoneNumber; }
-double Rider::getRating() const { return rating; }
+std::string Rider::getRating() const { return rating; }
 std::string Rider::getPickupLocationName() const { return pickupLocationName; }
 double Rider::getPickupLatitude() const { return pickupLatitude; }
 double Rider::getPickupLongitude() const { return pickupLongitude; }
@@ -65,7 +65,7 @@ void Rider::setLastName(const std::string& lastName) { this->lastName = lastName
 void Rider::setGender(const std::string& gender) { this->gender = gender; }
 void Rider::setAge(int age) { this->age = age; }
 void Rider::setPhoneNumber(const std::string& phoneNumber) { this->phoneNumber = phoneNumber; }
-void Rider::setRating(double rating) { this->rating = rating; }
+void Rider::setRating(const std::string& rating) { this->rating = rating; }
 void Rider::setPickupLocationName(const std::string& locationName) { this->pickupLocationName = locationName; }
 void Rider::setPickupLatitude(double latitude) { this->pickupLatitude = latitude; }
 void Rider::setPickupLongitude(double longitude) { this->pickupLongitude = longitude; }
