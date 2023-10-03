@@ -1,8 +1,8 @@
 #include <list>
 #include <iostream>
 #include <fstream>
-#include <Rider.h>
-#include <Driver.h>
+#include "Rider.h"
+#include "Driver.h"
 
 using namespace std;
 
@@ -12,51 +12,33 @@ using namespace std;
 // what order should this be done
 // efficiency?
 // how to use std::list in this?
-list readRiderFile(const ifstream &file, list &inRiders) {
+void readRiderFile(ifstream &file, list<Rider> &inRiders) {
 	string word;
 
 	int i = 0;
 	while (file >> word) {
-		// make a curr rider w def values
-		// add setter 
-		switch {
-		case 0:
-			// f name
-
-		case 1:
-			// last name
-		case 2:
-			// gender
-		case 3:
-			// age
-		case 4:
-			// number
-		case 5:
-			// rating
-		case 6:
-			// pickup loc
-		case 7:
-			// pickup lat
-		case 8:
-			// pickup long
-		case 9:
-			// drop loc
-		case 10:
-			// drop lat
-		case 11:
-			// drop long
-		case 12:
-			// car type req
-		case 13:
-			// current state
-		case 14:
-			// drive f name
-		case 15:
-			// driver l name
-		case 16:
-			// driver number
+		Rider curr;
+		switch (i) {
+		case 0: curr.setFirstName(string(word));
+		case 1: curr.setLastName(string(word));
+		case 2: curr.setGender(string(word));
+		case 3: curr.setAge(int(word));
+		case 4: curr.setPhoneNumber(string(word));
+		case 5: curr.setRating(string(word));
+		case 6: curr.setPickupLocationName(string(word));
+		case 7: curr.setPickupLatitude(double(word));
+		case 8: curr.setPickupLongitude(double(word));
+		case 9: curr.setDropoffLocationName(string(word));
+		case 10: curr.setDropoffLatitude(double(word));
+		case 11: curr.setDropoffLongitude(double(word));
+		case 12: curr.setVehiclePreference(string(word));
+		case 13: curr.setCurrentState(string(word));
+		case 14: curr.setDriverFirstName(string(word));
+		case 15: curr.setDriverLastName(string(word));
+		case 16: curr.setDriverPhoneNumber(string(word));
 		}
 		i++;
+		inRiders.push_back(curr);
 	}
 }
 
@@ -68,6 +50,8 @@ int main(int argc, char* argv[]) {
 		exit(1);
 	}
 
+	list<Rider> riders;
+	list<Driver> drivers;
 
 	return 0;
 }

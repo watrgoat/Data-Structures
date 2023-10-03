@@ -18,19 +18,19 @@ Driver::Driver(const std::string& firstName,
                const std::string& riderFirstName,
                const std::string& riderLastName,
                const std::string& riderPhoneNumber)
-    : firstName(firstName),
-      lastName(lastName),
-      gender(gender),
-      age(age),
-      phoneNumber(phoneNumber),
-      rating(rating),
-      currentLatitude(currentLatitude),
-      currentLongitude(currentLongitude),
-      vehicleType(vehicleType),
-      currentState(currentState),
-      riderFirstName(riderFirstName),
-      riderLastName(riderLastName),
-      riderPhoneNumber(riderPhoneNumber) {}
+            : firstName(firstName),
+              lastName(lastName),
+              gender(gender),
+              age(age),
+              phoneNumber(phoneNumber),
+              rating(rating),
+              currentLatitude(currentLatitude),
+              currentLongitude(currentLongitude),
+              vehicleType(vehicleType),
+              currentState(currentState),
+              riderFirstName(riderFirstName),
+              riderLastName(riderLastName),
+              riderPhoneNumber(riderPhoneNumber) {}
 
 std::string Driver::getFirstName() const { return firstName; }
 std::string Driver::getLastName() const { return lastName; }
