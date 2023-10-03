@@ -3,7 +3,7 @@
 Driver::Driver()
 : firstName(""), lastName(""), gender(""), age(0), phoneNumber(""), rating(""), 
   currentLatitude(0.0), currentLongitude(0.0), vehicleType(""), currentState(""), 
-  riderFirstName("null"), riderLastName("null"), riderPhoneNumber("null") {}
+  riderFirstName(""), riderLastName(""), riderPhoneNumber("") {}
 
 Driver::Driver(const std::string& firstName,
                const std::string& lastName,

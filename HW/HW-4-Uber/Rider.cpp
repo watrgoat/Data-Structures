@@ -4,8 +4,8 @@ Rider::Rider()
 : firstName(""), lastName(""), gender(""), age(0), phoneNumber(""), rating(""), 
   pickupLocationName(""), pickupLatitude(0.0), pickupLongitude(0.0),
   dropoffLocationName(""), dropoffLatitude(0.0), dropoffLongitude(0.0), 
-  vehiclePreference(""), currentState(""), driverFirstName("null"), 
-  driverLastName("null"), driverPhoneNumber("null") {}
+  vehiclePreference(""), currentState(""), driverFirstName(""), 
+  driverLastName(""), driverPhoneNumber("") {}
 
 Rider::Rider(const std::string& firstName,
              const std::string& lastName,
@@ -41,6 +41,25 @@ Rider::Rider(const std::string& firstName,
             driverFirstName(driverFirstName),
             driverLastName(driverLastName),
             driverPhoneNumber(driverPhoneNumber) {}
+
+Rider::Rider(const Rider& other) {
+  firstName = other.getFirstName();
+  lastName = other.getLastName();
+  gender = other.getGender();
+  age = other.getAge();
+  phoneNumber = other.getPhoneNumber();
+  rating = other.getRating();
+  pickupLocationName = other.getPickupLocationName();
+  pickupLatitude = other.getPickupLatitude();
+  pickupLongitude = other.getPickupLongitude();
+  dropoffLocationName = other.getDropoffLocationName();
+  dropoffLatitude = other.getDropoffLatitude();
+  dropoffLongitude = other.getDropoffLongitude();
+  vehiclePreference = other.getVehiclePreference();
+  currentState = other.getCurrentState();
+  driverFirstName = other.getDriverFirstName();
+  driverLastName = other.getDriverLastName();
+  driverPhoneNumber = other.getDriverPhoneNumber(); }
 
 std::string Rider::getFirstName() const { return firstName; }
 std::string Rider::getLastName() const { return lastName; }

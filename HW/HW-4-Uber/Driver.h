@@ -37,6 +37,8 @@ public:
            const std::string& riderLastName,
            const std::string& riderPhoneNumber);
     
+    // copy constructor
+    Driver(const Driver& other);
 
     // Getter methods
     std::string getFirstName() const;

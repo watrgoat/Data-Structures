@@ -47,6 +47,9 @@ public:
           const string& driverLastName,
           const string& driverPhoneNumber);
 
+    // copy constructor
+    Rider(const Rider& other);
+
     // Getter methods
     string getFirstName() const;
     string getLastName() const;
