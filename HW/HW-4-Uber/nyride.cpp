@@ -148,20 +148,32 @@ bool isPhoneNumber(const string &num) {
     return regex_match(num, pattern);
 }
 
-void searchDriverByNumber(const string &num, const list<Rider*>* &riders) {
+void searchDriverByNumber(const string &num, const list<Driver*>* &drivers) {
 	// what to return here
 	// dont return anything
 	// call function on the iter that is found!!!
-	for (list<Rider*>::iterator it = riders->begin(); it!=riders->end(); it++) {
+	for (list<Driver*>::iterator it = drivers->begin(); it!=drivers->end(); it++) {
 		if (it->getPhoneNumber() == num) {
 			continue;
 		}
 	}
 }
 
+void searchRiderByNumber(const string &num, const list<Rider*>* &riders) {
+	// loop over elements. break once found
+	list<Rider*>::iterator it;
+	for (it = riders->begin(); it!=riders->end(); it++) {
+		if (it->getPhoneNumber() == num) {
+			break;
+		}
+	}
+	cout << "Found the person: " << it->getFirstName() << endl;
+	// do stuff with it now
+}
+
 int main(int argc, char* argv[]) {
 
-	if (argc>3 || argc<3) {
+	if (argc>8 || argc<8) {
 		cerr << "ERROR: WRONG INPUT SIZE" << endl;
 		exit(1);
 	}
@@ -209,7 +221,19 @@ int main(int argc, char* argv[]) {
     // found: change account info
 
     if (isPhoneNumber(inNum)) {
-    	
+    	// is request?
+    	if (argv[7]=="request") {
+    		// assuming all phone numbers are unique
+    		// would need diff logic if drivers and riders had crossover
+
+    		// check the driver and rider lists
+    		searchDriverByNumber()
+    	} else if (argv[7]=="cancel") {
+    		// check from drivers
+    	} else {
+    		cerr << "ERROR: Invaid ride type - " << argv[7] << endl;
+    		exit(1)
+    	}
     } else {
     	// bad input
     	cout << "Phone number is invalid.\n";
