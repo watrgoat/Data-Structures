@@ -210,6 +210,9 @@ int main(int argc, char* argv[]) {
 
     if (isPhoneNumber(inNum)) {
     	
+    } else {
+    	// bad input
+    	cout << "Phone number is invalid.\n";
     }
 
 
