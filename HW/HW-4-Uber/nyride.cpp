@@ -143,9 +143,20 @@ void readRiderFile(ifstream &file, list<Rider*>* &inRiders) {
 }
 
 bool isPhoneNumber(const string &num) {
-	// reget pattern that follows xxx-xxx-xxxx digit only format
+	// regex pattern: follows xxx-xxx-xxxx digits only format
 	regex pattern("^\\d{3}-\\d{3}-\\d{4}$");
     return regex_match(num, pattern);
+}
+
+void searchDriverByNumber(const string &num, const list<Rider*>* &riders) {
+	// what to return here
+	// dont return anything
+	// call function on the iter that is found!!!
+	for (list<Rider*>::iterator it = riders->begin(); it!=riders->end(); it++) {
+		if (it->getPhoneNumber() == num) {
+			continue;
+		}
+	}
 }
 
 int main(int argc, char* argv[]) {
@@ -159,27 +170,61 @@ int main(int argc, char* argv[]) {
 	list<Rider*> *riders = new list<Rider*>;
 	list<Driver*> *drivers = new list<Driver*>;
 
-	ifstream riderInFile(argv[1]);
-	ifstream driverInFile(argv[2]);
-	/*ofstream output1(argv[3]);
+	ifstream driverInFile(argv[1]);
+	ifstream riderInFile(argv[2]);
+	ofstream output1(argv[3]);
 	ofstream output2(argv[4]);
-	ofstream output3(argv[5]);*/
+	ofstream output3(argv[5]);
+	string inNum = argv[6];
 
 	// checks if input and output files are able to be opened
-	if (!riderInFile.good()) {
+	if (!driverInFile.good()) {
 	    std::cerr << "Can't open " << argv[1] << " to read.\n";
 	    exit(1);
-	} if (!driverInFile.good()) {
+	} if (!riderInFile.good()) {
     	std::cerr << "Can't open " << argv[2] << " to write.\n";
+    	exit(1);
+    } if (!output1.good()) {
+    	std::cerr << "Can't open " << argv[3] << " to write.\n";
+    	exit(1);
+    } if (!output2.good()) {
+    	std::cerr << "Can't open " << argv[4] << " to write.\n";
+    	exit(1);
+    } if (!output3.good()) {
+    	std::cerr << "Can't open " << argv[5] << " to write.\n";
     	exit(1);
     }
 
     readRiderFile(riderInFile, riders);
-    readDriverFile(driverInFile, drivers); 
+    readDriverFile(driverInFile, drivers);
+
+    // request
+    // find number acct
+    // not found: bad input
+    // found: find driver, change data, output
+
+    // cancel
+    // find in rider, driver
+    // not found: bad input
+    // found: change account info
+
+    if (isPhoneNumber(inNum)) {
+    	
+    }
+
+
+	// drivers can be: 
+	// Available (waiting for a request)
+	// On the way to a pickup location (request accepted)
+	// During a trip
+
+	// riders can be:
+	// Ready to request
+	// Driver on the way (to pickup)
+	// During a trip
 
 	// Clean up: makes sure to delete all allocated memory from the list
 	for (list<Rider*>::iterator it = riders->begin(); it != riders->end(); it++) {
-
 		delete *it;
 	}
 	delete riders;
