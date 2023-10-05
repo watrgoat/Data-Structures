@@ -1,5 +1,8 @@
 #include "Rider.h"
 
+using std::string;
+
+// default constructor
 Rider::Rider()
 : firstName(""), lastName(""), gender(""), age(0), phoneNumber(""), rating(""), 
   pickupLocationName(""), pickupLatitude(0.0), pickupLongitude(0.0),
@@ -7,6 +10,7 @@ Rider::Rider()
   vehiclePreference(""), currentState(""), driverFirstName(""), 
   driverLastName(""), driverPhoneNumber("") {}
 
+// constructor
 Rider::Rider(const std::string& firstName,
              const std::string& lastName,
              const std::string& gender,
@@ -42,6 +46,7 @@ Rider::Rider(const std::string& firstName,
             driverLastName(driverLastName),
             driverPhoneNumber(driverPhoneNumber) {}
 
+// copy constructor
 Rider::Rider(const Rider& other) {
   firstName = other.getFirstName();
   lastName = other.getLastName();
@@ -61,6 +66,7 @@ Rider::Rider(const Rider& other) {
   driverLastName = other.getDriverLastName();
   driverPhoneNumber = other.getDriverPhoneNumber(); }
 
+// getters
 std::string Rider::getFirstName() const { return firstName; }
 std::string Rider::getLastName() const { return lastName; }
 std::string Rider::getGender() const { return gender; }
@@ -79,6 +85,7 @@ std::string Rider::getDriverFirstName() const { return driverFirstName; }
 std::string Rider::getDriverLastName() const { return driverLastName; }
 std::string Rider::getDriverPhoneNumber() const { return driverPhoneNumber; }
 
+// setters
 void Rider::setFirstName(const std::string& firstName) { this->firstName = firstName; }
 void Rider::setLastName(const std::string& lastName) { this->lastName = lastName; }
 void Rider::setGender(const std::string& gender) { this->gender = gender; }
