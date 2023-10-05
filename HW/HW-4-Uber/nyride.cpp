@@ -148,33 +148,44 @@ bool isPhoneNumber(const string &num) {
     return regex_match(num, pattern);
 }
 
-void searchDriverByNumber(const string &num, const list<Driver*>* &drivers) {
+void searchDriverByNumber(const string &num, list<Driver*>* &ds) {
 	// what to return here
 	// dont return anything
 	// call function on the iter that is found!!!
 	list<Driver*>::const_iterator it;
-	for (it = drivers->begin(); it!=drivers->end(); it++) {
+	for (it = ds->begin(); it!=ds->end(); it++) {
 		if ((*it)->getPhoneNumber() == num) {
 			break;
 		}
 	}
-	cout << "Found the driver: " << (*it)->getFirstName() << endl;
+	if (it!=ds->end()) {
+		cout << "Found the driver: " << (*it)->getFirstName() << endl;
+	} else {
+		cout << "Not in drivers\n";
+	}
+	
 }
 
-void searchRiderByNumber(const string &num, const list<Rider*>* &riders) {
+void searchRiderByNumber(const string &num, list<Rider*>* &rs) {
 	// loop over elements. break once found
 	list<Rider*>::const_iterator it;
-	for (it = riders->begin(); it!=riders->end(); it++) {
+	for (it = rs->begin(); it!=rs->end(); it++) {
 		if ((*it)->getPhoneNumber() == num) {
 			break;
 		}
 	}
-	cout << "Found the rider: " << (*it)->getFirstName() << endl;
+	if (it!=rs->end()) {
+		cout << "Found the rider: " << (*it)->getFirstName() << endl;
+	} else {
+		cout << "Not in riders\n";
+	}
 	// do stuff with it now
 }
 
 int main(int argc, char* argv[]) {
-
+	// command:
+	// valgrind -s --leak-check=full ./run.exe drivers.txt riders.txt output0.txt output1.txt output2.txt 737-781-9718 request
+	// g++ -g nyride.cpp Driver.cpp Rider.cpp -Wall -Wextra -o run.exe
 	if (argc>8 || argc<8) {
 		cerr << "ERROR: WRONG INPUT SIZE" << endl;
 		exit(1);
@@ -225,17 +236,23 @@ int main(int argc, char* argv[]) {
 
     if (isPhoneNumber(inNum)) {
     	// is request?
+    	cout << "valid" << endl;
     	if (requestType=="request") {
     		// assuming all phone numbers are unique
     		// would need diff logic if drivers and riders had crossover
-
+    		cout << "request\n";
+    		cout << "checking rider:\n";
+    		searchRiderByNumber(inNum, riders);
+    		cout << "checking driver:\n";
+    		searchDriverByNumber(inNum, drivers);
     		// check the driver and rider lists
-    		searchDriverByNumber()
+    		// searchDriverByNumber(inNum, drivers);
     	} else if (requestType=="cancel") {
     		// check from drivers
+    		searchDriverByNumber(inNum, drivers);
     	} else {
     		cerr << "ERROR: Invaid ride type - " << argv[7] << endl;
-    		exit(1)
+    		exit(1);
     	}
     } else {
     	// bad input

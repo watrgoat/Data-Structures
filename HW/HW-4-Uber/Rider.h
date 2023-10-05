@@ -1,9 +1,11 @@
 #ifndef RIDER_H
 #define RIDER_H
 
+#include <iostream>
+#include <fstream>
 #include <string>
 
-using std::string;
+using std::string, std::ostream, std::endl;
 
 class Rider {
 private:
@@ -26,9 +28,10 @@ private:
     string driverPhoneNumber;
 
 public:
+    // default constructor
     Rider();
     
-    // Constructor
+    // donstructor
     Rider(const string& firstName,
           const string& lastName,
           const string& gender,
@@ -88,5 +91,7 @@ public:
     void setDriverLastName(const string& driverLastName);
     void setDriverPhoneNumber(const string& driverPhoneNumber);
 };
+
+ostream& operator<<(ostream &out, const Rider &rider);
 
 #endif

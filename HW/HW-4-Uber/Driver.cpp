@@ -81,3 +81,8 @@ void Driver::setCurrentState(const string& currentState) { this->currentState = 
 void Driver::setRiderFirstName(const string& riderFirstName) { this->riderFirstName = riderFirstName; }
 void Driver::setRiderLastName(const string& riderLastName) { this->riderLastName = riderLastName; }
 void Driver::setRiderPhoneNumber(const string& riderPhoneNumber) { this->riderPhoneNumber = riderPhoneNumber; }
+
+// overload output steam operator
+ostream& operator<<(ostream &out, const Driver &driver) {
+  // print driver
+}

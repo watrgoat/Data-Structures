@@ -11,23 +11,23 @@ Rider::Rider()
   driverLastName(""), driverPhoneNumber("") {}
 
 // constructor
-Rider::Rider(const std::string& firstName,
-             const std::string& lastName,
-             const std::string& gender,
+Rider::Rider(const string& firstName,
+             const string& lastName,
+             const string& gender,
              int age,
-             const std::string& phoneNumber,
-             const std::string& rating,
-             const std::string& pickupLocationName,
+             const string& phoneNumber,
+             const string& rating,
+             const string& pickupLocationName,
              double pickupLatitude,
              double pickupLongitude,
-             const std::string& dropoffLocationName,
+             const string& dropoffLocationName,
              double dropoffLatitude,
              double dropoffLongitude,
-             const std::string& vehiclePreference,
-             const std::string& currentState,
-             const std::string& driverFirstName,
-             const std::string& driverLastName,
-             const std::string& driverPhoneNumber)
+             const string& vehiclePreference,
+             const string& currentState,
+             const string& driverFirstName,
+             const string& driverLastName,
+             const string& driverPhoneNumber)
           : firstName(firstName),
             lastName(lastName),
             gender(gender),
@@ -67,39 +67,45 @@ Rider::Rider(const Rider& other) {
   driverPhoneNumber = other.getDriverPhoneNumber(); }
 
 // getters
-std::string Rider::getFirstName() const { return firstName; }
-std::string Rider::getLastName() const { return lastName; }
-std::string Rider::getGender() const { return gender; }
+string Rider::getFirstName() const { return firstName; }
+string Rider::getLastName() const { return lastName; }
+string Rider::getGender() const { return gender; }
 int Rider::getAge() const { return age; }
-std::string Rider::getPhoneNumber() const { return phoneNumber; }
-std::string Rider::getRating() const { return rating; }
-std::string Rider::getPickupLocationName() const { return pickupLocationName; }
+string Rider::getPhoneNumber() const { return phoneNumber; }
+string Rider::getRating() const { return rating; }
+string Rider::getPickupLocationName() const { return pickupLocationName; }
 double Rider::getPickupLatitude() const { return pickupLatitude; }
 double Rider::getPickupLongitude() const { return pickupLongitude; }
-std::string Rider::getDropoffLocationName() const { return dropoffLocationName; }
+string Rider::getDropoffLocationName() const { return dropoffLocationName; }
 double Rider::getDropoffLatitude() const { return dropoffLatitude; }
 double Rider::getDropoffLongitude() const { return dropoffLongitude; }
-std::string Rider::getVehiclePreference() const { return vehiclePreference; }
-std::string Rider::getCurrentState() const { return currentState; }
-std::string Rider::getDriverFirstName() const { return driverFirstName; }
-std::string Rider::getDriverLastName() const { return driverLastName; }
-std::string Rider::getDriverPhoneNumber() const { return driverPhoneNumber; }
+string Rider::getVehiclePreference() const { return vehiclePreference; }
+string Rider::getCurrentState() const { return currentState; }
+string Rider::getDriverFirstName() const { return driverFirstName; }
+string Rider::getDriverLastName() const { return driverLastName; }
+string Rider::getDriverPhoneNumber() const { return driverPhoneNumber; }
 
 // setters
-void Rider::setFirstName(const std::string& firstName) { this->firstName = firstName; }
-void Rider::setLastName(const std::string& lastName) { this->lastName = lastName; }
-void Rider::setGender(const std::string& gender) { this->gender = gender; }
+void Rider::setFirstName(const string& firstName) { this->firstName = firstName; }
+void Rider::setLastName(const string& lastName) { this->lastName = lastName; }
+void Rider::setGender(const string& gender) { this->gender = gender; }
 void Rider::setAge(int age) { this->age = age; }
-void Rider::setPhoneNumber(const std::string& phoneNumber) { this->phoneNumber = phoneNumber; }
-void Rider::setRating(const std::string& rating) { this->rating = rating; }
-void Rider::setPickupLocationName(const std::string& locationName) { this->pickupLocationName = locationName; }
+void Rider::setPhoneNumber(const string& phoneNumber) { this->phoneNumber = phoneNumber; }
+void Rider::setRating(const string& rating) { this->rating = rating; }
+void Rider::setPickupLocationName(const string& locationName) { this->pickupLocationName = locationName; }
 void Rider::setPickupLatitude(double latitude) { this->pickupLatitude = latitude; }
 void Rider::setPickupLongitude(double longitude) { this->pickupLongitude = longitude; }
-void Rider::setDropoffLocationName(const std::string& locationName) { this->dropoffLocationName = locationName; }
+void Rider::setDropoffLocationName(const string& locationName) { this->dropoffLocationName = locationName; }
 void Rider::setDropoffLatitude(double latitude) { this->dropoffLatitude = latitude; }
 void Rider::setDropoffLongitude(double longitude) { this->dropoffLongitude = longitude; }
-void Rider::setVehiclePreference(const std::string& preference) { this->vehiclePreference = preference; }
-void Rider::setCurrentState(const std::string& state) { this->currentState = state; }
-void Rider::setDriverFirstName(const std::string& driverFirstName) { this->driverFirstName = driverFirstName; }
-void Rider::setDriverLastName(const std::string& driverLastName) { this->driverLastName = driverLastName; }
-void Rider::setDriverPhoneNumber(const std::string& driverPhoneNumber) { this->driverPhoneNumber = driverPhoneNumber; }
+void Rider::setVehiclePreference(const string& preference) { this->vehiclePreference = preference; }
+void Rider::setCurrentState(const string& state) { this->currentState = state; }
+void Rider::setDriverFirstName(const string& driverFirstName) { this->driverFirstName = driverFirstName; }
+void Rider::setDriverLastName(const string& driverLastName) { this->driverLastName = driverLastName; }
+void Rider::setDriverPhoneNumber(const string& driverPhoneNumber) { this->driverPhoneNumber = driverPhoneNumber; }
+
+// overload output stream operator
+ostream& operator<<(ostream &out, const Rider &rider) {
+  // print rider
+  out << rider.getFirstName() << endl;
+}

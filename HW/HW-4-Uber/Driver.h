@@ -1,9 +1,11 @@
 #ifndef DRIVER_H
 #define DRIVER_H
 
+#include <iostream>
+#include <fstream>
 #include <string>
 
-using std::string;
+using std::string, std::ostream, std::endl;
 
 class Driver {
 private:
@@ -73,5 +75,7 @@ public:
     void setRiderLastName(const string& riderLastName);
     void setRiderPhoneNumber(const string& riderPhoneNumber);
 };
+
+ostream& operator<<(ostream &out, const Driver &driver);
 
 #endif
