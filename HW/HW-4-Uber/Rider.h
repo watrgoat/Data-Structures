@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 
-using std::string, std::ostream, std::endl;
+using namespace std;
 
 class Rider {
 private:

@@ -148,7 +148,7 @@ bool isPhoneNumber(const string &num) {
     return regex_match(num, pattern);
 }
 
-void searchDriverByNumber(const string &num, list<Driver*>* &ds) {
+bool searchDriverByNumber(const string &num, list<Driver*>* &ds) {
 	// what to return here
 	// dont return anything
 	// call function on the iter that is found!!!
@@ -160,13 +160,15 @@ void searchDriverByNumber(const string &num, list<Driver*>* &ds) {
 	}
 	if (it!=ds->end()) {
 		cout << "Found the driver: " << (*it)->getFirstName() << endl;
+		return true;
 	} else {
 		cout << "Not in drivers\n";
+		return false;
 	}
 	
 }
 
-void searchRiderByNumber(const string &num, list<Rider*>* &rs) {
+bool searchRiderByNumber(const string &num, list<Rider*>* &rs) {
 	// loop over elements. break once found
 	list<Rider*>::const_iterator it;
 	for (it = rs->begin(); it!=rs->end(); it++) {
@@ -176,8 +178,10 @@ void searchRiderByNumber(const string &num, list<Rider*>* &rs) {
 	}
 	if (it!=rs->end()) {
 		cout << "Found the rider: " << (*it)->getFirstName() << endl;
+		return true;
 	} else {
 		cout << "Not in riders\n";
+		return false;
 	}
 	// do stuff with it now
 }
@@ -233,7 +237,7 @@ int main(int argc, char* argv[]) {
     // find in rider, driver
     // not found: bad input
     // found: change account info
-
+    bool found = false;
     if (isPhoneNumber(inNum)) {
     	// is request?
     	cout << "valid" << endl;
@@ -242,17 +246,19 @@ int main(int argc, char* argv[]) {
     		// would need diff logic if drivers and riders had crossover
     		cout << "request\n";
     		cout << "checking rider:\n";
-    		searchRiderByNumber(inNum, riders);
-    		cout << "checking driver:\n";
-    		searchDriverByNumber(inNum, drivers);
+
+    		found = searchRiderByNumber(inNum, riders);
+    		if (!found) {
+    			cout << "checking driver:\n";
+    			found = searchDriverByNumber(inNum, drivers);
+    		}
     		// check the driver and rider lists
     		// searchDriverByNumber(inNum, drivers);
     	} else if (requestType=="cancel") {
     		// check from drivers
     		searchDriverByNumber(inNum, drivers);
     	} else {
-    		cerr << "ERROR: Invaid ride type - " << argv[7] << endl;
-    		exit(1);
+    		cerr < "ERROR: Invaid ride type - " << argv[7] << endl;
     	}
     } else {
     	// bad input
