@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
+#include <cmath>
 #include "Rider.h"
 #include "Driver.h"
 
@@ -13,6 +14,7 @@ using namespace std;
 // what order should this be done
 // efficiency?
 // how to use std::list in this?
+
 
 void readDriverFile(ifstream &file, list<Driver*>* &inDrivers) {
 	string word;
@@ -72,6 +74,7 @@ void readDriverFile(ifstream &file, list<Driver*>* &inDrivers) {
 		}
 	}
 }
+
 
 void readRiderFile(ifstream &file, list<Rider*>* &inRiders) {
 	string word;
@@ -142,23 +145,49 @@ void readRiderFile(ifstream &file, list<Rider*>* &inRiders) {
 	}
 }
 
+
+// calculate the distance between two coordinates using Haversine formula
+double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    const double radiusOfEarth = 6371.0; // Earth's radius in kilometers
+
+    // convert latitude and longitude from degrees to radians
+    lat1 *= M_PI / 180.0;
+    lon1 *= M_PI / 180.0;
+    lat2 *= M_PI / 180.0;
+    lon2 *= M_PI / 180.0;
+
+    // Haversine formula
+    double dLat = lat2 - lat1;
+    double dLon = lon2 - lon1;
+    double a = sin(dLat / 2.0) * sin(dLat / 2.0) + cos(lat1) * cos(lat2) * sin(dLon / 2.0) * sin(dLon / 2.0);
+    double c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
+    // distance in kilometers
+    double distanceKM = radiusOfEarth * c;
+    // convert it to distance in miles
+    double distanceMiles = distanceKM * 0.621371;
+
+    return distanceMiles;
+}
+
+
 bool isPhoneNumber(const string &num) {
 	// regex pattern: follows xxx-xxx-xxxx digits only format
 	regex pattern("^\\d{3}-\\d{3}-\\d{4}$");
     return regex_match(num, pattern);
 }
 
-bool searchDriverByNumber(const string &num, list<Driver*>* &ds) {
+
+bool searchDriverByNumber(const string &num, list<Driver*>* &driverList, Driver* &dFound) {
 	// what to return here
 	// dont return anything
 	// call function on the iter that is found!!!
 	list<Driver*>::const_iterator it;
-	for (it = ds->begin(); it!=ds->end(); it++) {
+	for (it = driverList->begin(); it!=driverList->end(); it++) {
 		if ((*it)->getPhoneNumber() == num) {
 			break;
 		}
 	}
-	if (it!=ds->end()) {
+	if (it!=driverList->end()) {
 		cout << "Found the driver: " << (*it)->getFirstName() << endl;
 		return true;
 	} else {
@@ -168,15 +197,16 @@ bool searchDriverByNumber(const string &num, list<Driver*>* &ds) {
 	
 }
 
-bool searchRiderByNumber(const string &num, list<Rider*>* &rs) {
+
+bool searchRiderByNumber(const string &num, list<Rider*>* &riderList, Rider* &rFound) {
 	// loop over elements. break once found
-	list<Rider*>::const_iterator it;
-	for (it = rs->begin(); it!=rs->end(); it++) {
+	list<Rider*>::iterator it;
+	for (it = riderList->begin(); it!=riderList->end(); it++) {
 		if ((*it)->getPhoneNumber() == num) {
 			break;
 		}
 	}
-	if (it!=rs->end()) {
+	if (it!=riderList->end()) {
 		cout << "Found the rider: " << (*it)->getFirstName() << endl;
 		return true;
 	} else {
@@ -185,6 +215,28 @@ bool searchRiderByNumber(const string &num, list<Rider*>* &rs) {
 	}
 	// do stuff with it now
 }
+
+
+void writeDriverFound(ofstream &out, Rider* &rider, Driver* &driver) {
+	// Ride requested for user Rebecca, looking for an Economy vehicle.
+ 	// Pick Up Location: Williamsburg, Drop Off Location: Statue_of_Liberty.
+	// We have found the closest driver Elena(4.7) for you.
+	// Elena is now 7.9 miles away from you.
+
+	// get distance
+
+	out << "Ride requested for user " << rider->getFirstName() << ", looking for an " << rider->getVehiclePreference() << " vehicle.\n";
+	out << "Pick Up Location: " << rider->getPickupLocationName() << ", Drop off Location: " << rider->getDropoffLocationName() << ".\n";
+	out << "We have found the closest driver " << endl;
+}
+
+
+void writeDrivers(ofstream &out, list<Driver*>* &driverList) {
+
+	
+	return;
+}
+
 
 int main(int argc, char* argv[]) {
 	// command:
@@ -201,9 +253,9 @@ int main(int argc, char* argv[]) {
 
 	ifstream driverInFile(argv[1]);
 	ifstream riderInFile(argv[2]);
-	ofstream output1(argv[3]);
-	ofstream output2(argv[4]);
-	ofstream output3(argv[5]);
+	ofstream output0(argv[3]);
+	ofstream output1(argv[4]);
+	ofstream output2(argv[5]);
 	string inNum = argv[6];
 	string requestType = argv[7];
 
@@ -214,13 +266,13 @@ int main(int argc, char* argv[]) {
 	} if (!riderInFile.good()) {
     	std::cerr << "Can't open " << argv[2] << " to write.\n";
     	exit(1);
-    } if (!output1.good()) {
+    } if (!output0.good()) {
     	std::cerr << "Can't open " << argv[3] << " to write.\n";
     	exit(1);
-    } if (!output2.good()) {
+    } if (!output1.good()) {
     	std::cerr << "Can't open " << argv[4] << " to write.\n";
     	exit(1);
-    } if (!output3.good()) {
+    } if (!output2.good()) {
     	std::cerr << "Can't open " << argv[5] << " to write.\n";
     	exit(1);
     }
@@ -237,6 +289,10 @@ int main(int argc, char* argv[]) {
     // find in rider, driver
     // not found: bad input
     // found: change account info
+
+    Rider* riderFound;
+    Driver* driverFound;
+
     bool found = false;
     if (isPhoneNumber(inNum)) {
     	// is request?
@@ -247,18 +303,18 @@ int main(int argc, char* argv[]) {
     		cout << "request\n";
     		cout << "checking rider:\n";
 
-    		found = searchRiderByNumber(inNum, riders);
-    		if (!found) {
+    		bool foundRider = searchRiderByNumber(inNum, riders, riderFound);
+    		if (!foundRider) {
     			cout << "checking driver:\n";
-    			found = searchDriverByNumber(inNum, drivers);
+    			bool foundDriver = searchDriverByNumber(inNum, drivers, driverFound);
     		}
     		// check the driver and rider lists
     		// searchDriverByNumber(inNum, drivers);
     	} else if (requestType=="cancel") {
     		// check from drivers
-    		searchDriverByNumber(inNum, drivers);
+    		searchDriverByNumber(inNum, drivers, driverFound);
     	} else {
-    		cerr < "ERROR: Invaid ride type - " << argv[7] << endl;
+    		cerr << "ERROR: Invaid ride type - " << requestType << endl;
     	}
     } else {
     	// bad input

@@ -1,6 +1,6 @@
 #include "Driver.h"
 
-using std::string;
+using namespace std;
 
 // default constructor
 Driver::Driver()
@@ -85,4 +85,9 @@ void Driver::setRiderPhoneNumber(const string& riderPhoneNumber) { this->riderPh
 // overload output steam operator
 ostream& operator<<(ostream &out, const Driver &driver) {
   // print driver
+  out << driver.getFirstName() << ' ' << driver.getLastName() << ' ' << driver.getGender() << ' ' << driver.getAge() << ' ';
+  out << driver.getPhoneNumber() << ' ' << driver.getRating() << ' ' << driver.getCurrentLatitude() << ' ' << driver.getCurrentLongitude() << ' ';
+  out << driver.getVehicleType() << ' ' << driver.getCurrentState() << ' ' << driver.getRiderFirstName() << ' ' << driver.getRiderLastName() << ' ';
+  out << driver.getRiderPhoneNumber() << std::endl;
+  return out;
 }

@@ -1,6 +1,6 @@
 #include "Rider.h"
 
-using std::string;
+using namespace std;
 
 // default constructor
 Rider::Rider()
@@ -107,5 +107,6 @@ void Rider::setDriverPhoneNumber(const string& driverPhoneNumber) { this->driver
 // overload output stream operator
 ostream& operator<<(ostream &out, const Rider &rider) {
   // print rider
-  out << rider.getFirstName() << endl;
+  out << rider.getFirstName() << ' ' << rider.getLastName() << ' ' << rider.getGender() << ' ' << rider.getAge() << ' ' << rider.getPhoneNumber() << ' ';
+  out << rider.getPickupLocationName() << out.getPickupLatitude() << out.get
 }
