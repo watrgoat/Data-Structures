@@ -110,7 +110,7 @@ ostream& operator<<(ostream &out, const Rider &rider) {
   out << rider.getFirstName() << ' ' << rider.getLastName() << ' ' << rider.getGender() << ' ' << rider.getAge() << ' ' << rider.getPhoneNumber() << ' ';
   out << rider.getPickupLocationName() << rider.getPickupLatitude() << rider.getPickupLongitude() << ' ' << rider.getDropoffLocationName() << ' ';
   out << rider.getDropoffLatitude() << ' ' << rider.getDropoffLongitude() << ' ' << rider.getVehiclePreference() << ' ' << rider.getCurrentState() << ' ';
-  out << rider.getDriverFirstName() << ' ' << rider.getDriverLastName() << ' ' << rider.getDriverPhoneNumber() << endl;
+  out << rider.getDriverFirstName() << ' ' << rider.getDriverLastName() << ' ' << rider.getDriverPhoneNumber();
 
   return out;
 }

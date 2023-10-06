@@ -3,6 +3,8 @@
 #include <fstream>
 #include <regex>
 #include <cmath>
+#include <iomanip>
+#include <limits>
 #include "Rider.h"
 #include "Driver.h"
 
@@ -24,6 +26,7 @@ void readDriverFile(ifstream &file, list<Driver*>* &inDrivers) {
 	// assign values to temp Driver obj then adds to list
 	Driver curr;
 	while (file >> word) {
+		// break statements are required to get no errors
 		switch (i) {
 		case 0:
 			curr.setFirstName(word);
@@ -177,66 +180,146 @@ bool isPhoneNumber(const string &num) {
 }
 
 
-bool searchDriverByNumber(const string &num, list<Driver*>* &driverList, Driver* &dFound) {
+void searchDriverByNumber(const string &num, list<Driver*>* &driverList, Driver* &dFound) {
 	// what to return here
 	// dont return anything
 	// call function on the iter that is found!!!
 	list<Driver*>::const_iterator it;
 	for (it = driverList->begin(); it!=driverList->end(); it++) {
 		if ((*it)->getPhoneNumber() == num) {
+			dFound = *it;
 			break;
 		}
 	}
-	if (it!=driverList->end()) {
-		cout << "Found the driver: " << (*it)->getFirstName() << endl;
-		return true;
-		// update the driver pointer to the driver that has been found
-		dFound = *it;
-	} else {
-		cout << "Not in drivers\n";
-		return false;
-	}
-	
+	return;
 }
 
 
-bool searchRiderByNumber(const string &num, list<Rider*>* &riderList, Rider* &rFound) {
+void searchRiderByNumber(const string &num, list<Rider*>* &riderList, Rider* &rFound) {
 	// loop over elements. break once found
 	list<Rider*>::iterator it;
 	for (it = riderList->begin(); it!=riderList->end(); it++) {
 		if ((*it)->getPhoneNumber() == num) {
+			rFound = *it;
 			break;
 		}
 	}
-	if (it!=riderList->end()) {
-		cout << "Found the rider: " << (*it)->getFirstName() << endl;
-		return true;
-		rFound = *it;
-	} else {
-		cout << "Not in riders\n";
-		return false;
-	}
-	// do stuff with it now
+
+	return;
 }
 
 
-void writeDriverFound(ofstream &out, Rider* &rider, Driver* &driver) {
+void findDriverForRider(Rider* &inRider, list<Driver*>* driverList, Driver* &outDriver) {
+
+	list<Driver*>::iterator it;
+	double minDist = std::numeric_limits<double>::max();
+	double currDist;
+
+	// iterates over list finding the minimum distanced driver to the current requesting rider
+	for (it = driverList->begin(); it!=driverList->end(); it++) {
+		// if the driver is available
+		if ((*it)->getCurrentState() == "Available") {
+			// check if driver fits preferred vehicle type
+			if ((*it)->getVehicleType() != inRider->getVehiclePreference()) {
+				// check the distance to rider
+				currDist = calculateDistance(inRider->getPickupLatitude(), inRider->getPickupLongitude(), (*it)->getCurrentLatitude(), (*it)->getCurrentLongitude());
+				if (currDist < minDist) {
+					// edit the mins
+					minDist = currDist;
+					outDriver = *it;
+				}
+			}
+		}
+	}
+
+	return;
+}
+
+
+void riderStatus(ofstream &out, Rider* &r) {
+	if (r->getCurrentState() == "Driver_on_the_way") {
+		out << "You have already requested a ride and your driver is on the way to the pickup location." << endl;
+	} else {
+		out << "You can not request a ride at this moment as you are already on a trip." << endl;
+	}
+	return;
+}
+
+void writeRequestNoDriver(ofstream &out, Rider* &rider) {
+
+	out << "Ride requested for user " << rider->getFirstName() << ", looking for an " << rider->getVehiclePreference() << " vehicle.\n";
+	out << "Pick Up Location: " << rider->getPickupLocationName() << ", Drop off Location: " << rider->getDropoffLocationName() << ".\n";
+	out << "Sorry we can not find a driver for you at this moment.\n";
+
+	return;
+}
+
+void writeRequest(ofstream &out, Rider* &rider, Driver* &driver) {
 	// Ride requested for user Rebecca, looking for an Economy vehicle.
  	// Pick Up Location: Williamsburg, Drop Off Location: Statue_of_Liberty.
 	// We have found the closest driver Elena(4.7) for you.
 	// Elena is now 7.9 miles away from you.
 
-	// get distance
+	// get distance from rider to driver
+	double dist = calculateDistance(rider->getPickupLatitude(), rider->getPickupLongitude(), driver->getCurrentLatitude(), driver->getCurrentLongitude());
 
 	out << "Ride requested for user " << rider->getFirstName() << ", looking for an " << rider->getVehiclePreference() << " vehicle.\n";
 	out << "Pick Up Location: " << rider->getPickupLocationName() << ", Drop off Location: " << rider->getDropoffLocationName() << ".\n";
-	out << "We have found the closest driver " << endl;
+	out << "We have found the closest driver " << driver->getFirstName() << "(" << driver->getRating() << ") for you.\n";
+	out << driver->getFirstName() << " is now " << std::fixed << std::setprecision(1) << dist << " miles away from you.\n";
+
+	return;
 }
 
+// car type then calc dist
+// proximity and 
+void fillRiderRequest(ofstream &out, string num, list<Rider*>* riderList, list<Driver*>* driverList) {
+	// inNum, riders, drivers, out0
+	Rider* rider = NULL;
+	Driver* driver = NULL;
+
+	searchRiderByNumber(num, riderList, rider);
+
+	if (rider==NULL) {
+		out << "Account does not exist.\n";
+		return;
+	}
+	cout << "Found the rider\n";
+
+	// search for driver for the rider
+	// if the rider was already doing some other action aka not available
+	if (rider->getCurrentState() != "Ready_to_request") {
+		riderStatus(out, rider);
+		return;
+	}
+
+	findDriverForRider(rider, driverList, driver);
+
+	if (driver==NULL) {
+		// no driver found
+		writeRequestNoDriver(out, rider);
+		return;
+	}
+	cout << "found a driver for rider" << endl;
+	// found a driver
+	writeRequest(out, rider, driver);
+	// check the driver and rider lists
+	// searchDriverByNumber(inNum, drivers);
+}
+
+void writeRiders(ofstream &out, list<Rider*>* &riderList) {
+	list<Rider*>::iterator it;
+	for (it=riderList->begin(); it!=riderList->end(); it++) {
+		out << **it << endl;
+	}
+	return;
+}
 
 void writeDrivers(ofstream &out, list<Driver*>* &driverList) {
-
-	
+	list<Driver*>::iterator it;
+	for (it=driverList->begin(); it!=driverList->end(); it++) {
+		out << **it << endl;
+	}
 	return;
 }
 
@@ -293,11 +376,9 @@ int main(int argc, char* argv[]) {
     // not found: bad input
     // found: change account info
 
-    Rider* riderFound = NULL;
-    Driver* driverFound = NULL;
+    Rider* rider = NULL;
+    Driver* driver = NULL;
 
-    bool foundDriver = false;
-    bool foundRider = false;
     bool badNumber = false;
 
     if (isPhoneNumber(inNum)) {
@@ -306,14 +387,9 @@ int main(int argc, char* argv[]) {
     	if (requestType=="request") {
     		// assuming all phone numbers are unique
     		// would need diff logic if drivers and riders had crossover
-    		cout << "request\n";
-    		cout << "checking rider:\n";
 
-    		foundRider = searchRiderByNumber(inNum, riders, riderFound);
-    		if (foundRider) {
-    			cout << "Found a rider\n";
-    			foundDriver = searchDriverByNumber(inNum, drivers, driverFound);
-    		}
+    		fillRiderRequest(output0, inNum, riders, drivers);
+
     		// check the driver and rider lists
     		// searchDriverByNumber(inNum, drivers);
     	} else if (requestType=="cancel") {
@@ -321,13 +397,17 @@ int main(int argc, char* argv[]) {
     		cout << "cancel\n";
     		cout << "checking riders\n";
 
-    		foundRider = searchRiderByNumber(inNum, riders, riderFound);
-    		if (!foundRider) {
-    			cout << "not in riders\n";
+    		searchRiderByNumber(inNum, riders, rider);
+    		if (rider!=NULL) {
+    			// cancel this riders drive
     			cout << "checking driver:\n";
-    			foundDriver = searchDriverByNumber(inNum, drivers, driverFound);
+    			
     		} else {
-    			cout << "found a rider to cancel\n";
+    			// search for driver
+    			searchDriverByNumber(inNum, drivers, driver);
+    			if (driver!=NULL) {
+    				// cancel this drivers stuff
+    			}
     		}
     	} else {
     		cerr << "ERROR: Invaid ride type - " << requestType << endl;
@@ -336,10 +416,6 @@ int main(int argc, char* argv[]) {
     	// bad input
     	output0 << "Phone number is invalid.\n";
     	badNumber = true;
-    }
-
-    if (!foundRider && !foundDriver && !badNumber) {
-    	output0 << "Account does not exist.\n";
     }
 
 
