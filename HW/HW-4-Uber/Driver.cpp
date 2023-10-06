@@ -89,5 +89,6 @@ ostream& operator<<(ostream &out, const Driver &driver) {
   out << driver.getPhoneNumber() << ' ' << driver.getRating() << ' ' << driver.getCurrentLatitude() << ' ' << driver.getCurrentLongitude() << ' ';
   out << driver.getVehicleType() << ' ' << driver.getCurrentState() << ' ' << driver.getRiderFirstName() << ' ' << driver.getRiderLastName() << ' ';
   out << driver.getRiderPhoneNumber() << std::endl;
+  
   return out;
 }

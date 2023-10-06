@@ -190,6 +190,8 @@ bool searchDriverByNumber(const string &num, list<Driver*>* &driverList, Driver*
 	if (it!=driverList->end()) {
 		cout << "Found the driver: " << (*it)->getFirstName() << endl;
 		return true;
+		// update the driver pointer to the driver that has been found
+		dFound = *it;
 	} else {
 		cout << "Not in drivers\n";
 		return false;
@@ -209,6 +211,7 @@ bool searchRiderByNumber(const string &num, list<Rider*>* &riderList, Rider* &rF
 	if (it!=riderList->end()) {
 		cout << "Found the rider: " << (*it)->getFirstName() << endl;
 		return true;
+		rFound = *it;
 	} else {
 		cout << "Not in riders\n";
 		return false;
@@ -290,10 +293,13 @@ int main(int argc, char* argv[]) {
     // not found: bad input
     // found: change account info
 
-    Rider* riderFound;
-    Driver* driverFound;
+    Rider* riderFound = NULL;
+    Driver* driverFound = NULL;
 
-    bool found = false;
+    bool foundDriver = false;
+    bool foundRider = false;
+    bool badNumber = false;
+
     if (isPhoneNumber(inNum)) {
     	// is request?
     	cout << "valid" << endl;
@@ -303,34 +309,39 @@ int main(int argc, char* argv[]) {
     		cout << "request\n";
     		cout << "checking rider:\n";
 
-    		bool foundRider = searchRiderByNumber(inNum, riders, riderFound);
-    		if (!foundRider) {
-    			cout << "checking driver:\n";
-    			bool foundDriver = searchDriverByNumber(inNum, drivers, driverFound);
+    		foundRider = searchRiderByNumber(inNum, riders, riderFound);
+    		if (foundRider) {
+    			cout << "Found a rider\n";
+    			foundDriver = searchDriverByNumber(inNum, drivers, driverFound);
     		}
     		// check the driver and rider lists
     		// searchDriverByNumber(inNum, drivers);
     	} else if (requestType=="cancel") {
     		// check from drivers
-    		searchDriverByNumber(inNum, drivers, driverFound);
+    		cout << "cancel\n";
+    		cout << "checking riders\n";
+
+    		foundRider = searchRiderByNumber(inNum, riders, riderFound);
+    		if (!foundRider) {
+    			cout << "not in riders\n";
+    			cout << "checking driver:\n";
+    			foundDriver = searchDriverByNumber(inNum, drivers, driverFound);
+    		} else {
+    			cout << "found a rider to cancel\n";
+    		}
     	} else {
     		cerr << "ERROR: Invaid ride type - " << requestType << endl;
     	}
     } else {
     	// bad input
-    	cout << "Phone number is invalid.\n";
+    	output0 << "Phone number is invalid.\n";
+    	badNumber = true;
     }
 
+    if (!foundRider && !foundDriver && !badNumber) {
+    	output0 << "Account does not exist.\n";
+    }
 
-	// drivers can be: 
-	// Available (waiting for a request)
-	// On the way to a pickup location (request accepted)
-	// During a trip
-
-	// riders can be:
-	// Ready to request
-	// Driver on the way (to pickup)
-	// During a trip
 
 	// Clean up: makes sure to delete all allocated memory from the list
 	for (list<Rider*>::iterator it = riders->begin(); it != riders->end(); it++) {
