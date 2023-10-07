@@ -1,4 +1,4 @@
-Ride requested for user Amy, looking for an Premium vehicle.
-Pick Up Location: The_Met_Cloisters, Drop off Location: Brooklyn_Navy_Yard.
-We have found the closest driver Robert(3.2) for you.
-Robert is now 2.2 miles away from you.
+Ride requested for user Rebecca, looking for an Economy vehicle.
+Pick Up Location: Williamsburg, Drop off Location: Statue_of_Liberty.
+We have found the closest driver Elena(4.7) for you.
+Elena is now 7.9 miles away from you.
