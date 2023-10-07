@@ -194,18 +194,43 @@ void searchDriverByNumber(const string &num, list<Driver*>* &driverList, Driver*
 	return;
 }
 
+Rider* searchRiderByNumber(const string &num, const list<Rider*>& riderList) {
+    auto frontIt = riderList.begin();
+    auto backIt = riderList.end(); // Note: end() is one past the last element.
+    --backIt; // So we start from the actual last element.
 
-void searchRiderByNumber(const string &num, list<Rider*>* &riderList, Rider* &rFound) {
-	// loop over elements. break once found
+    while (frontIt != riderList.end() && backIt != riderList.begin() && frontIt != backIt) {
+        if ((*frontIt)->getPhoneNumber() == num) {
+            return *frontIt;
+        }
+        if ((*backIt)->getPhoneNumber() == num) {
+            return *backIt;
+        }
+        
+        ++frontIt;
+        if (frontIt != backIt) { // Ensure they haven't met yet.
+            --backIt;
+        }
+    }
+
+    // Handle the scenario where there's an odd number of elements, 
+    // and frontIt and backIt point to the same element.
+    if (frontIt == backIt && (*frontIt)->getPhoneNumber() == num) {
+        return *frontIt;
+    }
+
+    return nullptr;
+}
+
+
+Rider* searchRiderByNumber(const string &num, const list<Rider*>& riderList) {
 	list<Rider*>::iterator it;
-	for (it = riderList->begin(); it!=riderList->end(); it++) {
-		if ((*it)->getPhoneNumber() == num) {
-			rFound = *it;
-			break;
-		}
-	}
-
-	return;
+    for (it = riderList.begin(); it != riderList.end(); ++it) {
+        if ((*it)->getPhoneNumber() == num) {
+            return *it;
+        }
+    }
+    return NULL;
 }
 
 
@@ -273,7 +298,7 @@ void writeRequest(ofstream &out, Rider* &rider, Driver* &driver) {
 
 // car type then calc dist
 // proximity and 
-void fillRiderRequest(ofstream &out, string num, list<Rider*>* riderList, list<Driver*>* driverList) {
+void fillRequest(ofstream &out, string num, list<Rider*>* riderList, list<Driver*>* driverList) {
 	// inNum, riders, drivers, out0
 	Rider* rider = NULL;
 	Driver* driver = NULL;
@@ -301,10 +326,51 @@ void fillRiderRequest(ofstream &out, string num, list<Rider*>* riderList, list<D
 		return;
 	}
 	cout << "found a driver for rider" << endl;
+
 	// found a driver
 	writeRequest(out, rider, driver);
-	// check the driver and rider lists
-	// searchDriverByNumber(inNum, drivers);
+
+	// edit the rider and driver that have been matched
+	rider->setCurrentState("Driver_on_the_way");
+	rider->setDriverFirstName(driver->getFirstName());
+	rider->setDriverLastName(driver->getLastName());
+	rider->setDriverPhoneNumber(driver->getPhoneNumber());
+
+	driver->setCurrentState("On_the_way_to_pickup");
+	driver->setRiderFirstName(rider->getFirstName());
+	driver->setRiderLastName(rider->getLastName());
+	driver->setRiderPhoneNumber(rider->getPhoneNumber());
+}
+
+void fillCancel(ofstream &out, string num, list<Rider*>* &riderList, list<Driver*>* &driverList) {
+
+	Rider* rider = NULL;
+	Driver* driver = NULL;
+
+	searchRiderByNumber(num, riderList, rider);
+
+	// rider not found
+	if (rider!=NULL) {
+		// do all the rider functons
+
+		return;
+	}
+
+	searchDriverByNumber(num, driverList, driver);
+
+	if (driver!=NULL) {
+		// do all the driver functions
+
+		return;
+	}
+
+	// if i get here then no rider or driver was found with that number
+
+
+	// is the driver canceling?
+	// is the rider canceling?
+
+	// 
 }
 
 void writeRiders(ofstream &out, list<Rider*>* &riderList) {
@@ -379,45 +445,35 @@ int main(int argc, char* argv[]) {
     Rider* rider = NULL;
     Driver* driver = NULL;
 
-    bool badNumber = false;
 
+    // is the phone number valid
     if (isPhoneNumber(inNum)) {
-    	// is request?
-    	cout << "valid" << endl;
+
+    	// checks request
     	if (requestType=="request") {
-    		// assuming all phone numbers are unique
-    		// would need diff logic if drivers and riders had crossover
 
-    		fillRiderRequest(output0, inNum, riders, drivers);
+    		fillRequest(output0, inNum, riders, drivers);
 
-    		// check the driver and rider lists
-    		// searchDriverByNumber(inNum, drivers);
     	} else if (requestType=="cancel") {
-    		// check from drivers
-    		cout << "cancel\n";
-    		cout << "checking riders\n";
 
-    		searchRiderByNumber(inNum, riders, rider);
-    		if (rider!=NULL) {
-    			// cancel this riders drive
-    			cout << "checking driver:\n";
-    			
-    		} else {
-    			// search for driver
-    			searchDriverByNumber(inNum, drivers, driver);
-    			if (driver!=NULL) {
-    				// cancel this drivers stuff
-    			}
-    		}
+    		// figure out how to cance
+    		fillCancel()
+
     	} else {
     		cerr << "ERROR: Invaid ride type - " << requestType << endl;
     	}
     } else {
     	// bad input
     	output0 << "Phone number is invalid.\n";
-    	badNumber = true;
     }
 
+    writeRiders(output1, riders);
+    writeDrivers(output2, drivers);
+
+    // closes the outputs
+    output0.close();
+    output1.close();
+    output2.close();
 
 	// Clean up: makes sure to delete all allocated memory from the list
 	for (list<Rider*>::iterator it = riders->begin(); it != riders->end(); it++) {
