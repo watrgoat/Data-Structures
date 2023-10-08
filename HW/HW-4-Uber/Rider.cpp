@@ -108,9 +108,9 @@ void Rider::setDriverPhoneNumber(const string& driverPhoneNumber) { this->driver
 ostream& operator<<(ostream &out, const Rider &rider) {
   // print rider
   out << rider.getFirstName() << ' ' << rider.getLastName() << ' ' << rider.getGender() << ' ' << rider.getAge() << ' ' << rider.getPhoneNumber() << ' ';
-  out << rider.getPickupLocationName() << ' ' << rider.getPickupLatitude() << ' ' << rider.getPickupLongitude() << ' ' << rider.getDropoffLocationName() << ' ';
-  out << rider.getDropoffLatitude() << ' ' << rider.getDropoffLongitude() << ' ' << rider.getVehiclePreference() << ' ' << rider.getCurrentState() << ' ';
-  out << rider.getDriverFirstName() << ' ' << rider.getDriverLastName() << ' ' << rider.getDriverPhoneNumber();
+  out << rider.getRating() << ' ' << rider.getPickupLocationName() << ' ' << rider.getPickupLatitude() << ' ' << rider.getPickupLongitude() << ' ';
+  out << rider.getDropoffLocationName() << ' ' << rider.getDropoffLatitude() << ' ' << rider.getDropoffLongitude() << ' ' << rider.getVehiclePreference() << ' ';
+  out << rider.getCurrentState() << ' ' << rider.getDriverFirstName() << ' ' << rider.getDriverLastName() << ' ' << rider.getDriverPhoneNumber();
 
   return out;
 }

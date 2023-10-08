@@ -10,23 +10,30 @@
 
 using namespace std;
 
-// main uber functions
-// what is it asking for?
-// large file outline?
-// what order should this be done
-// efficiency?
-// how to use std::list in this?
+/*	Simplfied Uber:
+	
+	takes 7 arguments on top of the run file
+	1. drivers input file
+	2. riders input file
+	3. users output file from input command
+	4. drivers output file
+	5. riders output file
+	6. input phone number
+	7. ride request or cancel
+	
+*/
 
-
+// reads each driver into the driver list
 void readDriverFile(ifstream &file, list<Driver*>* &inDrivers) {
 	string word;
 
 	int i = 0;
 	// loop over driver text
-	// assign values to temp Driver obj then adds to list
+	// assign values to temp Driver obj then add to list
 	Driver curr;
 	while (file >> word) {
 		// break statements are required to get no errors
+		// switch determines differnt drivers
 		switch (i) {
 		case 0:
 			curr.setFirstName(word);
@@ -71,6 +78,7 @@ void readDriverFile(ifstream &file, list<Driver*>* &inDrivers) {
 		i++;
 		if (i>12) {
 			i=0;
+			// put driver on the heap and add to list
 			Driver* d = new Driver(curr);
 			inDrivers->push_back(d);
 			Driver curr;
@@ -78,13 +86,15 @@ void readDriverFile(ifstream &file, list<Driver*>* &inDrivers) {
 	}
 }
 
-
+// reads each rider into the rider list
 void readRiderFile(ifstream &file, list<Rider*>* &inRiders) {
 	string word;
 
 	int i = 0;
 	Rider curr;
+	// loop over input rider file
 	while (file >> word) {
+		// switch determine different riders
 		switch (i) {
 		case 0:
 			curr.setFirstName(word);
@@ -141,6 +151,7 @@ void readRiderFile(ifstream &file, list<Rider*>* &inRiders) {
 		i++;
 		if (i>16) {
 			i=0;
+			// add rider to heap and push to back
 			Rider* r = new Rider(curr);
 			inRiders->push_back(r);
 			Rider curr;
@@ -172,16 +183,17 @@ double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     return distanceMiles;
 }
 
-
+// checks if string is in phone num format
 bool isPhoneNumber(const string &num) {
 	// regex pattern: follows xxx-xxx-xxxx digits only format
 	regex pattern("^\\d{3}-\\d{3}-\\d{4}$");
     return regex_match(num, pattern);
 }
 
-
+// returns driver from driver list based on phone number input
 Driver* searchDriverByNumber(const string &num, list<Driver*> &driverList) {
 	list<Driver*>::iterator it;
+	// iterate over drivers and return if matches phone number
 	for (it = driverList.begin(); it!=driverList.end(); it++) {
 		if ((*it)->getPhoneNumber() == num) {
 			return *it;
@@ -190,9 +202,10 @@ Driver* searchDriverByNumber(const string &num, list<Driver*> &driverList) {
 	return NULL;
 }
 
-
+// search for rider by a phone number and return the pointer to that rider
 Rider* searchRiderByNumber(const string &num, list<Rider*> &riderList) {
 	list<Rider*>::iterator it;
+	// loops through riders returns when finding proper phone number
     for (it = riderList.begin(); it != riderList.end(); ++it) {
         if ((*it)->getPhoneNumber() == num) {
             return *it;
@@ -201,7 +214,7 @@ Rider* searchRiderByNumber(const string &num, list<Rider*> &riderList) {
     return NULL;
 }
 
-
+// searches for a driver for a specified rider, returns driver for that rider
 Driver* findDriverForRider(Rider* &inRider, list<Driver*> &driverList) {
 	list<Driver*>::iterator it;
 	double minDist = std::numeric_limits<double>::max();
@@ -228,6 +241,7 @@ Driver* findDriverForRider(Rider* &inRider, list<Driver*> &driverList) {
 }
 
 
+// outputs the status of the rider if it isnt available
 void riderStatus(ofstream &out, Rider* &r) {
 	if (r->getCurrentState() == "Driver_on_the_way") {
 		out << "You have already requested a ride and your driver is on the way to the pickup location." << endl;
@@ -237,6 +251,7 @@ void riderStatus(ofstream &out, Rider* &r) {
 	return;
 }
 
+// writes the request for when no driver is found
 void writeRequestNoDriver(ofstream &out, Rider* &rider) {
 	// a vs an
 	if (rider->getVehiclePreference()=="Economy") {
@@ -251,15 +266,10 @@ void writeRequestNoDriver(ofstream &out, Rider* &rider) {
 	return;
 }
 
+// write function for a request being filled out
 void writeRequest(ofstream &out, Rider* &rider, Driver* &driver) {
-	// Ride requested for user Rebecca, looking for an/a Economy vehicle.
- 	// Pick Up Location: Williamsburg, Drop Off Location: Statue_of_Liberty.
-	// We have found the closest driver Elena(4.7) for you.
-	// Elena is now 7.9 miles away from you.
 
-	// a vs an
-
-	// get distance from rider to driver
+	// get distance from rider to driver and truncates to 1 decimal place
 	double dist = calculateDistance(rider->getPickupLatitude(), rider->getPickupLongitude(), driver->getCurrentLatitude(), driver->getCurrentLongitude());
 	dist = int(dist*10)/10.0f;
 
@@ -269,40 +279,42 @@ void writeRequest(ofstream &out, Rider* &rider, Driver* &driver) {
 		out << "Ride requested for user " << rider->getFirstName() << ", looking for a " << rider->getVehiclePreference() << " vehicle." << endl;
 	}
 
-	out << "Pick Up Location: " << rider->getPickupLocationName() << ", Drop off Location: " << rider->getDropoffLocationName() << "." << endl;
+	out << "Pick Up Location: " << rider->getPickupLocationName() << ", Drop Off Location: " << rider->getDropoffLocationName() << "." << endl;
 	out << "We have found the closest driver " << driver->getFirstName() << "(" << driver->getRating() << ") for you." << endl;
 	out << driver->getFirstName() << " is now " << dist << " miles away from you." << endl;
 
 	return;
 }
 
-// car type then calc dist
-// proximity and 
+// helper func for when a driver is requested
 void fillRequest(ofstream &out, string num, list<Rider*>* riderList, list<Driver*>* driverList) {
-	// inNum, riders, drivers, out0
+	
+	// get rider from number
 	Rider* rider = searchRiderByNumber(num, *riderList);
 
+	// exit if rider was not found
 	if (rider==NULL) {
 		out << "Account does not exist." << endl;
 		return;
 	}
 
-	// search for driver for the rider
-	// if the rider was already doing some other action aka not available
+	
+	// exit if rider was not available for ride
 	if (rider->getCurrentState() != "Ready_to_request") {
 		riderStatus(out, rider);
 		return;
 	}
-
+	
+	// find driver for the rider
 	Driver* driver = findDriverForRider(rider, *driverList);
 
+	// exit if no driver found
 	if (driver==NULL) {
-		// no driver found
 		writeRequestNoDriver(out, rider);
 		return;
 	}
 
-	// found a driver
+	// write the request into ouput
 	writeRequest(out, rider, driver);
 
 	// edit the rider and driver that have been matched
@@ -317,6 +329,7 @@ void fillRequest(ofstream &out, string num, list<Rider*>* riderList, list<Driver
 	driver->setRiderPhoneNumber(rider->getPhoneNumber());
 }
 
+// helper func for removing driver and rider status
 void removeStatus(Rider* r, Driver* d) {
 	d->setCurrentState("Available");
 	d->setRiderFirstName("null");
@@ -329,11 +342,12 @@ void removeStatus(Rider* r, Driver* d) {
 	r->setDriverPhoneNumber("null");
 }
 
+// helper func fullfilling a cancel request
 void fillCancel(ofstream &out, string num, list<Rider*>* &riderList, list<Driver*>* &driverList) {
 
 	Rider* rider = searchRiderByNumber(num, *riderList);
 
-	// rider not found
+	// rider found fullfill rider cancel
 	if (rider!=NULL) {
 
 		// check rider for otw status
@@ -341,7 +355,7 @@ void fillCancel(ofstream &out, string num, list<Rider*>* &riderList, list<Driver
 			out << "You can only cancel a ride request if your driver is currently on the way to the pickup location." << endl;
 			return;
 		}
-		// cancel
+		
 		// find driver for that rider
 		Driver* driver = searchDriverByNumber(rider->getDriverPhoneNumber(), *driverList);
 
@@ -356,8 +370,10 @@ void fillCancel(ofstream &out, string num, list<Rider*>* &riderList, list<Driver
 		return;
 	}
 
+	// rider not found so search for driver
 	Driver* driver = searchDriverByNumber(num, *driverList);
 
+	// if driver found fullfill driver cancel
 	if (driver!=NULL) {
 		// do all the driver functions
 		if (driver->getCurrentState()!="On_the_way_to_pickup") {
@@ -390,6 +406,7 @@ void fillCancel(ofstream &out, string num, list<Rider*>* &riderList, list<Driver
 	return;
 }
 
+// write a 
 void writeRiders(ofstream &out, list<Rider*>* &riderList) {
 	list<Rider*>::iterator it;
 	for (it=riderList->begin(); it!=riderList->end(); it++) {
@@ -408,9 +425,6 @@ void writeDrivers(ofstream &out, list<Driver*>* &driverList) {
 
 
 int main(int argc, char* argv[]) {
-	// command:
-	// valgrind -s --leak-check=full ./run.exe drivers.txt riders.txt output0.txt output1.txt output2.txt 737-781-9718 request
-	// g++ -g nyride.cpp Driver.cpp Rider.cpp -Wall -Wextra -o run.exe
 	if (argc>8 || argc<8) {
 		cerr << "ERROR: WRONG INPUT SIZE" << endl;
 		exit(1);
@@ -420,6 +434,7 @@ int main(int argc, char* argv[]) {
 	list<Rider*> *riders = new list<Rider*>;
 	list<Driver*> *drivers = new list<Driver*>;
 
+	// assign input args
 	ifstream driverInFile(argv[1]);
 	ifstream riderInFile(argv[2]);
 	ofstream output0(argv[3]);
@@ -446,21 +461,11 @@ int main(int argc, char* argv[]) {
     	exit(1);
     }
 
+    // read in the rider and driver input files
     readRiderFile(riderInFile, riders);
     readDriverFile(driverInFile, drivers);
 
-    // request
-    // find number acct
-    // not found: bad input
-    // found: find driver, change data, output
-
-    output0 << fixed << setprecision(1);
-
-    // cancel
-    // find in rider, driver
-    // not found: bad input
-    // found: change account info
-    // is the phone number valid
+    // check for valid phone num
     if (isPhoneNumber(inNum)) {
 
     	// checks request
@@ -477,10 +482,11 @@ int main(int argc, char* argv[]) {
     		cerr << "ERROR: Invaid ride type - " << requestType << endl;
     	}
     } else {
-    	// bad input
+    	// bad number
     	output0 << "Phone number is invalid." << endl;
     }
     
+    // writes the updated driver and riders out to files.
     writeDrivers(output1, drivers);
     writeRiders(output2, riders);
 
