@@ -3,6 +3,8 @@
 #include <string>
 #include "Node.h"
 
+// assume all input phone numbers are valid and have an acct
+
 int main(int argc, char* argv[]) {
 
     Node* head = new Node();
@@ -14,7 +16,10 @@ int main(int argc, char* argv[]) {
     tail->next = nullptr;
     tail->prev = head;
 
-    std::cout << head << ", " << head->next << std::endl;
+    std::cout << *head << ", " << *head->next << std::endl;
+
+    delete head;
+    delete tail;
 
     return 0;
 }

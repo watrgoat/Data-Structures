@@ -12,9 +12,9 @@ public:
     Node* prev;
 };
 
-std::ostream& operator<<(std::ostream& os, const Node& node) {
-    os << node.data;
-    return os;
+std::ostream& operator<<(std::ostream& out, const Node& node) {
+    out << node.data;
+    return out;
 }
 
 #endif // NODE_H
