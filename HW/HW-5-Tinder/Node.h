@@ -28,7 +28,7 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& out, const Node& node) {
-    out << node.name;
+    out << node.phoneNumber;
     return out;
 }
 

@@ -63,9 +63,9 @@ double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
 int main(int argc, char* argv[]) {
 
     Node* head = new Node();
-    head->data = "Hello";
+    head->phoneNumber = "123-456-7890";
     Node* tail = new Node();
-    tail->data = "World";
+    tail->phoneNumber = "234-567-8901";
     head->next = tail;
     head->prev = nullptr;
     tail->next = nullptr;
