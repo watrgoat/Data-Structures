@@ -19,6 +19,8 @@ own, as described in "Academic Integrity for Homework" handout.
 ESTIMATE OF # OF HOURS SPENT ON THIS ASSIGNMENT:  < insert # hours >
 
 
-MISC. COMMENTS TO GRADER:
-(optional, please be concise!)
+MISC. COMMENTS TO GRADER: I chose insertion sort. Would use more
+efficient algo if it was required, chose to be code efficient instead.
 
+I chose to leave out checking if the other user is within the current
+users max distance since it did not seem to be asked for.

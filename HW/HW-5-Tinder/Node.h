@@ -17,7 +17,9 @@ public:
 
     // Member functions
     void insertAfter(Node* newNode);
+    void insertBefore(Node* newNode);
     void removeNode();
+    void swap(Node* other);
 
     // Getters
     std::string getName() const { return this->name; };
