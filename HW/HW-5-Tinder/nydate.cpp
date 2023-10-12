@@ -131,19 +131,13 @@ Node* searchUsers(Node* head, Node* tail, string num) {
     return nullptr;
 }
 
+// print out the profiles of all the users in the list starting from input node
 void printProfiles(ostream &out, Node* &head) {
     Node* curr = head;
     while (curr) {
-        out << curr->getName() << ' ' << curr->getAge() << endl;
-        if (curr->getProfession() != "Undisclosed") {
-            out << curr->getProfession() << endl;
-        }
-        if (curr->getSchool() != "Undisclosed") {
-            out << curr->getSchool() << endl;
-        }
-        curr = curr->getNext();
+       out << *curr << endl;
+       curr = curr->getNext();
     }
-    out << endl;
 }
 
 void profileView(ostream &out, Node* &head, Node* &tail, string phoneNumber) {
@@ -162,20 +156,22 @@ void profileView(ostream &out, Node* &head, Node* &tail, string phoneNumber) {
 
     // search for users that match the current users preferences
     Node* potentialMatch = head;
-    while (potentialMatch!=nullptr) {
+    while (potentialMatch != nullptr) {  // Check for potentialMatch being null too
         if (potentialMatch != currUser && 
-            potentialMatch->getAge() >= currUser->getMinAge() && 
-            potentialMatch->getAge() <= currUser->getMaxAge() && 
-            potentialMatch->getGender() == currUser->getInterestedGender() && 
-            isWithinDistance(currUser, potentialMatch)) {
-            cout << "here" << endl;
+        potentialMatch->getAge() >= currUser->getMinAge() && 
+        potentialMatch->getAge() <= currUser->getMaxAge() &&
+        (potentialMatch->getGender() == currUser->getInterestedGender() || 
+        currUser->getInterestedGender() == "Both") &&
+        isWithinDistance(currUser, potentialMatch)) {
+            // Create a new node with the same data
+            Node* newNode = new Node(*potentialMatch);
             // if first match set up temp list head
             if (!tempHead) {
-                tempHead = potentialMatch;
+                tempHead = newNode;
                 tempTail = tempHead;
             } else {
-                tempTail->insertAfter(potentialMatch);
-                tempTail = potentialMatch;
+                tempTail->insertAfter(newNode);
+                tempTail = newNode;  // Now pointing to new node
             }
         }
         potentialMatch = potentialMatch->getNext();
@@ -192,6 +188,54 @@ void profileView(ostream &out, Node* &head, Node* &tail, string phoneNumber) {
     // clean up temp list
     deallocate(tempHead);
 }
+
+void matchViewer(ostream &out, Node* &head, Node* &tail, string phoneNumber) {
+    // find the user
+    Node* currUser = searchUsers(head, tail, phoneNumber);
+
+    // check if the user was found
+    if (currUser == nullptr) {
+        cout << "Error: user '" << phoneNumber << "' not found." << endl;
+        return;
+    }
+
+    // temp list to store matched users
+    Node* tempHead = nullptr;
+    Node* tempTail = nullptr;
+
+    // search for users that contain number in likedUsers
+    Node* potentialMatch = head;
+    while (potentialMatch != nullptr) {  // Check for potentialMatch being null too
+        if (potentialMatch != currUser && 
+        potentialMatch->getLikedUsers().find(phoneNumber) != string::npos &&
+        currUser->getLikedUsers().find(potentialMatch->getPhoneNumber()) != string::npos) {
+            // Create a new node with the same data
+            Node* newNode = new Node(*potentialMatch);
+            // if first match set up temp list head
+            if (!tempHead) {
+                tempHead = newNode;
+                tempTail = tempHead;
+            } else {
+                tempTail->insertAfter(newNode);
+                tempTail = newNode;  // Now pointing to new node
+            }
+        }
+        potentialMatch = potentialMatch->getNext();
+    }
+
+    // check if there were any matches
+    if (!tempHead) {
+        out << "You do not have any matches at this moment." << endl;
+    } else {
+        // output matched profiles
+        printProfiles(out, tempHead);
+    }
+
+    // clean up temp list
+    deallocate(tempHead);
+}
+
+
 
 int main(int argc, char* argv[]) {
     // check if the number of command-line arguments is correct
@@ -224,13 +268,16 @@ int main(int argc, char* argv[]) {
     }
 
     string command = string(argv[4]);
+    string inNumber = string(argv[3]);
     // check command type
     if (command == "profile") {
         // show all users profiles that match the users preferences
-        profileView(outFile, head, tail, argv[3]);
+        profileView(outFile, head, tail, inNumber);
     } else if (command == "match") {
-        // ...
+        // show matches (phone number in both users liked list)
+        matchViewer(outFile, head, tail, inNumber);
     } else if (command == "like") {
+        // needs to have
         // ...
     } else if (command == "unmatch") {
         // ...

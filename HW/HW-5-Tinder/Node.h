@@ -12,6 +12,9 @@ public:
          bool isPremiumUser, int minAge, int maxAge, int maxDistance, 
          std::string interestedGender, std::string likedUsers);
 
+    // Copy constructor
+    Node(const Node& other);
+
     // Member functions
     void insertAfter(Node* newNode);
     void removeNode();
