@@ -1,5 +1,12 @@
+#include <fstream>
 #include "Node.h"
 
+// Default constructor
+Node::Node(): name(""), age(0), gender(""), phoneNumber(""), profession(""), school(""), currentLatitude(0.0),
+            currentLongitude(0.0), isPremiumUser(false), minAge(0), maxAge(0), maxDistance(0), interestedGender(""),
+            likedUsers(""), next(nullptr), prev(nullptr) {}
+
+// Constructor
 Node::Node(std::string name, int age, std::string gender, std::string phoneNumber, std::string profession,
         std::string school, double currentLatitude, double currentLongitude, 
         bool isPremiumUser, int minAge, int maxAge, int maxDistance, 
@@ -32,12 +39,11 @@ void Node::removeNode() {
     this->next = nullptr;
 }
 
-Node* Node::getNext() const {
-    return this->next;
+std::ostream& operator<<(std::ostream& out, const Node& node) {
+    out << node.getName() << " " << node.getAge() << " " << node.getGender() << " " << node.getPhoneNumber() << " " 
+       << node.getProfession() << " " << node.getSchool() << " " << node.getCurrentLatitude() << " " 
+       << node.getCurrentLongitude() << " " << node.getIsPremiumUser() << " " << node.getMinAge() << " " 
+       << node.getMaxAge() << " " << node.getMaxDistance() << " " << node.getInterestedGender() << " " 
+       << node.getLikedUsers();
+    return out;
 }
-
-Node* Node::getPrev() const {
-    return this->prev;
-}
-
-// You can add the implementation of other member functions, including accessors and mutators, here.

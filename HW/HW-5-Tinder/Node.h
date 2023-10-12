@@ -1,10 +1,11 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <string>
-
 class Node {
 public:
+    // Default constructor
+    Node();
+
     // Constructor
     Node(std::string name, int age, std::string gender, std::string phoneNumber, std::string profession,
          std::string school, double currentLatitude, double currentLongitude, 
@@ -15,26 +16,28 @@ public:
     void insertAfter(Node* newNode);
     void removeNode();
 
-    // Accessors and mutators
-    std::string getName() const;
-    int getAge() const;
-    std::string getGender() const;
-    std::string getPhoneNumber() const;
-    std::string getProfession() const;
-    std::string getSchool() const;
-    double getCurrentLatitude() const;
-    double getCurrentLongitude() const;
-    bool getIsPremiumUser() const;
-    int getMinAge() const;
-    int getMaxAge() const;
-    int getMaxDistance() const;
-    std::string getInterestedGender() const;
-    std::string getLikedUsers() const;
+    // Getters
+    std::string getName() const { return this->name; };
+    int getAge() const { return this->age; };
+    std::string getGender() const { return this->gender; };
+    std::string getPhoneNumber() const { return this->phoneNumber; };
+    std::string getProfession() const { return this->profession; };
+    std::string getSchool() const { return this->school; };
+    double getCurrentLatitude() const { return this->currentLatitude; };
+    double getCurrentLongitude() const { return this->currentLongitude; };
+    bool getIsPremiumUser() const { return this->isPremiumUser; };
+    int getMinAge() const { return this->minAge; };
+    int getMaxAge() const { return this->maxAge; };
+    int getMaxDistance() const { return this->maxDistance; };
+    std::string getInterestedGender() const { return this->interestedGender; };
+    std::string getLikedUsers() const { return this->likedUsers; };
 
-    void setLikedUsers(std::string likedUsers);
+    // Setters
+    void setLikedUsers(std::string likedUsers) { this->likedUsers = likedUsers; };
 
-    Node* getNext() const;
-    Node* getPrev() const;
+    // Getters for doubly linked list
+    Node* getNext() const { return this->next; };
+    Node* getPrev() const { return this->prev; };
 
 private:
     // User data
@@ -57,5 +60,7 @@ private:
     Node* next;
     Node* prev;
 };
+
+std::ostream& operator<<(std::ostream& os, const Node& node);
 
 #endif // NODE_H
