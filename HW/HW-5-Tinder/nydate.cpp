@@ -27,13 +27,14 @@ Users whom this user liked
 
 void ingest(ifstream &file, Node* &head, Node* &tail) {
     string name, age, gender, phoneNumber, profession, school, currentLatitude, currentLongitude, isPremiumUser, minAge, maxAge, maxDistance, interestedGender, likedUsers;
+    head = new Node(name, stoi(age), gender, phoneNumber, profession, school, stod(currentLatitude), stod(currentLongitude), (isPremiumUser == "true"), stoi(minAge), stoi(maxAge), stoi(maxDistance), interestedGender, likedUsers);
     while (file >> name >> age >> gender >> phoneNumber >> profession >> school >> currentLatitude >> currentLongitude >> isPremiumUser >> minAge >> maxAge >> maxDistance >> interestedGender >> likedUsers) {
-        Node* node = new Node();
-        node->phoneNumber = phoneNumber;
-        node->next = nullptr;
-        node->prev = tail;
-        tail->next = node;
-        tail = node;
+        cout << name << age << gender << phoneNumber << profession << school << currentLatitude << currentLongitude << isPremiumUser << minAge << maxAge << maxDistance << interestedGender << likedUsers << endl;
+        if (head==nullptr) {
+            // assigne head values
+            Node* head = new Node(name, stoi(age), gender, phoneNumber, profession, school, stod(currentLatitude), stod(currentLongitude), (isPremiumUser == "true"), stoi(minAge), stoi(maxAge), stoi(maxDistance), interestedGender, likedUsers);
+
+        }
     }
 }
 
@@ -61,20 +62,47 @@ double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
 }
 
 int main(int argc, char* argv[]) {
+    // check if the number of command-line arguments is correct
+    if (argc < 5 || argc > 6) {
+        cout << "Usage: ./nydate <input_file> <output_file> <phone_number> <command> <optional_phone_number>" << endl;
+        return 1;
+    }
 
-    Node* head = new Node();
-    head->phoneNumber = "123-456-7890";
-    Node* tail = new Node();
-    tail->phoneNumber = "234-567-8901";
-    head->next = tail;
-    head->prev = nullptr;
-    tail->next = nullptr;
-    tail->prev = head;
+    Node* head = nullptr;
+    Node* tail = nullptr;
 
-    cout << *head << ", " << *head->next << endl;
+    // open the input file
+    ifstream inFile(argv[1]);
+    if (!inFile) {
+        cout << "Error: cannot open file '" << argv[1] << "'." << endl;
+        return 1;
+    }
 
-    delete head;
-    delete tail;
+    // ingest the data from the input file
+    ingest(inFile, head, tail);
+
+    // close the input file
+    inFile.close();
+
+    // check if the command is valid
+    string command = string(argv[4]);
+    if (command != "profile" && command != "match" && command != "like" && command != "unmatch") {
+        cout << "Error: unknown command '" << argv[4] << "'." << endl;
+        return 1;
+    }
+
+    // do main function calls here
+    // ...
+
+    // open the output file
+    ofstream outFile(argv[2]);
+    if (!outFile) {
+        cout << "Error: cannot open file '" << argv[2] << "'." << endl;
+        return 1;
+    }
+
+    // write to output file
+    // ...
 
     return 0;
 }
