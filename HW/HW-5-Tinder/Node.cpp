@@ -38,13 +38,17 @@ Node::Node(const Node& other)
 
 // insert newNode after this node
 void Node::insertAfter(Node* newNode) {
-    // if there exists a node in front of this node set its prev to newNode
-    newNode->next = this->next;
-    newNode->prev = this;
-    // if there exists a node in front of this node set its prev to newNode
+    // If this node isn't the tail node
     if (this->next) {
+        // set the previous pointer of the next node to newNode
         this->next->prev = newNode;
+        // set the next pointer of newNode to this next node
+        newNode->next = this->next;
     }
+
+    // set the previous pointer of newNode to this node
+    newNode->prev = this;   
+    // set the next pointer of this node to newNode
     this->next = newNode;
 }
 
@@ -60,22 +64,6 @@ void Node::removeNode() {
     }
     this->prev = nullptr;
     this->next = nullptr;
-}
-
-void Node::swap(Node* other) {
-    // swap nodes in linked list
-    if (this->prev) {
-        this->prev->next = other;
-    }
-    if (this->next) {
-        this->next->prev = other;
-    }
-    if (other->prev) {
-        other->prev->next = this;
-    }
-    if (other->next) {
-        other->next->prev = this;
-    }
 }
 
 std::ostream& operator<<(std::ostream& out, const Node& node) {

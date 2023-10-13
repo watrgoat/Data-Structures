@@ -108,7 +108,7 @@ void deallocate(Node* head) {
 }
 
 // print out the profiles of all the users in the list starting from input node
-void printProfiles(ostream &out, Node* &head) {
+void printProfiles(ostream &out, Node* head) {
     Node* curr = head;
     while (curr) {
        out << *curr << endl;
@@ -117,20 +117,20 @@ void printProfiles(ostream &out, Node* &head) {
 }
 
 // insert node into already sorted list by phone number
-void sortedInsert(Node* &sortedHead, Node* &newNode) {
-    // check if new node should be inserted before head
-    if (sortedHead->getPhoneNumber() >= newNode->getPhoneNumber()) {
-        // insert head after newNode and set newNode as head
+void sortedInsert(Node* &sortedHead, Node* newNode) {
+    // if the list is empty or the new node is less than the head
+    if (!sortedHead || newNode->getPhoneNumber() < sortedHead->getPhoneNumber()) {
+        // insert node at the head
         newNode->insertAfter(sortedHead);
         sortedHead = newNode;
     } else {
-        // find the node that the new node should be inserted after
-        Node* current = sortedHead;
-        // while not at the end and the next nodes phone number is less than the new node's phone number
-        while (current->getNext() != nullptr && current->getNext()->getPhoneNumber() < newNode->getPhoneNumber()) {
-            current = current->getNext();
+        Node* curr = sortedHead;
+        // loop through list until the new node is less than the current node
+        while (curr->getNext() && newNode->getPhoneNumber() > curr->getNext()->getPhoneNumber()) {
+            curr = curr->getNext();
         }
-        current->insertAfter(newNode);
+        // insert node after current node
+        curr->insertAfter(newNode);
     }
 }
 
@@ -163,7 +163,7 @@ Node* searchUsers(Node* head, Node* tail, const string &num) {
     return nullptr;
 }
 
-void profileView(ostream &out, Node* &head, Node* &tail, const string &phoneNumber) {
+void profile(ostream &out, Node* head, Node* tail, const string &phoneNumber) {
     // find the user
     Node* currUser = searchUsers(head, tail, phoneNumber);
 
@@ -215,7 +215,7 @@ void profileView(ostream &out, Node* &head, Node* &tail, const string &phoneNumb
     deallocate(tempHead);
 }
 
-void matchViewer(ostream &out, Node* &head, Node* &tail, const string &phoneNumber) {
+void match(ostream &out, Node* head, Node* tail, const string &phoneNumber) {
     // find the user
     Node* currUser = searchUsers(head, tail, phoneNumber);
 
@@ -239,6 +239,7 @@ void matchViewer(ostream &out, Node* &head, Node* &tail, const string &phoneNumb
         if (potentialMatch != currUser && 
         potentialMatch->getLikedUsers().find(phoneNumber) != string::npos &&
         currUser->getLikedUsers().find(potentialMatch->getPhoneNumber()) != string::npos) {
+
             // create a copy of the now confirmed match
             Node* newNode = new Node(*potentialMatch);
 
@@ -250,10 +251,10 @@ void matchViewer(ostream &out, Node* &head, Node* &tail, const string &phoneNumb
                 // insert node in sorted order
                 sortedInsert(tempHead, newNode);
 
-                // reset tempTail to the end of the list
-                if (tempTail->getNext() != nullptr) {
-                    tempTail = tempTail->getNext();
-                } // otherwise tempTail is already at the end of the list
+                // check if the new node was inserted at the tail
+                if (newNode->getNext() == nullptr) {
+                    tempTail = newNode;
+                }
             }
         }
         potentialMatch = potentialMatch->getNext();
@@ -271,7 +272,7 @@ void matchViewer(ostream &out, Node* &head, Node* &tail, const string &phoneNumb
     deallocate(tempHead);
 }
 
-void likeViewer(ostream &out, Node* &head, Node* &tail, const string &phoneNumber) {
+void like(ostream &out, Node* head, Node* tail, const string &phoneNumber) {
     // find the user
     Node* currUser = searchUsers(head, tail, phoneNumber);
 
@@ -327,6 +328,43 @@ void likeViewer(ostream &out, Node* &head, Node* &tail, const string &phoneNumbe
     deallocate(tempHead);
 }
 
+void unmatch(ofstream &out, Node* head, Node* tail, const string &phoneNumber1, const string &phoneNumber2) {
+    // find the user
+    Node* currUser1 = searchUsers(head, tail, phoneNumber1);
+    Node* currUser2 = searchUsers(head, tail, phoneNumber2);
+
+    // check if the user was found
+    if (!currUser1) {
+        cout << "Error: user '" << phoneNumber1 << "' not found." << endl;
+        return;
+    }
+    if (!currUser2) {
+        cout << "Error: user '" << phoneNumber2 << "' not found." << endl;
+        return;
+    }
+
+    // check if the users are in each others liked list
+    if (currUser1->getLikedUsers().find(phoneNumber2) == string::npos) {
+        cout << "You are not matched with '" << phoneNumber2 << "'." << endl;
+        return;
+    }
+    if (currUser2->getLikedUsers().find(phoneNumber1) == string::npos) {
+        cout << "'" << phoneNumber2 << "' is not matched with you." << endl;
+        return;
+    }
+
+    // remove each other from liked list
+    currUser1->setLikedUsers(currUser1->getLikedUsers().erase(currUser1->getLikedUsers().find(phoneNumber2), phoneNumber2.length()));
+    currUser2->setLikedUsers(currUser2->getLikedUsers().erase(currUser2->getLikedUsers().find(phoneNumber1), phoneNumber1.length()));
+
+    // output new liked list
+    out << currUser1->getName() << "'s match list:\n" << endl;
+    match(out, head, tail, phoneNumber1);
+    out << "======\n" << endl;
+    out << currUser2->getName() << "'s match list:\n" << endl;
+    match(out, head, tail, phoneNumber2);
+}
+
 int main(int argc, char* argv[]) {
     // check if the number of command-line arguments is correct
     if (argc < 5 || argc > 6) {
@@ -354,6 +392,7 @@ int main(int argc, char* argv[]) {
     ofstream outFile(argv[2]);
     if (!outFile) {
         cout << "Error: cannot open file '" << argv[2] << "'." << endl;
+        deallocate(head);
         return 1;
     }
 
@@ -362,15 +401,17 @@ int main(int argc, char* argv[]) {
     // check command type
     if (command == "profile") {
         // show all users profiles that match the users preferences
-        profileView(outFile, head, tail, inNumber);
+        profile(outFile, head, tail, inNumber);
     } else if (command == "match") {
         // show matches (phone number in both users liked list)
-        matchViewer(outFile, head, tail, inNumber);
+        match(outFile, head, tail, inNumber);
+        
     } else if (command == "like") {
         // show users that liked this user
-        likeViewer(outFile, head, tail, inNumber);
+        like(outFile, head, tail, inNumber);
     } else if (command == "unmatch") {
-        // ...
+        // unmatch two users by removing each other from liked list and outputting their new liked list
+        unmatch(outFile, head, tail, inNumber, string(argv[5]));
     } else {
         // bad input command
         cout << "Error: unknown command '" << argv[4] << "'." << endl;
