@@ -8,20 +8,26 @@ using namespace std;
 
 void ingest(ifstream &inputFile, vector<string> &positiveWords, vector<string> &negativeWords) {
     string line;
+    bool is_dimension = true;
     while (inputFile >> line) {
         // first line is dimensions
-        if (line[0] == 'D') {
+        if (is_dimension) {
             // get dimensions
-            int rows = stoi(line.substr(1, line.find('x')));
+            int rows = stoi(line[0]);
             int cols = stoi(line.substr(line.find('x') + 1));
             // create board
             Board board(rows, cols);
-        }
-        // check if line is positive or negative
-        if (line[0] == '+') {
-            positiveWords.push_back(line.substr(1));
+            
+            is_dimension = false;
         } else {
-            negativeWords.push_back(line.substr(1));
+            // get word
+            string word = line.substr(1);
+            // check if line is positive or negative
+            if (line[0] == '+') {
+                positiveWords.push_back(word);
+            } else {
+                negativeWords.push_back(word);
+            }
         }
     }
 }
