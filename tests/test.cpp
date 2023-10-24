@@ -2,12 +2,15 @@
 
 using namespace std;
 
+class MyClass {
+public:
+	ostream& operator<<(ostream& os) {
+		os << "Hello world!";
+		return os;
+	}
+};
+
 int main() {
-	int *p = new int;
-	*p = 10;
-	int *q = p;
-	cout << p << " " << q << endl;
-	p = new int;
-	*p = 1;
-	cout << *p << " " << *q << endl;
+	MyClass obj;
+	obj.operator<<(cout);
 }
