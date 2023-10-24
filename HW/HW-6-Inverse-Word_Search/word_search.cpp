@@ -6,17 +6,18 @@
 
 using namespace std;
 
-void ingest(ifstream &inputFile, vector<string> &positiveWords, vector<string> &negativeWords) {
+pair<int, int> ingest(ifstream &inputFile, vector<string> &positiveWords, vector<string> &negativeWords) {
     string line;
+    int rows = 0;
+    int cols = 0;
     bool is_dimension = true;
     while (inputFile >> line) {
         // first line is dimensions
         if (is_dimension) {
+            size_t pos = line.find(' ');
             // get dimensions
-            int rows = stoi(line[0]);
-            int cols = stoi(line.substr(line.find('x') + 1));
-            // create board
-            Board board(rows, cols);
+            rows = stoi(line.substr(0, pos));
+            cols = stoi(line.substr(pos + 1));
             
             is_dimension = false;
         } else {
@@ -30,7 +31,62 @@ void ingest(ifstream &inputFile, vector<string> &positiveWords, vector<string> &
             }
         }
     }
+    return make_pair(rows, cols);
 }
+
+bool isWordPlaceable(vector<vector<char>>& board, const string& word, int x, int y, int dx, int dy) {
+    // Check if word can be placed starting from (x, y) and moving in the direction (dx, dy)
+    // ...
+    return true;  // or false
+}
+
+bool findNegativeWords(vector<vector<char>>& board, const vector<string>& negativeWords) {
+    // Check if any negative word is present on the board
+    // ...
+    return true;  // or false
+}
+
+bool placeWord(vector<vector<char>>& board, const string& word, int x, int y, int dx, int dy) {
+    // Place word starting from (x, y) and moving in the direction (dx, dy)
+    // ...
+    return true;  // or false
+}
+
+bool backtrack(vector<vector<char>>& board, const vector<string>& positiveWords, const vector<string>& negativeWords, int wordIndex) {
+    // should be global var, but advised against for these homeworks for no good reason -_-
+    pair<int, int> directions[] = {{0, 1}, {1, 0}, {1, 1}, {1, -1}};
+    if (wordIndex == positiveWords.size()) {
+        return !findNegativeWords(board, negativeWords);
+    }
+    
+    // looping to iterate over all possible board positions and directions
+    for (int x = 0; x < board.size(); ++x) {
+        for (int y = 0; y < board[0].size(); ++y) {
+            for (int dir = 0; dir < 4; ++dir) {
+                int dx = directions[dir].first;
+                int dy = directions[dir].second;
+                if (isWordPlaceable(board, positiveWords[wordIndex], x, y, dx, dy)) {
+                    placeWord(board, positiveWords[wordIndex], x, y, dx, dy);
+                    if (backtrack(board, positiveWords, negativeWords, wordIndex + 1)) {
+                        return true;
+                    }
+                    // Remove the word for backtracking (undo the placement)
+                    // ...
+                }
+            }
+        }
+    }
+    return false;
+}
+
+void findPuzzles(int rows, int cols, const vector<string>& positiveWords, const vector<string>& negativeWords) {
+    vector<vector<char>> board(rows, vector<char>(cols, '.'));  // Initialize an empty board with placeholders.
+    if (backtrack(board, positiveWords, negativeWords, 0)) {
+        // Print the board or store it
+        // ...
+    }
+}
+
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
@@ -46,11 +102,12 @@ int main(int argc, char* argv[]) {
     }
     
     // create data structure to store input file
-    vector<vector<char>> data;
+    vector<string> positiveWords;
+    vector<string> negativeWords;
 
     // ingest input file
-    ingest(input_file, data);
-    // store data into 
+    ingest(input_file, positiveWords, negativeWords);
+    
 
     // create all soltions with positive words.
     // make the board rectangular and set to empty value
