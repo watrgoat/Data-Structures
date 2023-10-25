@@ -9,10 +9,10 @@ public:
     Board(int rows, int cols);
     ~Board(); // Destructor
 
-    char getChar(int row, int col) const;
-    void setChar(int row, int col, char value);
-    int getRows() const;
-    int getCols() const;
+    char get(int row, int col) const;
+    void set(int row, int col, char value);
+    int numRows() const;
+    int numCols() const;
 
 private:
     std::vector<std::vector<char>>* board_;
