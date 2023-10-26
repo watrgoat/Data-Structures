@@ -14,6 +14,8 @@ public:
     int numRows() const;
     int numCols() const;
 
+    void clear();
+
 private:
     std::vector<std::vector<char>>* board_;
 };
