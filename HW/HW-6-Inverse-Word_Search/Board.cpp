@@ -3,6 +3,26 @@
 
 Board::Board(int rows, int cols) {
     board_ = new std::vector<std::vector<char>>(rows, std::vector<char>(cols, '0'));
+    rows_ = rows;
+    cols_ = cols;
+}
+
+// Copy constructor
+Board::Board(const Board& other) {
+    board_ = new std::vector<std::vector<char>>(*other.board_);
+    rows_ = other.rows_;
+    cols_ = other.cols_;
+}
+
+// Assignment operator
+Board& Board::operator=(const Board& other) {
+    if (this != &other) {
+        delete board_;
+        board_ = new std::vector<std::vector<char>>(*other.board_);
+        rows_ = other.rows_;
+        cols_ = other.cols_;
+    }
+    return *this;
 }
 
 Board::~Board() {
@@ -11,7 +31,7 @@ Board::~Board() {
 
 // Get board value in O(1) time
 char Board::get(int row, int col) const {
-    if (row < 0 || row >= numRows() || col < 0 || col >= numCols()) {
+    if (row < 0 || row >= rows_ || col < 0 || col >= rows_) {
         std::cerr << "ERROR: get() out of bounds" << std::endl;
         return ' ';
     }
@@ -20,7 +40,7 @@ char Board::get(int row, int col) const {
 
 // Set board value in O(1) time
 void Board::set(int row, int col, char value) {
-    if (row < 0 || row >= numRows() || col < 0 || col >= numCols()) {
+    if (row < 0 || row >= rows_ || col < 0 || col >= cols_) {
         std::cerr << "ERROR: set() out of bounds" << std::endl;
         return;
     }
@@ -29,18 +49,18 @@ void Board::set(int row, int col, char value) {
 
 // Return number of rows in O(1) time
 int Board::numRows() const {
-    return board_->size();
+    return rows_;
 }
 
 // Return number of columns in O(1) time
 int Board::numCols() const {
     // cant check board[0] if empty, undefined behavior
-    return board_->empty() ? 0 : (*board_)[0].size();
+    return cols_;
 }
 
 void Board::clear() {
-    for (int i = 0; i < numRows(); i++) {
-        for (int j = 0; j < numCols(); j++) {
+    for (int i = 0; i < rows_; i++) {
+        for (int j = 0; j < cols_; j++) {
             set(i, j, '0');
         }
     }

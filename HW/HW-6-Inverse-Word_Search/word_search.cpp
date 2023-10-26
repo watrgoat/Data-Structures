@@ -36,12 +36,15 @@ bool isWordPlaceable(const Board& board, const string& word, int x, int y, int d
     
     // check if word is in bounds 
     // current position + word length * direction > board size
-    if (x + word.length()*dx > board.numRows() || y + word.length()*dy > board.numCols()) {
+    if (x + word.length()*dx >= board.numRows() || y + word.length()*dy >= board.numCols() ||
+        x + (word.length() - 1)*dx < 0 || y + (word.length() - 1)*dy < 0) {
         return false;
     }
 
+
     // check if all characters are 0
     for (size_t i = 0; i < word.length(); i++) {
+        cout << "here" << endl;
         if (board.get(x + i*dx, y + i*dy) != '0') {
             return false;
         }
@@ -66,42 +69,38 @@ void removeWord(Board& board, const string& word, int x, int y, int dx, int dy) 
 }
 
 bool findNegativeWords(const Board& board, const vector<string>& negativeWords) {
-    // check for negative words in the board
-    // ***consider using recursion for this
-
-    // loop through all negative words
-    for (int i = 0; i < negativeWords.size(); i++) {
-        // loop through all rows
-        for (int j = 0; j < board.numRows(); j++) {
-            // loop through all columns
-            for (int k = 0; k < board.numCols(); k++) {
-                // loop through all directions
-                for (int l = 0; l < 4; l++) {
-                    // check if word is placeable
-                    if (isWordPlaceable(board, negativeWords[i], j, k, l, l)) {
-                        // check if word is in board
-                        for (int m = 0; m < negativeWords[i].length(); m++) {
-                            if (board.get(j + m*l, k + m*l) == negativeWords[i][m]) {
-                                return true;
-                            }
+    pair<int, int> directions[] = {{0, 1}, {1, 0}, {1, 1}, {1, -1}};
+    
+    for (const string& negativeWord : negativeWords) {
+        for (int x = 0; x < board.numRows(); x++) {
+            for (int y = 0; y < board.numCols(); y++) {
+                for (int dir = 0; dir < 4; dir++) {
+                    int dx = directions[dir].first;
+                    int dy = directions[dir].second;
+                    
+                    bool isMatch = true;
+                    for (size_t m = 0; m < negativeWord.length(); m++) {
+                        cout << "out of bounds" << endl;
+                        if (board.get(x + m*dx, y + m*dy) != negativeWord[m]) {
+                            isMatch = false;
+                            break;
                         }
                     }
+                    if (isMatch) { return true; }
                 }
             }
         }
     }
-
-    return false;  // or true if negative words are found
+    return false;
 }
 
+
 void backtrack(Board& board, const vector<string>& positiveWords, const vector<string>& negativeWords, int wordIndex, vector<Board>& solutions) {
+    cout << solutions.size() << endl;
     if (wordIndex == positiveWords.size()) {
         if (!findNegativeWords(board, negativeWords)) {
             solutions.push_back(board);  // Store this valid board as a solution
-            // reset board
-            board.clear();
         }
-        return;
     }
 
     pair<int, int> directions[] = {{0, 1}, {1, 0}, {1, 1}, {1, -1}};
@@ -111,10 +110,14 @@ void backtrack(Board& board, const vector<string>& positiveWords, const vector<s
                 int dx = directions[dir].first;
                 int dy = directions[dir].second;
                 cout << "x: " << x << " y: " << y << " dx: " << dx << " dy: " << dy << endl;
+                cout << board << endl;
                 
                 if (isWordPlaceable(board, positiveWords[wordIndex], x, y, dx, dy)) {
+
                     cout << "placeable" << endl;
+                    cout << board << endl;
                     placeWord(board, positiveWords[wordIndex], x, y, dx, dy);
+                    cout << "after place" << endl;
                     backtrack(board, positiveWords, negativeWords, wordIndex + 1, solutions);
                     removeWord(board, positiveWords[wordIndex], x, y, dx, dy);
                 }
@@ -131,6 +134,10 @@ void createPuzzle(int rows, int cols, const vector<string>& positiveWords, const
     
     // The `solutions` vector now contains all possible solution boards.
     // You can print them, store them, or perform other actions as required.
+    cout << "Solutions:" << endl;
+    for (const Board& solution : solutions) {
+        cout << solution << endl;
+    }
 }
 
 
@@ -166,6 +173,7 @@ int main(int argc, char* argv[]) {
     // if still found in board then you can set to any character a-z
     // but make sure that u still check for bad words 
     // backtracking algorithm
+
 
 
     // eleminate bad boards as you go not at the end
