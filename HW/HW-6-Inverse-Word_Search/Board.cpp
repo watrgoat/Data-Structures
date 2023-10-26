@@ -31,20 +31,11 @@ Board::~Board() {
 
 // Get board value in O(1) time
 char Board::get(int row, int col) const {
-    if (row < 0 || row >= rows_ || col < 0 || col >= rows_) {
+    if (row < 0 || row >= rows_ || col < 0 || col >= cols_) {
         std::cerr << "ERROR: get() out of bounds" << std::endl;
         return ' ';
     }
     return (*board_)[row][col];
-}
-
-// Set board value in O(1) time
-void Board::set(int row, int col, char value) {
-    if (row < 0 || row >= rows_ || col < 0 || col >= cols_) {
-        std::cerr << "ERROR: set() out of bounds" << std::endl;
-        return;
-    }
-    (*board_)[row][col] = value;
 }
 
 // Return number of rows in O(1) time
@@ -56,6 +47,15 @@ int Board::numRows() const {
 int Board::numCols() const {
     // cant check board[0] if empty, undefined behavior
     return cols_;
+}
+
+// Set board value in O(1) time
+void Board::set(int row, int col, char value) {
+    if (row < 0 || row >= rows_ || col < 0 || col >= cols_) {
+        std::cerr << "ERROR: set() out of bounds" << std::endl;
+        return;
+    }
+    (*board_)[row][col] = value;
 }
 
 void Board::clear() {
