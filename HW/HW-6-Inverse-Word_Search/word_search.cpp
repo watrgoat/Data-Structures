@@ -80,50 +80,45 @@ void placeWord(Board& board, const string& word, int x, int y, int dx, int dy) {
     }
 }
 
-// This function removes a word from the board starting from (x, y) and 
-// moving in the direction (dx, dy) for each character in the word, 
-// setting the path back to '0'.
-void removeWord(Board& board, const string& word, int x, int y, int dx, int dy) {
-    for (int i = 0; i < word.length(); i++) {
-        board.set(x + i*dx, y + i*dy, '0');
-    }
-}
-
 // This function searches the board for any of the words provided in negativeWords.
 // It returns true if any of the negative words are found.
-bool findNegativeWords(const Board& board, const vector<string>& negativeWords) {
-    // define all possible movement directions on the board.
-    
-    // iterate over each negative word
-    for (const string& negativeWord : negativeWords) {
-        // iterate over the board's rows
-        for (int x = 0; x < board.numRows(); x++) {
-            // iterate over the board's columns
-            for (int y = 0; y < board.numCols(); y++) {
-                // iterate over the possible movement directions
-                for (int dir = 0; dir < 8; dir++) {
-                    int dx = DIRECTIONS[dir].first;
-                    int dy = DIRECTIONS[dir].second;
-                    
-                    if (!isPositionInBounds(board, negativeWord, x, y, dx, dy)) {
-                        continue;
-                    }
+bool searchNegativeWord(const Board& board, vector<string>& words, int x, int y, int dx, int dy, int index) {
+    if (index == words.size()) return true;
 
-                    bool isMatch = true;
-                    // try to match the negative word on the board
-                    for (size_t m = 0; m < negativeWord.length(); m++) {
-                        if (board.get(x + m*dx, y + m*dy) != negativeWord[m]) {
-                            isMatch = false;
-                            break;
-                        }
-                    }
-                    // if a match is found, return true
-                    if (isMatch) { return true; }
+    if (!isPositionInBounds(board, words[index], x, y, dx, dy)) return false;
+
+    for (int i = 0; i < words.size(); i++) {
+        if (index < words[i].length() && board.get(x, y) == words[i][index]) {
+            if (index == words[i].length() - 1) return true; // found a negative word
+
+            // continue searching in the current direction
+            if (searchNegativeWord(board, words, x + dx, y + dy, dx, dy, index + 1)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool findNegativeWords(const Board& board, const vector<string>& negativeWords) {
+    int numRows = board.numRows();
+    int numCols = board.numCols();
+
+    for (int x = 0; x < numRows; x++) {
+        for (int y = 0; y < numCols; y++) {
+            for (int dir = 0; dir < 8; dir++) {
+                int dx = DIRECTIONS[dir].first;
+                int dy = DIRECTIONS[dir].second;
+
+                vector<string> tempWords = negativeWords; // make a copy of negative words for this iteration
+                cout << "here" << endl;
+                // start searching from position (x, y) in the current direction
+                if (searchNegativeWord(board, tempWords, x, y, dx, dy, 0)) {
+                    return true;
                 }
             }
         }
     }
-    // return false if no negative words are found on the board
     return false;
 }
 
@@ -157,7 +152,7 @@ bool checkForNegativeWordsAroundPosition(const Board& board, const vector<string
 void fillWithCombinations(Board& board, int row, int col, const vector<string>& negativeWords, vector<Board>& solutions) {
     // If we've filled the entire board, check for negative words
     if (!containsZeros(board)) {
-        if (!findNegativeWords(board, negativeWords)) { // This can be made more efficient in the future, but it's left as is for now
+        if (!findNegativeWords(board, negativeWords)) { // can be made more efficient, but it's left as is for now
             solutions.push_back(board);
         }
         return;
@@ -194,11 +189,15 @@ void fillWithCombinations(Board& board, int row, int col, const vector<string>& 
 // If a valid configuration is found, it's added to the solutions vector.
 void backtrack(Board& board, const vector<string>& positiveWords, const vector<string>& negativeWords, int wordIndex, vector<Board>& solutions) {
     if (wordIndex == positiveWords.size()) {
+        // Fill remaining cells with letter combinations
+        // we know
         fillWithCombinations(board, 0, 0, negativeWords, solutions);
         return;
     }
-
-    Board snap(board);
+    if (wordIndex > 0) {
+        if (findNegativeWords(board, negativeWords)) { return; }
+    }
+    
 
     // iterate over the board's rows
     for (int x = 0; x < board.numRows(); ++x) {
@@ -209,7 +208,7 @@ void backtrack(Board& board, const vector<string>& positiveWords, const vector<s
                 int dx = DIRECTIONS[dir].first;
                 int dy = DIRECTIONS[dir].second;
                 if (isWordPlaceable(board, positiveWords[wordIndex], x, y, dx, dy)) {
-                    
+                    Board snap(board);
                     placeWord(board, positiveWords[wordIndex], x, y, dx, dy);
                     backtrack(board, positiveWords, negativeWords, wordIndex + 1, solutions);
                     board = snap;
@@ -262,18 +261,18 @@ bool backtrackOne(Board& board, const vector<string>& positiveWords, const vecto
         return fillWithCombinations(board, 0, 0, negativeWords);
     }
 
+    Board snap(board);
     for (int x = 0; x < board.numRows(); ++x) {
         for (int y = 0; y < board.numCols(); ++y) {
             for (int dir = 0; dir < 8; ++dir) {
                 int dx = DIRECTIONS[dir].first;
                 int dy = DIRECTIONS[dir].second;
-                
                 if (isWordPlaceable(board, positiveWords[wordIndex], x, y, dx, dy)) {
                     placeWord(board, positiveWords[wordIndex], x, y, dx, dy);
                     if (backtrackOne(board, positiveWords, negativeWords, wordIndex + 1)) {
                         return true;  // A valid solution has been found in the recursive call
                     }
-                    removeWord(board, positiveWords[wordIndex], x, y, dx, dy);
+                    board = snap;  // Reset board to previous state
                 }
             }
         }
