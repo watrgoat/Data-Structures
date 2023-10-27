@@ -63,8 +63,9 @@ bool isWordPlaceable(const Board& board, const string& word, int x, int y, int d
 
     // iterate through the word's characters and ensure the path on the board is '0'.
     for (size_t i = 0; i < word.length(); i++) {
-        if (board.get(x + i*dx, y + i*dy) != '0') {
-            return false;
+        char currentCell = board.get(x + i*dx, y + i*dy);
+        if (currentCell != '0' && currentCell != word[i]) {
+            return false; // Cell is occupied by a different character than the current word's character.
         }
     }
     return true;
@@ -126,32 +127,67 @@ bool findNegativeWords(const Board& board, const vector<string>& negativeWords) 
     return false;
 }
 
+bool isNegativeWordPresentFromPosition(const Board& board, const string& negativeWord, int x, int y, int dx, int dy) {
+    for (size_t m = 0; m < negativeWord.length(); m++) {
+        int checkX = x + m*dx;
+        int checkY = y + m*dy;
+
+        // If out of bounds or characters don't match, abort early
+        if (checkX < 0 || checkX >= board.numRows() || checkY < 0 || checkY >= board.numCols() || board.get(checkX, checkY) != negativeWord[m]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool checkForNegativeWordsAroundPosition(const Board& board, const vector<string>& negativeWords, int startX, int startY) {
+    for (const string& negativeWord : negativeWords) {
+        for (int dir = 0; dir < 8; dir++) {
+            int dx = DIRECTIONS[dir].first;
+            int dy = DIRECTIONS[dir].second;
+            
+            if (isNegativeWordPresentFromPosition(board, negativeWord, startX, startY, dx, dy)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void fillWithCombinations(Board& board, int row, int col, const vector<string>& negativeWords, vector<Board>& solutions) {
-    if (row == board.numRows() - 1 && col == board.numCols()) {
-        if (!findNegativeWords(board, negativeWords)) {
+    // If we've filled the entire board, check for negative words
+    if (!containsZeros(board)) {
+        if (!findNegativeWords(board, negativeWords)) { // This can be made more efficient in the future, but it's left as is for now
             solutions.push_back(board);
         }
         return;
     }
 
+    // If this cell is empty ('0'), try to fill it with a letter
     if (board.get(row, col) == '0') {
         for (char letter = 'a'; letter <= 'z'; ++letter) {
             board.set(row, col, letter);
-            if (col == board.numCols() - 1) {
-                fillWithCombinations(board, row + 1, 0, negativeWords, solutions);
-            } else {
-                fillWithCombinations(board, row, col + 1, negativeWords, solutions);
+            
+            // Check if a negative word has formed around this position. If it has, we can skip further exploration.
+            if (!checkForNegativeWordsAroundPosition(board, negativeWords, row, col)) {
+                // Determine the next row and column for recursive call
+                int nextRow = (col == board.numCols() - 1) ? row + 1 : row;
+                int nextCol = (col == board.numCols() - 1) ? 0 : col + 1;
+                
+                fillWithCombinations(board, nextRow, nextCol, negativeWords, solutions);
             }
-            board.set(row, col, '0');  // reset cell after trying all letters
+
+            board.set(row, col, '0');  // Reset cell after trying all letters
         }
     } else {
-        if (col == board.numCols() - 1) {
-            fillWithCombinations(board, row + 1, 0, negativeWords, solutions);
-        } else {
-            fillWithCombinations(board, row, col + 1, negativeWords, solutions);
-        }
+        // Determine the next row and column for recursive call
+        int nextRow = (col == board.numCols() - 1) ? row + 1 : row;
+        int nextCol = (col == board.numCols() - 1) ? 0 : col + 1;
+
+        fillWithCombinations(board, nextRow, nextCol, negativeWords, solutions);
     }
 }
+
 
 // This function attempts to fit all positive words onto the board, 
 // while ensuring that none of the negative words appear.
@@ -162,6 +198,8 @@ void backtrack(Board& board, const vector<string>& positiveWords, const vector<s
         return;
     }
 
+    Board snap(board);
+
     // iterate over the board's rows
     for (int x = 0; x < board.numRows(); ++x) {
         // iterate over the board's columns
@@ -171,9 +209,10 @@ void backtrack(Board& board, const vector<string>& positiveWords, const vector<s
                 int dx = DIRECTIONS[dir].first;
                 int dy = DIRECTIONS[dir].second;
                 if (isWordPlaceable(board, positiveWords[wordIndex], x, y, dx, dy)) {
+                    
                     placeWord(board, positiveWords[wordIndex], x, y, dx, dy);
                     backtrack(board, positiveWords, negativeWords, wordIndex + 1, solutions);
-                    removeWord(board, positiveWords[wordIndex], x, y, dx, dy);
+                    board = snap;
                 }
             }
         }
