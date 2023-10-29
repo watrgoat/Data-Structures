@@ -66,6 +66,18 @@ void Board::clear() {
     }
 }
 
+bool Board::operator<(const Board& other) const {
+    for (int x = 0; x < numRows(); x++) {
+        for (int y = 0; y < numCols(); y++) {
+            if (get(x, y) != other.get(x, y)) {
+                return get(x, y) < other.get(x, y);
+            }
+        }
+    }
+    return false; // They are equal
+}
+
+
 std::ostream& operator<<(std::ostream& os, const Board& board) {
     os << "Board: " << std::endl;
     for (int i = 0; i < board.numRows(); i++) {
@@ -76,4 +88,20 @@ std::ostream& operator<<(std::ostream& os, const Board& board) {
         os << std::endl;
     }
     return os;
+}
+
+bool operator==(const Board& b1, const Board& b2) {
+    // assumes both boards of equal size
+    if (b1.numRows() != b2.numRows() || b1.numCols() != b2.numCols()) {
+        return false;
+    }
+    for (int i = 0; i < b1.numRows(); i++) {
+        for (int j = 0; j < b1.numCols(); j++) {
+            if (b1.get(i, j) != b2.get(i, j)) {
+                return false;
+            }
+        }
+    }
+    // nothing went wrong they are equal
+    return true;
 }

@@ -20,6 +20,8 @@ public:
     void set(int row, int col, char value);
     void clear();
 
+    bool operator<(const Board& other) const;
+
 private:
     std::vector<std::vector<char>>* board_;
     int rows_;
@@ -27,5 +29,6 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& os, const Board& board);
+bool operator==(const Board& b1, const Board& b2);
 
 #endif // BOARD_H
