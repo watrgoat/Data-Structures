@@ -1,25 +1,41 @@
 8 solution(s)
 Board: 
-  cat
-  eno
+  aare
+  rrea
+  itss
+  dstt
 Board: 
-  cat
-  one
+  arid
+  arts
+  rest
+  east
 Board: 
-  eno
-  cat
+  dira
+  stra
+  tser
+  tsae
 Board: 
-  eno
-  tac
+  dstt
+  itss
+  rrea
+  aare
 Board: 
-  one
-  cat
+  east
+  rest
+  arts
+  arid
 Board: 
-  one
-  tac
+  eraa
+  aerr
+  ssti
+  ttsd
 Board: 
-  tac
-  eno
+  tsae
+  tser
+  stra
+  dira
 Board: 
-  tac
-  one
+  ttsd
+  ssti
+  aerr
+  eraa

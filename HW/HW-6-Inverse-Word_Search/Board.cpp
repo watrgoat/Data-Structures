@@ -1,20 +1,21 @@
 #include <iostream>
 #include "Board.h"
 
+// constructor
 Board::Board(int rows, int cols) {
     board_ = new std::vector<std::vector<char>>(rows, std::vector<char>(cols, '0'));
     rows_ = rows;
     cols_ = cols;
 }
 
-// Copy constructor
+// copy constructor
 Board::Board(const Board& other) {
     board_ = new std::vector<std::vector<char>>(*other.board_);
     rows_ = other.rows_;
     cols_ = other.cols_;
 }
 
-// Assignment operator
+// assignment operator
 Board& Board::operator=(const Board& other) {
     if (this != &other) {
         delete board_;
@@ -25,11 +26,12 @@ Board& Board::operator=(const Board& other) {
     return *this;
 }
 
+// destructor
 Board::~Board() {
     delete board_;
 }
 
-// Get board value in O(1) time
+// gets value from board
 char Board::get(int row, int col) const {
     if (row < 0 || row >= rows_ || col < 0 || col >= cols_) {
         std::cerr << "ERROR: get() out of bounds" << std::endl;
@@ -38,18 +40,17 @@ char Board::get(int row, int col) const {
     return (*board_)[row][col];
 }
 
-// Return number of rows in O(1) time
+// gets num of rows
 int Board::numRows() const {
     return rows_;
 }
 
-// Return number of columns in O(1) time
+// gets num of columns
 int Board::numCols() const {
-    // cant check board[0] if empty, undefined behavior
     return cols_;
 }
 
-// Set board value in O(1) time
+// sets a value
 void Board::set(int row, int col, char value) {
     if (row < 0 || row >= rows_ || col < 0 || col >= cols_) {
         std::cerr << "ERROR: set() out of bounds" << std::endl;
@@ -58,6 +59,7 @@ void Board::set(int row, int col, char value) {
     (*board_)[row][col] = value;
 }
 
+// reset the entire board to '0'
 void Board::clear() {
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < cols_; j++) {
@@ -66,6 +68,8 @@ void Board::clear() {
     }
 }
 
+// compare two boards to see which one is less
+// needed for storing boards in set
 bool Board::operator<(const Board& other) const {
     for (int x = 0; x < numRows(); x++) {
         for (int y = 0; y < numCols(); y++) {
@@ -74,10 +78,10 @@ bool Board::operator<(const Board& other) const {
             }
         }
     }
-    return false; // They are equal
+    return false;
 }
 
-
+// print out the board
 std::ostream& operator<<(std::ostream& os, const Board& board) {
     os << "Board: " << std::endl;
     for (int i = 0; i < board.numRows(); i++) {
@@ -90,8 +94,8 @@ std::ostream& operator<<(std::ostream& os, const Board& board) {
     return os;
 }
 
+// check if two boards are same
 bool operator==(const Board& b1, const Board& b2) {
-    // assumes both boards of equal size
     if (b1.numRows() != b2.numRows() || b1.numCols() != b2.numCols()) {
         return false;
     }
@@ -102,6 +106,6 @@ bool operator==(const Board& b1, const Board& b2) {
             }
         }
     }
-    // nothing went wrong they are equal
+    // made here so all elements same
     return true;
 }

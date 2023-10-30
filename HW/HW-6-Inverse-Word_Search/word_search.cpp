@@ -8,43 +8,38 @@
 
 using namespace std;
 
-// define all possible movement directions on the board.
+// all possible movement directions on the board
 const pair<int, int> DIRECTIONS[] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
+// ingest the file
 pair<int, int> ingest(ifstream &inputFile, vector<string> &positiveWords, vector<string> &negativeWords) {
-    string first, second;
-    int rows = 0;
-    int cols = 0;
-    bool is_dimension = true;
-    while (inputFile >> first >> second) {
-        // first line is dimensions 
-        if (is_dimension) {
-            // get dimensions
-            cols = stoi(first);
-            rows = stoi(second);
+    // first two items are always board dimensions
+    int width, height;
+    inputFile >> width >> height;
 
-            is_dimension = false;
+    // read in the pos and neg words
+    string sign, word;
+    while (inputFile >> sign >> word) {
+        // check if pos or neg
+        if (sign == "+") {
+            positiveWords.push_back(word);
         } else {
-            
-            // check if line is positive or negative
-            if (first == "+") {
-                positiveWords.push_back(second);
-            } else {
-                negativeWords.push_back(second);
-            }
+            negativeWords.push_back(word);
         }
     }
-    return make_pair(rows, cols);
+    return make_pair(height, width);
 }
 
-bool isPositionInBounds(const Board& board, const string& word, int x, int y, int dx, int dy) {
+// checks if the word will fit inside the bounds of the current board
+bool wordFits(const Board& board, const string& word, int x, int y, int dx, int dy) {
     return !(x < 0 || y < 0 ||
-             x + (word.length() - 1)*dx >= board.numRows() ||
-             x + (word.length() - 1)*dx < 0 ||
-             y + (word.length() - 1)*dy >= board.numCols() ||
-             y + (word.length() - 1)*dy < 0);
+             x + (int(word.length()) - 1)*dx >= board.numRows() ||
+             x + (int(word.length()) - 1)*dx < 0 ||
+             y + (int(word.length()) - 1)*dy >= board.numCols() ||
+             y + (int(word.length()) - 1)*dy < 0);
 }
 
+// check if board contains any empty values
 bool containsZeros(const Board& board) {
     for (int x = 0; x < board.numRows(); ++x) {
         for (int y = 0; y < board.numCols(); ++y) {
@@ -56,44 +51,58 @@ bool containsZeros(const Board& board) {
     return false;
 }
 
-// This function checks if a word can be placed on the board 
-// starting from coordinates (x, y) and moving in direction (dx, dy).
+// checks if a word can be placed on the board
 bool isWordPlaceable(const Board& board, const string& word, int x, int y, int dx, int dy) {
-    if (!isPositionInBounds(board, word, x, y, dx, dy)) {
+    // if word doesnt fit return
+    if (!wordFits(board, word, x, y, dx, dy)) {
         return false;
     }
 
-    // iterate through the word's characters and ensure the path on the board is '0'.
+    // if word will overlap another without the same characters
     for (size_t i = 0; i < word.length(); i++) {
         char currentCell = board.get(x + i*dx, y + i*dy);
         if (currentCell != '0' && currentCell != word[i]) {
-            return false; // Cell is occupied by a different character than the current word's character.
+            return false;
         }
     }
     return true;
 }
 
-
-// This function places a word on the board starting from (x, y) and 
-// moving in the direction (dx, dy) for each character in the word.
+// places a word in the board towards given direction
 void placeWord(Board& board, const string& word, int x, int y, int dx, int dy) {
-    for (int i = 0; i < word.length(); i++) {
+    for (int i = 0; i < int(word.length()); i++) {
         board.set(x + i*dx, y + i*dy, word[i]);
     }
 }
 
-// Helper function to check if the board contains any word from the negativeWords list
+// checks for words matching at position in direction
+bool matchingWord(const Board& board, const string& word, int x, int y, int dx, int dy) {
+    // if word doesnt fit return
+    if (!wordFits(board, word, x, y, dx, dy)) {
+        return false;
+    }
+
+    // if words will overlap
+    for (size_t i = 0; i < word.length(); i++) {
+        char currentCell = board.get(x + i*dx, y + i*dy);
+        if (currentCell != word[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// check if the board contains any word from the negativeWords list
 bool containsNegativeWord(const Board& board, const vector<string>& negativeWords) {
     for (const string& word : negativeWords) {
         for (int x = 0; x < board.numRows(); x++) {
             for (int y = 0; y < board.numCols(); y++) {
-                for (int dx = -1; dx <= 1; dx++) {
-                    for (int dy = -1; dy <= 1; dy++) {
-                        if (dx == 0 && dy == 0) continue;
-
-                        if (isWordPlaceable(board, word, x, y, dx, dy)) {
-                            return true;
-                        }
+                for (int i = 0; i < 8; i++) {
+                    int dx = DIRECTIONS[i].first;
+                    int dy = DIRECTIONS[i].second;
+                    // if the words allign
+                    if (matchingWord(board, word, x, y, dx, dy)) {
+                        return true;
                     }
                 }
             }
@@ -103,11 +112,16 @@ bool containsNegativeWord(const Board& board, const vector<string>& negativeWord
 }
 
 void fillRemainingSpaces(Board& board, const vector<string>& positiveWords, const vector<string>& negativeWords, set<Board>& solutions, int startX = 0, int startY = 0, char minChar = 'a') {
-    // Find the first '0' character starting from (startX, startY)
+    // stored loc of a zero
     int zeroX = -1, zeroY = -1;
     bool found = false;
+
+    // traverse board to find the first '0' after curr position
     for (int x = startX; x < board.numRows() && !found; x++) {
-        for (int y = (x == startX ? startY : 0); y < board.numCols() && !found; y++) {
+        // resets y cord when in new row
+        int yStart = (x == startX) ? startY : 0;
+        
+        for (int y = yStart; y < board.numCols() && !found; y++) {
             if (board.get(x, y) == '0') {
                 zeroX = x;
                 zeroY = y;
@@ -116,7 +130,7 @@ void fillRemainingSpaces(Board& board, const vector<string>& positiveWords, cons
         }
     }
 
-    // If no '0' character is found, add the board to solutions if it doesn't contain negative words
+    // no '0' character found add to solutions if no neg words
     if (!found) {
         if (!containsNegativeWord(board, negativeWords)) {
             solutions.insert(board);
@@ -124,28 +138,28 @@ void fillRemainingSpaces(Board& board, const vector<string>& positiveWords, cons
         return;
     }
 
-    // Try filling the found '0' character with every character from 'minChar' to 'z'
+    // fill the '0' character with every char from minChar to z
     for (char ch = minChar; ch <= 'z'; ch++) {
         board.set(zeroX, zeroY, ch);
         if (zeroY < board.numCols() - 1) {
-            // If not the last cell in the current row, move to the next cell in the same row
+            // move along the row to next col
             fillRemainingSpaces(board, positiveWords, negativeWords, solutions, zeroX, zeroY + 1, ch);
         } else {
-            // If the last cell in the current row, move to the first cell of the next row
+            // if end of at last col then start at beg of next row
             fillRemainingSpaces(board, positiveWords, negativeWords, solutions, zeroX + 1, 0, ch);
         }
     }
-    board.set(zeroX, zeroY, '0');  // Restore the board for backtracking
+    board.set(zeroX, zeroY, '0');  // restore board
 }
 
 void driver(Board& board, const vector<string>& positiveWords, const vector<string>& negativeWords, int wordIndex, set<Board>& solutions) {
-    // Base case: if all words have been placed and there are no '0's left
-    if (wordIndex == positiveWords.size()) {
+    // if all words have been placed
+    if (wordIndex == int(positiveWords.size())) {
+        // still has some '0's so fill them
         if (containsZeros(board)) {
-            // If there are '0' characters, try filling them up
             fillRemainingSpaces(board, positiveWords, negativeWords, solutions);
+        // no '0's so add to solutions set
         } else if (!containsNegativeWord(board, negativeWords)) {
-            // If there are no '0' characters, add the board to solutions
             solutions.insert(board);
         }
         return;
@@ -153,20 +167,18 @@ void driver(Board& board, const vector<string>& positiveWords, const vector<stri
     
     string currentWord = positiveWords[wordIndex];
     
-    // Try placing the current word in every possible position and direction
+    // place every word in every position every direction
     for (int x = 0; x < board.numRows(); x++) {
         for (int y = 0; y < board.numCols(); y++) {
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = -1; dy <= 1; dy++) {
-                    // Skip the case where dx = dy = 0 as it's not a valid direction
-                    if (dx == 0 && dy == 0) continue;
+            for (int i = 0; i < 8; i++) {
+                int dx = DIRECTIONS[i].first;
+                int dy = DIRECTIONS[i].second;
 
-                    if (isWordPlaceable(board, currentWord, x, y, dx, dy)) {
-                        Board boardCopy = board;  // Store a copy of the current board state
-                        placeWord(board, currentWord, x, y, dx, dy);
-                        driver(board, positiveWords, negativeWords, wordIndex + 1, solutions);
-                        board = boardCopy;  // Restore the board to its previous state
-                    }
+                if (isWordPlaceable(board, currentWord, x, y, dx, dy)) {
+                    Board boardCopy = board;  // Store a copy of the current board state
+                    placeWord(board, currentWord, x, y, dx, dy);
+                    driver(board, positiveWords, negativeWords, wordIndex + 1, solutions);
+                    board = boardCopy;  // Restore the board to its previous state
                 }
             }
         }
@@ -233,7 +245,6 @@ int main(int argc, char* argv[]) {
 
     string solution_type = argv[3];
     if (solution_type == "all_solutions") {
-
         set<Board> solves = createAllPuzzles(dim.first, dim.second, positiveWords, negativeWords);
         // print all solutions
         printAll(output_file, solves);
