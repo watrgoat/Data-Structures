@@ -1,5 +1,7 @@
 #include <regex>
 #include <vector>
+#include <map>
+#include <set>
 #include <iostream>
 #include <fstream>
 
@@ -36,7 +38,7 @@ using namespace std;
 
 // function to parse an HTML file and extract links to local files
 vector<string> extractLinksFromHTML(const string& fileContent) {
-    list<string> links;
+    vector<string> links;
     // regular expression to match href attributes in anchor tags
     regex linkRegex("<a\\s+[^>]*href\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
     smatch match;
@@ -53,10 +55,43 @@ vector<string> extractLinksFromHTML(const string& fileContent) {
     return links;
 }
 
-// extract text from url
+// expand this function to get all the information needed from each url connected to the first url
+// create new class for each url
+// recursive url function
+void retrieveLinks(string url, map<string, vector<string>> &backlinks, set<string> &visited) {
+    // open file
+    ifstream file(url);
+    string line;
+    string content;
+    // read file into string
+    while (getline(file, line)) {
+        content += line;
+    }
+    // extract links from html
+    vector<string> links = extractLinksFromHTML(content);
+    // add links to map
+    backlinks[url] = links;
+    // recursively call url on each link
+    for (string link : links) {
+        // only if not already in visited set
+        if (visited.find(link) == visited.end()) {
+            visited.insert(link);
+            retrieveLinks(link, backlinks, visited);
+        }
+    }
+}
 
 int main(int argc, char* argv[]) {
-    // open input file
-    ifstream inputFile(argv[1]);
-    if (!inputFile) {}
+    // check command line arguments len 4-6
+    if (argc < 4 || argc > 6) {
+        cout << "Usage: " << argv[0] << " <input file> <output file> <query 1-3>" << endl;
+        return 1;
+    }
+
+    // recursively give function a "url" and it adds to map of backlinks
+    map<string, vector<string>> backlinks;
+    set<string> visited;
+
+
+
 }
