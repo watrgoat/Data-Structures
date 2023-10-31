@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 // SHOULD I KNOW MY OWN URL???
 
 /*
@@ -18,11 +20,6 @@ Class for storing HTML data from a web page.
 */
 
 class Soup {
-private:
-    string title_;
-    string body_;
-    vector<string> outlinks_;
-    vector<string> inlinks_;
 public:
     // constructors
     Soup();
@@ -31,11 +28,14 @@ public:
     // destructor
     ~Soup();
 
+    // operator overloads
+    bool operator==(const Soup& other) const;
+
     // getters
-    string getTitle();
-    string getBody();
-    vector<string> getOutlinks();
-    vector<string> getInlinks();
+    string getTitle() const;
+    string getBody() const;
+    vector<string> getOutlinks() const;
+    vector<string> getInlinks() const;
 
     // setters
     void setTitle(string title);
@@ -52,9 +52,13 @@ public:
 
     // clear
     void clear();
+
+private:
+    string *title_;
+    string *body_;
+    vector<string> *outlinks_;
+    vector<string> *inlinks_;
 };
 
 // overload << operator
 ostream& operator<<(ostream& os, const Soup& soup);
-
-#endif
