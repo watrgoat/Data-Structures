@@ -5,6 +5,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "Soup.h"
+
 using namespace std;
 
 // step 1: web crawl.
