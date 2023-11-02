@@ -34,8 +34,6 @@ using namespace std;
 
 // big overview:
 // scrape all of the input files
-// write a map for each word and their assosiated url
-// 
 
 
 // function to parse an HTML file and extract links to local files
@@ -60,39 +58,37 @@ vector<string> extractLinksFromHTML(const string& fileContent) {
 // expand this function to get all the information needed from each url connected to the first url
 // create new class for each url
 // recursive url function
-void retrieveLinks(string url, map<string, vector<string>> &backlinks, set<string> &visited) {
+void webCrawl(string url, string currentDir, map<string, Soup> &pages, set<string> &visited) {
+    // check if url has been visited
+    if (visited.find(url) != visited.end()) {
+        return;
+    }
+
     // open file
-    ifstream file(url);
-    string line;
-    string content;
+    std::ifstream fileStream(filePath);
+    if (fileStream.is_open()) {
+        std::string fileContent((std::istreambuf_iterator<char>(fileStream)), std::istreambuf_iterator<char>());
+        // suppose filePath is the string "html_files/subdir1/file3.html", then at this point, the string fileContent will be the full content of this file file3.html.
+        // do something with fileContent
+    }
+
     // read file into string
-    while (getline(file, line)) {
-        content += line;
-    }
-    // extract links from html
-    vector<string> links = extractLinksFromHTML(content);
-    // add links to map
-    backlinks[url] = links;
-    // recursively call url on each link
-    for (string link : links) {
-        // only if not already in visited set
-        if (visited.find(link) == visited.end()) {
-            visited.insert(link);
-            retrieveLinks(link, backlinks, visited);
-        }
-    }
 }
 
 int main(int argc, char* argv[]) {
     // check command line arguments len 4-6
     if (argc < 4 || argc > 6) {
-        cout << "Usage: " << argv[0] << " <input file> <output file> <query 1-3>" << endl;
+        cout << "Usage: " << argv[0] << " <input file> <output file> <query/phrase search>" << endl;
         return 1;
     }
 
-    // recursively give function a "url" and it adds to map of backlinks
-    map<string, vector<string>> backlinks;
+    // recursively crawl the web
+    // create a vector of Soup objects
+    vector<Soup> pages;
+    // create a set of visited urls
     set<string> visited;
+
+    webCrawl(argv[1], pages, visited);
 
 
 

@@ -23,41 +23,32 @@ class Soup {
 public:
     // constructors
     Soup();
-    Soup(string title, string body, vector<string> outlinks, vector<string> inlinks);
+    Soup(string title, string content, vector<string> outlinks, int count);
 
     // destructor
     ~Soup();
 
     // operator overloads
     bool operator==(const Soup& other) const;
+    bool operator!=(const Soup& other) const;
+    bool operator<(const Soup& other) const;
+    bool operator>(const Soup& other) const;
 
     // getters
     string getTitle() const;
-    string getBody() const;
+    string getContent() const;
     vector<string> getOutlinks() const;
-    vector<string> getInlinks() const;
-
-    // setters
-    void setTitle(string title);
-    void setBody(string body);
-    // possibly unnessesary
-    void setOutlinks(vector<string> outlinks);
-    void setInlinks(vector<string> inlinks);
+    int getCount() const;
 
     // edit links
     void addOutlink(string outlink);
-    void addInlink(string inlink);
     void removeOutlink(string outlink);
-    void removeInlink(string inlink);
-
-    // clear
-    void clear();
 
 private:
     string *title_;
-    string *body_;
+    string *content_;
     vector<string> *outlinks_;
-    vector<string> *inlinks_;
+    int count_;
 };
 
 // overload << operator
