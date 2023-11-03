@@ -3,10 +3,12 @@
 
 #include <string>
 #include <vector>
+#include <set>
+#include <sstream>
+#include <iostream>
+#include <regex>
 
 using namespace std;
-
-// SHOULD I KNOW MY OWN URL???
 
 /*
 Soup:
@@ -16,19 +18,18 @@ Class for storing HTML data from a web page.
     - title: title of the web page
     - body: body of the web page
     - outlinks: list of URLs that the web page links to
-    - inlinks: list of URLs that link to the web page
 */
 
 class Soup {
 public:
     // constructors
     Soup();
-    Soup(string title, string content, vector<string> outlinks, int count);
-
-    // destructor
-    ~Soup();
+    Soup(const string& content);
+    Soup(const Soup& other);
+    Soup(Soup&& other) noexcept;
 
     // operator overloads
+    Soup& operator=(const Soup& other);
     bool operator==(const Soup& other) const;
     bool operator!=(const Soup& other) const;
     bool operator<(const Soup& other) const;
@@ -38,18 +39,21 @@ public:
     string getTitle() const;
     string getContent() const;
     vector<string> getOutlinks() const;
-    int getCount() const;
+    set<string> getBody() const;
+    int getCount(string word) const;
 
     // edit links
-    void addOutlink(string outlink);
-    void removeOutlink(string outlink);
+    void addOutlink(const string& outlink);
+    void removeOutlink(const string& outlink);
 
 private:
-    string *title_;
-    string *content_;
-    vector<string> *outlinks_;
-    int count_;
+    string title_;
+    string content_;
+    vector<string> outlinks_;
+    set<string> body_;
 };
 
 // overload << operator
 ostream& operator<<(ostream& os, const Soup& soup);
+
+#endif // SOUP_H
