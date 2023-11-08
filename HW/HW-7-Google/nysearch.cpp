@@ -51,14 +51,14 @@ string resolvePath(const string& basePath, const string& relativePath) {
     istringstream relativeStream(relativePath);
     string temp;
 
-    // split base path into parts
+    // Split base path into parts
     while (getline(baseStream, temp, '/')) {
         if (temp != "." && !temp.empty()) {
             baseParts.push_back(temp);
         }
     }
 
-    // split relative path into parts
+    // Split relative path into parts
     while (getline(relativeStream, temp, '/')) {
         if (temp == "..") {
             if (!baseParts.empty()) {
@@ -69,8 +69,11 @@ string resolvePath(const string& basePath, const string& relativePath) {
         }
     }
 
-    // combine the parts into a single path
+    // Combine the parts into a single path
     ostringstream resolvedPath;
+    if (basePath.front() == '/') {
+        resolvedPath << '/';
+    }
     for (const auto& part : baseParts) {
         resolvedPath << part << "/";
     }
@@ -79,12 +82,14 @@ string resolvePath(const string& basePath, const string& relativePath) {
     }
 
     string resolved = resolvedPath.str();
-    resolved.pop_back(); // remove slash at end
+    if (!resolved.empty() && resolved.back() == '/') {
+        resolved.pop_back(); // Remove trailing slash if necessary
+    }
 
     return resolved;
 }
 
-Soup readFileIntoSoup(const string &path) {
+Soup readFileIntoSoup(const string& path) {
     ifstream fileStream(path);
     if (!fileStream.is_open()) {
         cerr << "Could not open the file - '" << path << "'" << endl;
@@ -95,14 +100,14 @@ Soup readFileIntoSoup(const string &path) {
     return soup;
 }
 
-void webCrawl(string basePath, string url, map<string, Soup> &pages) {
+void webCrawl(const string& basePath, const string& url, map<string, Soup>& pages) {
     // Resolve the relative path
     string resolvedPath = resolvePath(basePath, url);
-    // check if path isnt in pages
+    // Check if path isn't in pages
     if (pages.find(resolvedPath) == pages.end()) {
-        pages[resolvedPath] = (readFileIntoSoup(resolvedPath));
+        pages[resolvedPath] = readFileIntoSoup(resolvedPath);
 
-        for (string relativePath : pages[resolvedPath].getOutlinks()) {
+        for (const string& relativePath : pages[resolvedPath].getOutlinks()) {
             // Construct new base path by removing the file name from the resolved path
             string newBasePath = resolvedPath.substr(0, resolvedPath.find_last_of('/'));
             webCrawl(newBasePath, relativePath, pages);
@@ -110,44 +115,37 @@ void webCrawl(string basePath, string url, map<string, Soup> &pages) {
     }
 }
 
-// phrase vs regular search
-// regular search what do i need
-// does any of the query words appear in body
-// if so .find count each word in all found documents
+map<string, vector<string>> invertLinks(const map<string, Soup>& pages) {
+    map<string, vector<string>> backlinks_map;
 
-map<string, vector<string> > invertLinks(const map<string, Soup>& pages) {
-    map<string, vector<string> > backlinks_map;
-    
-    for (const pair<string, Soup> pair : pages) {
-        const string& page = pair.first;
+    for (const auto& pair : pages) {
+        const string& pageUrl = pair.first; // pageUrl is the resolved path of the current page
         const vector<string>& outgoing_links = pair.second.getOutlinks();
         
-        for (const string& linked_page : outgoing_links) {
-            backlinks_map[linked_page].push_back(page);
+        // Base path for outlinks will be the directory of the current page
+        string basePath = pageUrl.substr(0, pageUrl.find_last_of('/'));
+
+        for (const string& relative_link : outgoing_links) {
+            // Resolve each relative outlink to an absolute path
+            string absoluteOutlink = resolvePath(basePath, relative_link);
+            backlinks_map[absoluteOutlink].push_back(pageUrl);
         }
     }
     
     return backlinks_map;
 }
 
-bool containsWord(const string& word, const set<string>& body) {
-    return body.find(word) != body.end();
-}
-
 bool containsAllWords(const vector<string>& query, const set<string>& body) {
-    for (const auto& word : query) {
-        if (body.find(word) == body.end()) {
-            return false;
-        }
-    }
-    return true;
+    return all_of(query.begin(), query.end(), [&](const string& word) {
+        return body.find(word) != body.end();
+    });
 }
 
-map<string, double> calculateBacklinksScore(const map<string, vector<string> >& backlinks_map, const map<string, Soup>& pages) {
+map<string, double> calculateBacklinksScore(const map<string, vector<string>>& backlinks_map, const map<string, Soup>& pages) {
     map<string, double> backlinks_scores;
     
     // Initialize backlink scores to zero for all pages
-    for (const pair<string, Soup> pair : pages) {
+    for (const auto& pair : pages) {
         backlinks_scores[pair.first] = 0.0;
     }
 
@@ -157,8 +155,10 @@ map<string, double> calculateBacklinksScore(const map<string, vector<string> >& 
         const vector<string>& incoming_links = pair.second;
         
         for (const string& incoming_link : incoming_links) {
-            unsigned int outgoing_links_count = pages.at(incoming_link).getOutlinks().size();
-            backlinks_scores[page] += 1.0 / (outgoing_links_count + 1);
+            if (pages.count(incoming_link)) {  // Check if the incoming link is a valid page
+                unsigned int outgoing_links_count = pages.at(incoming_link).getOutlinks().size();
+                backlinks_scores[page] += 1.0 / (outgoing_links_count + 1);
+            }
         }
     }
     
@@ -166,44 +166,33 @@ map<string, double> calculateBacklinksScore(const map<string, vector<string> >& 
 }
 
 // document density calculation function
-map<string, double> calculateDocumentDensity(const vector<string>& query, map<string, Soup>& pages) {
-    map<string, vector<pair<string, int> > > wordDocuments;
-    map<string, pair<int, int> > wordFrequency;
+map<string, double> calculateDocumentDensity(const vector<string>& query, const map<string, Soup>& pages) {
+    map<string, double> documentDensity;
+    map<string, int> totalWordCounts;
+    int totalContentLength = 0;
 
-    // for each page, check if it contains any of the query words
-    for (auto it = pages.begin(); it != pages.end();) {
-        const string& pageUrl = it->first;
-        Soup& soup = it->second;
-        
-        // If the page doesn't contain all query words, erase it from the map
-        if (!containsAllWords(query, soup.getBody())) {
-            it = pages.erase(it);
-        } else {
-            // If it contains all words, proceed with counting and calculating densities
-            for (const auto& word : query) {
-                int count = soup.getCount(word);
-                wordDocuments[word].emplace_back(pageUrl, count);
-                wordFrequency[word].first += count;
-                wordFrequency[word].second += soup.getContent().size();
-            }
-            ++it; // Only increment the iterator if the page was not erased
+    // First, we calculate the total number of occurrences and total content length for each keyword
+    for (const auto& pagePair : pages) {
+        totalContentLength += pagePair.second.getContent().length();
+        for (const string& word : query) {
+            totalWordCounts[word] += pagePair.second.getCount(word);
         }
     }
 
-    // calculate keyword density across all documents
-    // For the first keyword in the query, calculate its overall frequency across all documents, and then divide this by the sum of the lengths of all documents.
+    // Then, we calculate the keyword density score for each document
+    for (const auto& pagePair : pages) {
+        const string& url = pagePair.first;
+        const Soup& soup = pagePair.second;
+        const string content = soup.getContent();
+        double score = 0.0;
 
-    map<string, double> documentDensity;
-    // how many times does keyword appear in document
-    for (string word : query) {
-
-        double density = wordFrequency[word].first / wordFrequency[word].second;
-
-        // for each document that contains the keyword
-        for (int j = 0; j < int(wordDocuments[word].size()); j++) {
-            // calculate keyword density
-            documentDensity[wordDocuments[word][j].first] += wordDocuments[word][j].second / (pages[wordDocuments[word][j].first].getContent().size() * density);
+        for (const string& word : query) {
+            int wordCount = soup.getCount(word);
+            double keywordDensity = wordCount / static_cast<double>(content.length());
+            double keywordDensityAcrossDocuments = static_cast<double>(totalWordCounts[word]) / totalContentLength;
+            score += keywordDensity / keywordDensityAcrossDocuments;
         }
+        documentDensity[url] = score;
     }
 
     return documentDensity;
@@ -219,48 +208,133 @@ bool compareScore(const pair<string, double>& a, const pair<string, double>& b) 
 }
 
 vector<pair<string, double>> sortMapByValue(const map<string, double>& page_scores) {
-    // Create a vector of pairs and copy elements from the map
     vector<pair<string, double>> sorted_scores(begin(page_scores), end(page_scores));
-
-    // Sort using the custom comparator
     sort(sorted_scores.begin(), sorted_scores.end(), compareScore);
-
     return sorted_scores;
 }
 
-void regularSearch(const vector<string>& query, map<string, Soup>& pages) {
-    // remove pages that dont contain BOTH of the query words
-    
+string getSnippetFromContent(const string& content, const string& searchText) {
 
-    // get document density
+    // Find the first occurrence of searchText
+    size_t searchTextPos = content.find(searchText);
+    if (searchTextPos == string::npos) {
+        return ""; // Search text not found
+    }
+
+    // Find the last period before the searchText
+    size_t periodPos = content.rfind('.', searchTextPos);
+    if (periodPos == string::npos || periodPos < searchTextPos - 120) {
+        periodPos = searchTextPos > 120 ? searchTextPos - 120 : 0;
+    } else {
+        // Move one character ahead to not include the period itself
+        periodPos += 1;
+    }
+
+    // Get the snippet, ensuring not to go beyond the bounds of the string
+    size_t snippetLength = (content.length() - periodPos < 120) ? content.length() - periodPos : 120;
+    string snippet = content.substr(periodPos, snippetLength);
+
+    return snippet;
+}
+
+void regularSearch(ofstream &out, const vector<string>& query, map<string, Soup>& pages) {
+
+    // Get document density
     map<string, double> documentDensity = calculateDocumentDensity(query, pages);
 
-    // get backlinks map
-    map<string, vector<string> > backlinks_map = invertLinks(pages);
+    // Get backlinks map
+    map<string, vector<string>> backlinks_map = invertLinks(pages);
 
-    // calculate backlinks score
+    // Calculate backlinks score
     map<string, double> backlinks_scores = calculateBacklinksScore(backlinks_map, pages);
 
-    // calculate page score only for non zero scores
-    map<string, double> page_scores;
-
-    for (const pair<string, Soup> pair : pages) {
-        const string& page = pair.first;
-        const Soup& soup = pair.second;
-        double keyword_density_score = documentDensity[page];
-        double backlinks_score = backlinks_scores[page];
-        double page_score = 0.5 * keyword_density_score + 0.5 * backlinks_score;
-        if (page_score > 0) {
-            page_scores[page] = page_score;
+    // remove pages with no keyword matches
+    for (auto it = pages.begin(); it != pages.end();) {
+        if (!containsAllWords(query, it->second.getBody())) {
+            it = pages.erase(it);
+        } else {
+            ++it;
         }
     }
 
-    // sort page scores
-    vector<pair<string, double> > sorted_page_scores = sortMapByValue(page_scores);
+    // Calculate page score only for non-zero scores
+    map<string, double> page_scores;
+    for (const auto& page_pair : pages) {
+        double keyword_density_score = documentDensity[page_pair.first];
+        double backlinks_score = backlinks_scores[page_pair.first];
+        double page_score = 0.5 * keyword_density_score + 0.5 * backlinks_score;
+        page_scores[page_pair.first] = page_score;
+    }
 
-    // print all pages urls
-    for (const pair<string, double>& pair : sorted_page_scores) {
-        cout << pair.first << endl;
+    // Sort page scores
+    vector<pair<string, double>> sorted_page_scores = sortMapByValue(page_scores);
+    
+    out << "Matching documents:" << endl << endl;
+
+    // Print all pages URLs
+    for (const auto& pair : sorted_page_scores) {
+        // soup title
+        out << "Title: " << pages[pair.first].getTitle() << endl;
+        out << "Url: " << pair.first << endl;
+        out << "Description: " << pages[pair.first].getDescription() << endl;
+        out << "Snippet: " << getSnippetFromContent(pages[pair.first].getContent(), query[0]) << endl;
+        out << endl;
+    }
+}
+
+void phraseSearch(ofstream &out, const vector<string>& query, map<string, Soup>& pages) {
+
+    string searchPhrase;
+    for (const auto& word : query) {
+        if (!searchPhrase.empty()) searchPhrase += " "; // Add space before the next word
+        searchPhrase += word;
+    }
+
+    // Get document density
+    map<string, double> documentDensity = calculateDocumentDensity(query, pages);
+
+    // Get backlinks map
+    map<string, vector<string>> backlinks_map = invertLinks(pages);
+
+    // Calculate backlinks score
+    map<string, double> backlinks_scores = calculateBacklinksScore(backlinks_map, pages);
+
+    // remove pages with no keyword matches and pages that do not contain the entire search phrase
+    for (auto it = pages.begin(); it != pages.end();) {
+        bool hasAllWords = containsAllWords(query, it->second.getBody());
+        bool containsPhrase = (it->second.getContent().find(searchPhrase) != string::npos); // Check if the entire phrase exists
+
+        if (!hasAllWords || !containsPhrase) {
+            cout << "Removing page: " << it->first << endl;
+            it = pages.erase(it); // Remove pages that do not meet both conditions
+        } else {
+            ++it; // Only increment if we didn't erase
+        }
+    }
+
+    // Calculate page score only for non-zero scores
+    map<string, double> page_scores;
+    for (const auto& page_pair : pages) {
+        double keyword_density_score = documentDensity[page_pair.first];
+        double backlinks_score = backlinks_scores[page_pair.first];
+        double page_score = 0.5 * keyword_density_score + 0.5 * backlinks_score;
+        page_scores[page_pair.first] = page_score;
+    }
+
+    // Sort page scores
+    vector<pair<string, double>> sorted_page_scores = sortMapByValue(page_scores);
+    
+    out << "Matching documents:" << endl << endl;
+
+    // Print all pages URLs
+    for (const auto& pair : sorted_page_scores) {
+        // soup title
+        out << "Title: " << pages[pair.first].getTitle() << endl;
+        out << "Url: " << pair.first << endl;
+        out << "Description: " << pages[pair.first].getDescription() << endl;
+        // snippet
+        // todo
+        out << endl;
     }
 }
 
@@ -271,9 +345,17 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    // open output file
+    ofstream out(argv[2]);
+    if (!out.is_open()) {
+        cerr << "Could not open the file - '" << argv[2] << "'" << endl;
+        return 1;
+    }
+
     // recursively crawl the web
-    // create a vector of Soup objects
     map<string, Soup> pages;
+
+    webCrawl("", argv[1], pages);
     
     if (argv[3][0] == '"' && argv[argc-1][strlen(argv[argc]) - 1] == '"') {
         // phrase search
@@ -285,21 +367,20 @@ int main(int argc, char* argv[]) {
                 string(argv[i]).erase(quotePos, 1); // remove the double quote character at the found position; here number 1 as the second argument means erasing 1 character.
             }
         }
+        vector<string> searchTerms;
+        for (int i = 3; i < argc; i++) {
+            searchTerms.push_back(argv[i]);
+        }
+
+        phraseSearch(out, searchTerms, pages);
 
     } else {
         // regular search
-
+        // get vector of search terms
+        vector<string> searchTerms;
+        for (int i = 3; i < argc; i++) {
+            searchTerms.push_back(argv[i]);
+        }
+        regularSearch(out, searchTerms, pages);
     }
-    
-    cout << argv[3] << ' ' << argv[4] << endl;
-
-
-    webCrawl("", argv[1], pages);
-
-    cout << "done" << endl;
-
-    regularSearch({"Boston", "Cruise"}, pages);
-
-    cout << "done" << endl;
-
 }

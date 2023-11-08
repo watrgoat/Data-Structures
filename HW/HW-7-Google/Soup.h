@@ -41,6 +41,7 @@ public:
     vector<string> getOutlinks() const;
     set<string> getBody() const;
     int getCount(string word) const;
+    string getDescription() const;
 
     // edit links
     void addOutlink(const string& outlink);
@@ -51,6 +52,7 @@ private:
     string content_;
     vector<string> outlinks_;
     set<string> body_;
+    string description_;
 };
 
 // overload << operator

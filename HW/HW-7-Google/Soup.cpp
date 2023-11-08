@@ -17,6 +17,22 @@ namespace {
         return "";
     }
 
+    string findDescription(const string &content) {
+        // regular expression to match meta description tag
+        regex descriptionRegex("<meta\\s+name\\s*=\\s*['\"]description['\"]\\s+content\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
+        smatch match;
+
+        // search for description in the HTML content
+        string::const_iterator start = content.cbegin();
+        if (regex_search(start, content.cend(), match, descriptionRegex)) {
+            // second match group contains the description
+            if (match.size() > 1) {
+                return match[1].str();
+            }
+        }
+        return "";
+    }
+
     // function to parse an HTML file and extract links to local files
     vector<string> extractLinksFromHTML(const string& content) {
         vector<string> links;
@@ -63,7 +79,8 @@ Soup::Soup()
     : title_(""),
       content_(""),
       outlinks_(),
-      body_()
+      body_(),
+      description_("")
 {}
 
 // constructor with content
@@ -71,7 +88,8 @@ Soup::Soup(const string& content)
     : title_(findTitle(content)),
       content_(content),
       outlinks_(extractLinksFromHTML(content)),
-      body_(extractBody(content))
+      body_(extractBody(content)),
+      description_(findDescription(content))
 {}
 
 // copy constructor
@@ -79,7 +97,8 @@ Soup::Soup(const Soup& other)
     : title_(other.title_),
       content_(other.content_),
       outlinks_(other.outlinks_),
-      body_(other.body_)
+      body_(other.body_),
+      description_(other.description_)
 {}
 
 // move constructor
@@ -87,7 +106,8 @@ Soup::Soup(Soup&& other) noexcept
     : title_(move(other.title_)),
       content_(move(other.content_)),
       outlinks_(move(other.outlinks_)),
-      body_(move(other.body_))
+      body_(move(other.body_)),
+      description_(move(other.description_))
 {}
 
 Soup& Soup::operator=(const Soup& other) {
@@ -96,6 +116,7 @@ Soup& Soup::operator=(const Soup& other) {
         content_ = other.content_;
         outlinks_ = other.outlinks_;
         body_ = other.body_;
+        description_ = other.description_;
     }
     return *this;
 }
@@ -139,6 +160,10 @@ vector<string> Soup::getOutlinks() const {
 
 set<string> Soup::getBody() const {
     return body_;
+}
+
+string Soup::getDescription() const {
+    return description_;
 }
 
 int Soup::getCount(string word) const {
