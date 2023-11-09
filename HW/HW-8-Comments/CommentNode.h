@@ -28,7 +28,6 @@ public:
     // Functions for manipulating comments
     void addReply(const CommentNode &reply);
     void likeComment();
-    void deleteComment(); // This will need to recursively delete child comments
     void displayComment(std::ostream &out) const; // For nested display
 
     int numReplies() const { return replies.size(); }
