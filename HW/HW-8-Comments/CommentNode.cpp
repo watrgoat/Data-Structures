@@ -12,19 +12,21 @@ CommentNode::CommentNode(const std::string &vid_id, const std::string &auth, con
       comment_text(comment) {}
 
 void CommentNode::addReply(const CommentNode &reply) {
-    // Implementation code here
+    replies.push_back(reply);
+    reply_count++;
 }
 
 void CommentNode::likeComment() {
-    // Implementation code here
+    like_count++;
 }
 
-void CommentNode::deleteComment() {
-    // Implementation code here
-}
-
+// @user1 0 seconds ago
+// Friends is my favorite TV show. Thank you for all the laughs. I will always remember the character Chandler Bing.
+// 👍 0
+// 1 reply
 void CommentNode::displayComment(std::ostream &out) const {
-    // Implementation code here
+    out << author << " " << published_date << std::endl;
+    out << comment_text << std::endl;
+    out << "\U0001F44D " << like_count << std::endl;\
+    out << reply_count << " replies" << std::endl;
 }
-
-// Other necessary functions can be implemented here
