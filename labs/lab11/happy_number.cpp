@@ -127,7 +127,7 @@ bool isHappy2(int n) {
     return isHappy2(n, seen);
 }
 
-bool isHappy(int n, std::unordered_set<int> &seen) {
+bool isHappy1(int n, std::unordered_set<int> &seen) {
     if (n == 1) {
         return true;
     }
@@ -149,12 +149,12 @@ bool isHappy(int n, std::unordered_set<int> &seen) {
         sum += digit * digit;
     }
 
-    return isHappy(sum, seen);
+    return isHappy1(sum, seen);
 }
 
-bool isHappy(int n) {
+bool isHappy1(int n) {
     unordered_set<int> seen;
-    return isHappy(n, seen);
+    return isHappy1(n, seen);
 }
 
 int main() {
