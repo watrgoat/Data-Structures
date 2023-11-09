@@ -84,13 +84,14 @@ void readJsonComments(ifstream &file, vector<CommentNode>& comments) {
     }
 }
 
+// helper function to find comment with given id
 CommentNode* findComment(CommentNode& root, const string& id) {
-    // Check if the current node's ID matches the target ID
+    // check if curr id matches target id
     if (root.getCommentId() == id) {
         return &root;
     }
 
-    // Recursively search in each reply
+    // cearch through all replies
     for (CommentNode& reply : root.getReplies()) {
         CommentNode* found = findComment(reply, id);
         if (found != nullptr) {
@@ -98,10 +99,10 @@ CommentNode* findComment(CommentNode& root, const string& id) {
         }
     }
 
-    // Return nullptr if the comment is not found in this branch
     return nullptr;
 }
 
+// finds the comment with the given ID and adds a reply to it
 CommentNode* findComment(vector<CommentNode>& comments, const string& id) {
     for (CommentNode& comment : comments) {
         CommentNode* found = findComment(comment, id);
@@ -111,15 +112,8 @@ CommentNode* findComment(vector<CommentNode>& comments, const string& id) {
     }
     return nullptr;
 }
-// reply_to_comment <parent_id> <reply_id> <username> <reply_text>
 
-// reply_to_video <user_id> <username> <reply_text>
-
-// like_comment <comment_id>
-
-// display_comment <comment_id>
-
-// delete_comment <comment_id>
+// reads in text commands and executes them
 void executeTextComments(ifstream &file, ofstream &outFile, vector<CommentNode>& comments) {
     string line;
 
