@@ -27,6 +27,7 @@ public:
 
     // Functions for manipulating comments
     void addReply(const CommentNode &reply);
+    void removeReply(const std::string &reply_id);
     void likeComment();
     void displayComment(std::ostream &out) const; // For nested display
 

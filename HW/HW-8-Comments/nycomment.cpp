@@ -15,13 +15,17 @@ using namespace std;
 // Function Prototypes
 void readJsonComments(ifstream &file, vector<CommentNode>& comments);
 
-CommentNode* findComment(vector<CommentNode>& comments, string comment_id);
+CommentNode* findCommentNode(CommentNode& root, const string& comment_id);
+CommentNode* findCommentAll(vector<CommentNode>& comments, const string& comment_id);
+
 void addReplyToComment(vector<CommentNode>& comments, string parent_id, string reply_id, string username, string reply_text);
+void addReplyToVideo(vector<CommentNode>& comments, string reply_id, string username, string reply_text);
 void likeComment(vector<CommentNode>& comments, string comment_id);
 void displayComment(ofstream &outFile, vector<CommentNode>& comments, string comment_id);
-void deleteComment(vector<CommentNode>& comments, string comment_id);
+void deleteComment(vector<CommentNode>& comments, const string& comment_id);
 
-void executeTextComments(ifstream &file, vector<CommentNode>& comments);
+void executeTextComments(ifstream &file, ofstream &outFile, vector<CommentNode>& comments);
+
 
 // reads in json comments adds to tree structure
 void readJsonComments(ifstream &file, vector<CommentNode>& comments) {
@@ -85,15 +89,15 @@ void readJsonComments(ifstream &file, vector<CommentNode>& comments) {
 }
 
 // helper function to find comment with given id
-CommentNode* findComment(CommentNode& root, const string& id) {
+CommentNode* findCommentNode(CommentNode& root, const string& comment_id) {
     // check if curr id matches target id
-    if (root.getCommentId() == id) {
+    if (root.getCommentId() == comment_id) {
         return &root;
     }
 
     // cearch through all replies
     for (CommentNode& reply : root.getReplies()) {
-        CommentNode* found = findComment(reply, id);
+        CommentNode* found = findCommentNode(reply, comment_id);
         if (found != nullptr) {
             return found;
         }
@@ -103,14 +107,98 @@ CommentNode* findComment(CommentNode& root, const string& id) {
 }
 
 // finds the comment with the given ID and adds a reply to it
-CommentNode* findComment(vector<CommentNode>& comments, const string& id) {
+CommentNode* findCommentAll(vector<CommentNode>& comments, const string& comment_id) {
     for (CommentNode& comment : comments) {
-        CommentNode* found = findComment(comment, id);
+        CommentNode* found = findCommentNode(comment, comment_id);
         if (found != nullptr) {
             return found;
         }
     }
     return nullptr;
+}
+
+void addReplyToComment(vector<CommentNode>& comments, string parent_id, string reply_id, string username, string reply_text) {
+    // find parent comment
+    CommentNode* parent = findCommentAll(comments, parent_id);
+    if (parent == nullptr) {
+        cerr << "Error: Parent comment with ID '" << parent_id << "' not found." << endl;
+        return;
+    }
+
+    // create new comment
+    CommentNode newNode(parent->getVideoId(), username, reply_id, 0, 0, true, parent_id, "", "", false, reply_text);
+    cout << newNode.getCommentId() << endl;
+    // add reply to parent
+    parent->addReply(newNode);
+}
+
+void addReplyToVideo(vector<CommentNode>& comments, string reply_id, string username, string reply_text) {
+    // get video id
+    string video_id = comments[0].getVideoId();
+
+    // create new comment
+    CommentNode newNode(video_id, username, reply_id, 0, 0, false, "", "0 seconds ago", "", false, reply_text);
+    
+    // add reply to comments
+    comments.push_back(newNode);
+}
+
+void likeComment(vector<CommentNode>& comments, string comment_id) {
+    // find comment
+    CommentNode* comment = findCommentAll(comments, comment_id);
+    if (comment == nullptr) {
+        cerr << "Error: Comment with ID '" << comment_id << "' not found." << endl;
+        return;
+    }
+
+    // like comment
+    comment->likeComment();
+}
+
+void displayComment(ofstream &outFile, vector<CommentNode>& comments, string comment_id) {
+    // find comment
+    CommentNode* comment = findCommentAll(comments, comment_id);
+    if (comment == nullptr) {
+        cerr << "Error: Comment with ID '" << comment_id << "' not found." << endl;
+        return;
+    }
+
+    // display comment
+    comment->displayComment(outFile);
+}
+
+// helper for finding parent of comment
+CommentNode* findParent(CommentNode& root, const std::string& comment_id, CommentNode** parent) {
+    for (CommentNode& reply : root.getReplies()) {
+        if (reply.getCommentId() == comment_id) {
+            *parent = &root;
+            return &reply;
+        }
+        CommentNode* found = findParent(reply, comment_id, parent);
+        if (found != nullptr) {
+            return found;
+        }
+    }
+    return nullptr;
+}
+
+void deleteComment(std::vector<CommentNode>& comments, const std::string& comment_id) {
+    // check if in root comments and remove
+    for (auto it = comments.begin(); it != comments.end(); ++it) {
+        if (it->getCommentId() == comment_id) {
+            comments.erase(it);
+        }
+    }
+
+    // if not in the root comments, find the parent and delete the comment
+    CommentNode* parent = nullptr;
+    for (CommentNode& comment : comments) {
+        CommentNode* found = findParent(comment, comment_id, &parent);
+        if (found != nullptr && parent != nullptr) {
+            // remove the comment
+            parent->removeReply(comment_id);
+        }
+    }
 }
 
 // reads in text commands and executes them
@@ -131,8 +219,9 @@ void executeTextComments(ifstream &file, ofstream &outFile, vector<CommentNode>&
                 iss.get(); // Consume the opening double quote
                 getline(iss, comment_text, '"'); // Read until the closing double quote
             }
-            // Add reply to comment function call here
-            // e.g., addReplyToComment(comments, parent_id, id, user, comment_text);
+            
+            // cout << id << endl;
+            addReplyToComment(comments, parent_id, id, user, comment_text);
 
         // reply_to_video <user_id> <username> <reply_text>
         } else if (command == "reply_to_video") {
@@ -143,24 +232,25 @@ void executeTextComments(ifstream &file, ofstream &outFile, vector<CommentNode>&
                 getline(iss, comment_text, '"'); // Read until the closing double quote
             }
             
-
+            addReplyToVideo(comments, id, user, comment_text);
 
         // like_comment <comment_id>
         } else if (command == "like_comment") {
             iss >> id;
             
+            likeComment(comments, id);
 
         // delete_comment <comment_id>
         } else if (command == "delete_comment") {
             iss >> id;
-            // Delete comment function call here
-            // e.g., deleteComment(comments, id);
+            
+            deleteComment(comments, id);
 
-        // Handling display_comment command
+        // display_comment <comment_id>
         } else if (command == "display_comment") {
             iss >> id;
-            // Display comment function call here
-            // e.g., displayComment(outFile, comments, id);
+            
+            displayComment(outFile, comments, id);
 
         // Unknown command handling
         } else {
@@ -205,7 +295,7 @@ int main(int argc, char* argv[]) {
     }
 
     // execute text comments
-    // executeTextComments(text_file, out_file, comments);
+    executeTextComments(text_file, out_file, comments);
 
     // close files
     text_file.close();
