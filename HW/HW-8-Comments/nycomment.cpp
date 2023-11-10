@@ -46,7 +46,18 @@ void readJsonComments(ifstream &file, vector<CommentNode>& comments) {
             if (key == "\"video_id\"" || key == "\"author\"" || key == "\"comment_id\"" || 
                 key == "\"parent_comment_id\"" || key == "\"published_date\"" || 
                 key == "\"crawled_date\"" || key == "\"comment\"") {
-                iss >> quoted(value);
+                iss >> ws; // Skip any whitespace
+
+                if (iss.peek() == '"') {
+                    // if the field starts with a double quote, read it as a whole string
+                    iss.get();  // consume the opening double quote
+                    getline(iss, value, '"');  // read until the closing double quote
+                    // iss >> comment;  // read the quoted field
+                    if (!value.empty() && value.back() == '"') {
+                        value.pop_back();  // remove the closing double quote
+                    }
+                }
+
                 if (key == "\"video_id\"") video_id = value;
                 else if (key == "\"author\"") author = value;
                 else if (key == "\"comment_id\"") comment_id = value;
@@ -78,9 +89,17 @@ void readJsonComments(ifstream &file, vector<CommentNode>& comments) {
             comments.push_back(newNode);
         } else {
             // Find the parent and add this node as a child
+            // likely at the end of the vector
+            if (comments.back().getCommentId() == newNode.getParentCommentId()) {
+                comments.back().addReply(newNode);
+                comments.back().decreaseReplyCount();
+                continue;
+            }
+
             for (CommentNode& comment : comments) {
                 if (comment.getCommentId() == newNode.getParentCommentId()) {
                     comment.addReply(newNode);
+                    comment.decreaseReplyCount();
                     break;
                 }
             }
@@ -126,8 +145,8 @@ void addReplyToComment(vector<CommentNode>& comments, string parent_id, string r
     }
 
     // create new comment
-    CommentNode newNode(parent->getVideoId(), username, reply_id, 0, 0, true, parent_id, "", "", false, reply_text);
-    cout << newNode.getCommentId() << endl;
+    CommentNode newNode(parent->getVideoId(), username, reply_id, 0, 0, true, parent_id, "0 seconds ago", "", false, reply_text);
+
     // add reply to parent
     parent->addReply(newNode);
 }
@@ -168,7 +187,7 @@ void displayComment(ofstream &outFile, vector<CommentNode>& comments, string com
 }
 
 // helper for finding parent of comment
-CommentNode* findParent(CommentNode& root, const std::string& comment_id, CommentNode** parent) {
+CommentNode* findParent(CommentNode& root, const string& comment_id, CommentNode** parent) {
     for (CommentNode& reply : root.getReplies()) {
         if (reply.getCommentId() == comment_id) {
             *parent = &root;
@@ -182,9 +201,9 @@ CommentNode* findParent(CommentNode& root, const std::string& comment_id, Commen
     return nullptr;
 }
 
-void deleteComment(std::vector<CommentNode>& comments, const std::string& comment_id) {
+void deleteComment(vector<CommentNode>& comments, const string& comment_id) {
     // check if in root comments and remove
-    for (auto it = comments.begin(); it != comments.end(); ++it) {
+    for (vector<CommentNode>::iterator it = comments.begin(); it != comments.end(); ++it) {
         if (it->getCommentId() == comment_id) {
             comments.erase(it);
         }
@@ -197,6 +216,7 @@ void deleteComment(std::vector<CommentNode>& comments, const std::string& commen
         if (found != nullptr && parent != nullptr) {
             // remove the comment
             parent->removeReply(comment_id);
+            break;
         }
     }
 }
@@ -220,7 +240,6 @@ void executeTextComments(ifstream &file, ofstream &outFile, vector<CommentNode>&
                 getline(iss, comment_text, '"'); // Read until the closing double quote
             }
             
-            // cout << id << endl;
             addReplyToComment(comments, parent_id, id, user, comment_text);
 
         // reply_to_video <user_id> <username> <reply_text>

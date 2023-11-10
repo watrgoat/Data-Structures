@@ -10,7 +10,9 @@ namespace {
         out << indentStr << comment.getCommentText() << std::endl;
         out << indentStr << "\U0001F44D " << comment.getLikeCount() << std::endl;
 
-        if (comment.getReplyCount() > 0) {
+        if (comment.getReplyCount() == 1) {
+            out << indentStr << comment.getReplyCount() << " reply" << std::endl;
+        } else if (comment.getReplyCount() > 1) {
             out << indentStr << comment.getReplyCount() << " replies" << std::endl;
         }
         
