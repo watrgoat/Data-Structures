@@ -211,11 +211,11 @@ int main(int argc, char* argv[]) {
     }
 
     // execute text comments
-    executeTextComments(text_file, out_file, comments);
+    // executeTextComments(text_file, out_file, comments);
 
     // close files
     text_file.close();
     out_file.close();
-
+    // ./run.exe hold_me_closer.json input1_hold_me_closer.txt output.txt
     return 0;
 }
