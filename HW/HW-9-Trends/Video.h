@@ -1,3 +1,5 @@
+#include <string>
+#include <unordered_set>
 
 class Video {
 private:
@@ -18,23 +20,9 @@ public:
     }
 
     // Getters
-    std::string getCoverUrl() const {
-        return cover_url;
-    }
-
-    std::string getWebVideoUrl() const {
-        return web_video_url;
-    }
-
-    std::unordered_set<std::string> getHashtags() const {
-        return hashtags;
-    }
-
-    int getViews() const {
-        return views;
-    }
-
-    std::string getSoundId() const {
-        return sound;
-    }
+    std::string getCoverUrl() const { return cover_url; }
+    std::string getWebVideoUrl() const { return web_video_url; }
+    std::unordered_set<std::string> getHashtags() const { return hashtags;}
+    int getViews() const { return views; }
+    std::string getSoundId() const { return sound; }
 };

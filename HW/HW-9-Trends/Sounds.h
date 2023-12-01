@@ -1,32 +1,51 @@
-// sound queue:
-// organize by sound popularity (total views, then music id), then views
+// Sounds.h
+#ifndef SOUNDS_H
+#define SOUNDS_H
 
-#include <functional>
+#include <string>
 #include <queue>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
+#include "Video.h"
 
+/*
+print the top 10 trending sounds, and then for each sound, print 3 videos 
+which use this sound. If a sound is used in 100 videos, select the 3 (out of these 100) 
+most viewed videos. Print the most viewed video first, and then print the next most 
+viewed video, and then the third most viewed video.
+
+Definition of the top 10 trending sounds: this should be the based on the total 
+view count of the videos which use this sound. If there is a tie, break the tie 
+by the music id - the one with the smaller music id will be displayed first. (Note: 
+use the comparison operators (<, <=, >, >=) directly on these two std::string objects 
+to decide which one is smaller.)*/
 
 class Sounds {
 private:
-    // Define the type for the comparison function
-    using CompareFunction = std::function<bool(const Video&, const Video&)>;
-
-    // Define the comparison function
-    CompareFunction compare = [](const Video& a, const Video& b) {
-        if (a.getViews() == b.getViews()) {
-            return a.getSoundId() < b.getSoundId(); // Break ties by sound ID
-        }
-        return a.getViews() < b.getViews(); // Order by viewCount in descending order
+    // video comparison functor
+    class VideoCompare {
+    public:
+        bool operator()(const Video& a, const Video& b) const;
     };
 
-    // Use CompareFunction in the priority_queue
-    std::unordered_map<std::string, std::priority_queue<Video, std::vector<Video>, CompareFunction> > soundToVideosMap;
+    std::priority_queue<Video, std::vector<Video>, VideoCompare> soundQueue;
 
 public:
-    Sounds() : soundToVideosMap() {}
+    // def constructor
+    Sounds() {}
 
-    void addVideo(const Video& video) { soundToVideosMap[video.getSoundId()].push(video); }
+    int size() const { return soundQueue.size(); }
 
-    // Additional methods...
+    void addVideo(const std::string& coverUrl,
+                  const std::string& webVideoUrl,
+                  const std::unordered_set<std::string>& videoHashtags,
+                  int videoViews, const std::string& soundId) { 
+        soundQueue.emplace(coverUrl, webVideoUrl, videoHashtags, videoViews, soundId);
+    }
+
+    // Method to get top 10 trending sounds and 3 videos for each sound
+    std::unordered_map<std::string, std::vector<Video> > getTopVideosForMusicIds(const std::unordered_set<std::string>& musicIds);
 };
+
+#endif // SOUNDS_H
