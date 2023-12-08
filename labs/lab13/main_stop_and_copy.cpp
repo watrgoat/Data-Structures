@@ -43,7 +43,7 @@ int main() {
 
 
   // UNCOMMENT THESE LINES AFTER YOU FINISH CHECKPOINT 1 (to check your work)
-  /*
+  
   m.root = m.my_new('l',m.root,MY_NULL);
   std::cout << std::endl << "adding another cell triggers automatic garbage collection:" << std::endl << m;
 
@@ -51,7 +51,7 @@ int main() {
   m.root = MY_NULL;
   m.collect_garbage();
   std::cout << std::endl << "root set to null & forced garbage collection:" << std::endl << m;
-  */
+  
 
 }
 
